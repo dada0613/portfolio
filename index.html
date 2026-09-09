@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html><html lang="en" class="dark"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -137,7 +135,7 @@ transition: transform 0.5s ease;
 transform: scale(1.05);
 }
 
-/* 獨立定位畫布物件，防止互相擠壓 */
+/* 獨立定位畫布物件 */
 .canvas-draggable-photo {
 position: relative;
 display: inline-block;
@@ -197,13 +195,6 @@ box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 .gd-card.editing-active .delete-elem-btn {
 display: flex;
 }
-
-/* 九宮格裁減線樣式 */
-.crop-grid-line {
-position: absolute;
-border: 1px dashed rgba(255, 255, 255, 0.6);
-pointer-events: none;
-}
 </style></head>
 <body class="min-h-screen relative flex flex-col justify-between selection:bg-neutral-800 selection:text-white">
 
@@ -211,7 +202,7 @@ pointer-events: none;
 
 <!-- 頂部編輯控制列 -->
 <div id="admin-floating-bar" class="hidden fixed top-4 right-4 z-50 bg-yellow-600/90 text-black px-5 py-2 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-<span>⚡ Edit Mode (Double-click image to Crop)</span>
+<span>⚡ Edit Mode (Ctrl+Z Supported)</span>
 <button onclick="saveAllChanges()" class="bg-black text-white px-3 py-1 rounded hover:bg-neutral-800">Save Changes</button>
 <button onclick="openAdminModal()" class="bg-neutral-900 text-white px-3 py-1 rounded hover:bg-black">Add Project</button>
 <button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Logout</button>
@@ -227,7 +218,6 @@ pointer-events: none;
 <p class="text-xs text-neutral-400">Drag sliders below or preview framing using the 3x3 grid overlay.</p>
 <div id="crop-preview-container" class="w-full h-64 bg-black relative overflow-hidden rounded border border-neutral-700 flex items-center justify-center">
 <img id="crop-preview-img" src="" alt="Crop Target" class="w-full h-full object-cover transition-all">
-<!-- 九宮格格線 -->
 <div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none">
 <div class="border-r border-b border-white/30"></div>
 <div class="border-r border-b border-white/30"></div>
@@ -538,7 +528,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let isAdminLoggedIn = false;
 let undoStack = [];
-let currentCropImg = null; // 當前正在裁減的圖片元素
+let currentCropImg = null;
 
 function recordState() {
 const state = document.querySelector('main').innerHTML;
@@ -546,6 +536,7 @@ undoStack.push(state);
 if (undoStack.length > 30) undoStack.shift();
 }
 
+// 修正：Ctrl+Z 還原後立刻重新啟用編輯與拖曳功能
 window.addEventListener('keydown', function(e) {
 if (isAdminLoggedIn && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
 e.preventDefault();
@@ -655,7 +646,7 @@ isAdminLoggedIn = true;
 closeAdminLogin();
 document.getElementById('admin-floating-bar').classList.remove('hidden');
 enableEditableElements();
-alert('Successfully Logged In! Independent Positioning & Double-Click Crop Enabled.');
+alert('Successfully Logged In! All Editors & Ctrl+Z Re-binding Enabled.');
 }
 }
 
@@ -679,10 +670,9 @@ document.getElementById('admin-modal').classList.add('hidden');
 function saveAllChanges() {
 recordState();
 localStorage.setItem('portfolio_layout_snapshot', document.querySelector('main').innerHTML);
-alert('All layout modifications, sizes & crops saved permanently!');
+alert('All changes saved permanently!');
 }
 
-// 啟用編輯模式
 function enableEditableElements() {
 document.querySelectorAll('.serif-title, p, h3').forEach(el => {
 if (!el.closest('#admin-modal')) {
@@ -735,14 +725,12 @@ setTimeout(() => card.remove(), 300);
 }
 }
 
-// 獨立定位、防擠壓的滑鼠互動引擎，並支援雙擊開啟裁減器
 function attachCanvasInteraction(elem) {
 let isDragging = false;
 let isResizing = false;
 let currentHandle = null;
 let startX, startY, startWidth, startHeight, startLeft, startTop;
 
-// 雙擊事件：開啟九宮格裁減 Modal
 elem.addEventListener('dblclick', function(e) {
 if (!isAdminLoggedIn) return;
 const img = elem.querySelector('img');
@@ -761,7 +749,6 @@ if (!isAdminLoggedIn) return;
 if (e.target.classList.contains('delete-elem-btn')) return;
 recordState();
 
-// 初始化絕對定位，確保物件互相獨立、不會擠壓別的項目
 const rect = elem.getBoundingClientRect();
 const parentRect = elem.offsetParent ? elem.offsetParent.getBoundingClientRect() : document.body.getBoundingClientRect();
 
