@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html><html lang="en" class="dark"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -135,7 +137,7 @@ transition: transform 0.5s ease;
 transform: scale(1.05);
 }
 
-/* 完美對齊的向量畫布自由拖曳與縮放物件 */
+/* 獨立定位畫布物件，防止互相擠壓 */
 .canvas-draggable-photo {
 position: relative;
 display: inline-block;
@@ -151,7 +153,7 @@ outline-offset: 4px;
 cursor: grabbing;
 }
 
-/* 8 個方向把手精準對齊 */
+/* 8 個方向把手 */
 .resize-handle {
 display: none;
 position: absolute;
@@ -196,10 +198,11 @@ box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 display: flex;
 }
 
-.editable-active {
-outline: 2px dashed rgba(218, 165, 32, 0.8);
-outline-offset: 4px;
-background: rgba(218, 165, 32, 0.05);
+/* 九宮格裁減線樣式 */
+.crop-grid-line {
+position: absolute;
+border: 1px dashed rgba(255, 255, 255, 0.6);
+pointer-events: none;
 }
 </style></head>
 <body class="min-h-screen relative flex flex-col justify-between selection:bg-neutral-800 selection:text-white">
@@ -208,10 +211,50 @@ background: rgba(218, 165, 32, 0.05);
 
 <!-- 頂部編輯控制列 -->
 <div id="admin-floating-bar" class="hidden fixed top-4 right-4 z-50 bg-yellow-600/90 text-black px-5 py-2 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-<span>⚡ Edit Mode (Ctrl+Z Supported)</span>
+<span>⚡ Edit Mode (Double-click image to Crop)</span>
 <button onclick="saveAllChanges()" class="bg-black text-white px-3 py-1 rounded hover:bg-neutral-800">Save Changes</button>
 <button onclick="openAdminModal()" class="bg-neutral-900 text-white px-3 py-1 rounded hover:bg-black">Add Project</button>
 <button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Logout</button>
+</div>
+
+<!-- 圖片裁減九宮格 Modal -->
+<div id="crop-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+<div class="glass-panel p-6 rounded-lg max-w-lg w-full relative space-y-4">
+<div class="flex justify-between items-center border-b border-neutral-800 pb-3">
+<h3 class="serif-title text-xl text-white italic">Photo Crop Studio (Rule of Thirds)</h3>
+<button onclick="closeCropModal()" class="text-neutral-400 hover:text-white text-lg">✕</button>
+</div>
+<p class="text-xs text-neutral-400">Drag sliders below or preview framing using the 3x3 grid overlay.</p>
+<div id="crop-preview-container" class="w-full h-64 bg-black relative overflow-hidden rounded border border-neutral-700 flex items-center justify-center">
+<img id="crop-preview-img" src="" alt="Crop Target" class="w-full h-full object-cover transition-all">
+<!-- 九宮格格線 -->
+<div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none">
+<div class="border-r border-b border-white/30"></div>
+<div class="border-r border-b border-white/30"></div>
+<div class="border-b border-white/30"></div>
+<div class="border-r border-b border-white/30"></div>
+<div class="border-r border-b border-white/30"></div>
+<div class="border-b border-white/30"></div>
+<div class="border-r border-white/30"></div>
+<div class="border-r border-white/30"></div>
+<div></div>
+</div>
+</div>
+<div class="space-y-3">
+<div>
+<label class="block text-[10px] text-neutral-400 uppercase tracking-widest mb-1">Zoom / Scale</label>
+<input type="range" id="crop-zoom-range" min="1" max="2" step="0.05" value="1" oninput="updateCropZoom(this.value)" class="w-full accent-yellow-600">
+</div>
+<div>
+<label class="block text-[10px] text-neutral-400 uppercase tracking-widest mb-1">Object Fit Mode</label>
+<div class="flex gap-2">
+<button onclick="setCropFit('cover')" class="flex-1 bg-neutral-800 hover:bg-neutral-700 text-xs py-2 rounded text-white">Cover (Fill)</button>
+<button onclick="setCropFit('contain')" class="flex-1 bg-neutral-800 hover:bg-neutral-700 text-xs py-2 rounded text-white">Contain (Fit)</button>
+</div>
+</div>
+</div>
+<button onclick="applyCropChanges()" class="w-full bg-yellow-600 text-black font-bold py-3 uppercase text-xs tracking-widest hover:bg-white transition-colors">Apply & Save Crop</button>
+</div>
 </div>
 
 <!-- 圖片放大 LightBox 燈箱 Modal -->
@@ -495,6 +538,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let isAdminLoggedIn = false;
 let undoStack = [];
+let currentCropImg = null; // 當前正在裁減的圖片元素
 
 function recordState() {
 const state = document.querySelector('main').innerHTML;
@@ -611,7 +655,7 @@ isAdminLoggedIn = true;
 closeAdminLogin();
 document.getElementById('admin-floating-bar').classList.remove('hidden');
 enableEditableElements();
-alert('Successfully Logged In! Smooth Drag, 8-Point Resize & Persistent Storage Enabled.');
+alert('Successfully Logged In! Independent Positioning & Double-Click Crop Enabled.');
 }
 }
 
@@ -632,11 +676,10 @@ function closeAdminModal() {
 document.getElementById('admin-modal').classList.add('hidden');
 }
 
-// 點擊儲存按鈕：將修改後的畫面永久寫入 localStorage
 function saveAllChanges() {
 recordState();
 localStorage.setItem('portfolio_layout_snapshot', document.querySelector('main').innerHTML);
-alert('All changes saved permanently! Reloading will now keep your layout.');
+alert('All layout modifications, sizes & crops saved permanently!');
 }
 
 // 啟用編輯模式
@@ -692,29 +735,51 @@ setTimeout(() => card.remove(), 300);
 }
 }
 
-// 修正版：絕對座標與游標完美對齊的拖曳與 8 點雙向縮放引擎
+// 獨立定位、防擠壓的滑鼠互動引擎，並支援雙擊開啟裁減器
 function attachCanvasInteraction(elem) {
 let isDragging = false;
 let isResizing = false;
 let currentHandle = null;
 let startX, startY, startWidth, startHeight, startLeft, startTop;
 
+// 雙擊事件：開啟九宮格裁減 Modal
+elem.addEventListener('dblclick', function(e) {
+if (!isAdminLoggedIn) return;
+const img = elem.querySelector('img');
+if (img) {
+currentCropImg = img;
+document.getElementById('crop-preview-img').src = img.src;
+document.getElementById('crop-zoom-range').value = 1;
+document.getElementById('crop-preview-img').style.transform = 'scale(1)';
+document.getElementById('crop-modal').classList.remove('hidden');
+e.stopPropagation();
+}
+});
+
 elem.addEventListener('mousedown', function(e) {
 if (!isAdminLoggedIn) return;
 if (e.target.classList.contains('delete-elem-btn')) return;
 recordState();
 
+// 初始化絕對定位，確保物件互相獨立、不會擠壓別的項目
+const rect = elem.getBoundingClientRect();
+const parentRect = elem.offsetParent ? elem.offsetParent.getBoundingClientRect() : document.body.getBoundingClientRect();
+
+if (getComputedStyle(elem).position !== 'absolute') {
+elem.style.position = 'absolute';
+elem.style.width = `${rect.width}px`;
+elem.style.height = `${rect.height}px`;
+elem.style.left = `${rect.left - parentRect.left}px`;
+elem.style.top = `${rect.top - parentRect.top}px`;
+elem.style.transform = 'none';
+}
+
 startX = e.clientX;
 startY = e.clientY;
-const rect = elem.getBoundingClientRect();
-startWidth = rect.width;
-startHeight = rect.height;
-
-// 取得目前的位移量
-let transform = elem.style.transform;
-let match = transform && transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
-startLeft = match ? parseFloat(match[1]) : 0;
-startTop = match ? parseFloat(match[2]) : 0;
+startWidth = elem.offsetWidth;
+startHeight = elem.offsetHeight;
+startLeft = parseFloat(elem.style.left) || 0;
+startTop = parseFloat(elem.style.top) || 0;
 
 if (e.target.classList.contains('resize-handle')) {
 isResizing = true;
@@ -733,28 +798,35 @@ const dx = e.clientX - startX;
 const dy = e.clientY - startY;
 
 if (isDragging) {
-elem.style.transform = `translate(${startLeft + dx}px, ${startTop + dy}px)`;
+elem.style.left = `${startLeft + dx}px`;
+elem.style.top = `${startTop + dy}px`;
 } else if (isResizing) {
 if (currentHandle === 'br') {
 elem.style.width = `${Math.max(60, startWidth + dx)}px`;
 elem.style.height = `${Math.max(60, startHeight + dy)}px`;
 } else if (currentHandle === 'bl') {
 elem.style.width = `${Math.max(60, startWidth - dx)}px`;
+elem.style.left = `${startLeft + dx}px`;
 elem.style.height = `${Math.max(60, startHeight + dy)}px`;
 } else if (currentHandle === 'tr') {
 elem.style.width = `${Math.max(60, startWidth + dx)}px`;
 elem.style.height = `${Math.max(60, startHeight - dy)}px`;
+elem.style.top = `${startTop + dy}px`;
 } else if (currentHandle === 'tl') {
 elem.style.width = `${Math.max(60, startWidth - dx)}px`;
+elem.style.left = `${startLeft + dx}px`;
 elem.style.height = `${Math.max(60, startHeight - dy)}px`;
+elem.style.top = `${startTop + dy}px`;
 } else if (currentHandle === 'r') {
 elem.style.width = `${Math.max(60, startWidth + dx)}px`;
 } else if (currentHandle === 'l') {
 elem.style.width = `${Math.max(60, startWidth - dx)}px`;
+elem.style.left = `${startLeft + dx}px`;
 } else if (currentHandle === 'b') {
 elem.style.height = `${Math.max(60, startHeight + dy)}px`;
 } else if (currentHandle === 't') {
 elem.style.height = `${Math.max(60, startHeight - dy)}px`;
+elem.style.top = `${startTop + dy}px`;
 }
 }
 });
@@ -766,6 +838,32 @@ isResizing = false;
 currentHandle = null;
 }
 });
+}
+
+function closeCropModal() {
+document.getElementById('crop-modal').classList.add('hidden');
+currentCropImg = null;
+}
+
+function updateCropZoom(val) {
+const previewImg = document.getElementById('crop-preview-img');
+if (previewImg) previewImg.style.transform = `scale(${val})`;
+}
+
+function setCropFit(mode) {
+const previewImg = document.getElementById('crop-preview-img');
+if (previewImg) previewImg.style.objectFit = mode;
+}
+
+function applyCropChanges() {
+if (currentCropImg) {
+const previewImg = document.getElementById('crop-preview-img');
+currentCropImg.style.objectFit = previewImg.style.objectFit || 'cover';
+currentCropImg.style.transform = previewImg.style.transform || 'scale(1)';
+recordState();
+alert('Photo crop & framing updated successfully!');
+}
+closeCropModal();
 }
 
 function toggleCategoryFields() {
