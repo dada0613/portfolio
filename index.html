@@ -1,746 +1,1276 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amanda Hsu | Technical Game Designer</title>
-    
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            background-color: #050505;
-            color: #f5f5f5;
-            font-family: 'Rajdhani', sans-serif;
-            overflow-x: hidden;
-            margin: 0;
-        }
+<!DOCTYPE html><html lang="en" class="dark"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMANDA HSU — Portfolio</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<!-- 引入 Supabase JS SDK 用於安全後端驗證 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Oswald:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+body {
+font-family: 'Inter', sans-serif;
+background-color: #0b0f15;
+color: #f3f4f6;
+overflow-x: hidden;
+margin: 0;
+}
+.serif-title { font-family: 'Playfair Display', serif; }
+.font-hero { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
 
-        .text-gold-gradient {
-            background: linear-gradient(
-                135deg, 
-                #FFF8DC 0%,
-                #F0E68C 30%,
-                #DAA520 70%,
-                #B8860B 100%
-            );
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            filter: drop-shadow(0 0 15px rgba(218, 165, 32, 0.3));
-        }
+@keyframes drift {
+0% { transform: translate(0px, 0px) scale(1); }
+100% { transform: translate(var(--move-x), var(--move-y)) scale(1.05); }
+}
+.particle {
+position: absolute;
+border-radius: 50%;
+pointer-events: none;
+mix-blend-mode: screen;
+animation: drift var(--duration) ease-in-out infinite alternate;
+}
 
-        .font-hero {
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
-        }
-        
-        .font-retro {
-            font-family: 'VT323', monospace;
-        }
+@keyframes stereoGlow {
+0% {
+transform: perspective(600px) translateZ(0px) rotateX(0deg);
+filter: brightness(1) drop-shadow(0 4px 35px rgba(0,0,0,0.95));
+letter-spacing: normal;
+}
+50% {
+transform: perspective(600px) translateZ(45px) rotateX(-4deg);
+filter: brightness(1.4) drop-shadow(0 15px 35px rgba(218, 165, 32, 0.6));
+letter-spacing: 0.02em;
+}
+100% {
+transform: perspective(600px) translateZ(0px) rotateX(0deg);
+filter: brightness(1) drop-shadow(0 4px 35px rgba(0,0,0,0.95));
+letter-spacing: normal;
+}
+}
 
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #000000;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #DAA520;
-            border-radius: 4px;
-        }
+.hero-brand-animation {
+display: inline-block;
+transform-style: preserve-3d;
+transition: transform 0.3s ease;
+}
+.hero-brand-animate-active {
+animation: stereoGlow 3s ease-in-out forwards;
+}
 
-        .glass-panel {
-            background: rgba(25, 25, 25, 0.95);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
-        }
+.outline-card {
+background: rgba(20, 25, 30, 0.4);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.15);
+box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+transition: all 0.3s ease;
+}
+.outline-card:hover {
+border: 1px solid rgba(255, 255, 255, 0.35);
+background: rgba(255, 255, 255, 0.05);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+}
 
-        .page-enter {
-            animation: fadeSlideUp 0.6s ease-out forwards;
-        }
-        @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.page-enter {
+animation: fadeSlideUp 0.6s ease-out forwards;
+}
+@keyframes fadeSlideUp {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
 
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            outline: none;
-            pointer-events: none;
-        }
-        
-        .cursor-blink {
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
+.gd-body { font-family: 'Rajdhani', sans-serif; }
+.font-retro { font-family: 'VT323', monospace; }
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+.text-gold-gradient {
+background: linear-gradient(135deg, #FFF8DC 0%, #F0E68C 30%, #DAA520 70%, #B8860B 100%);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+filter: drop-shadow(0 0 15px rgba(218, 165, 32, 0.3));
+}
 
-        const IconWrapper = ({ children, size = 24, className = "" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                {children}
-            </svg>
-        );
-        const ExternalLink = (props) => (
-            <IconWrapper {...props}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></IconWrapper>
-        );
-        const ArrowRight = (props) => (
-            <IconWrapper {...props}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></IconWrapper>
-        );
-        const ArrowLeft = (props) => (
-            <IconWrapper {...props}><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></IconWrapper>
-        );
+.cursor-blink { animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
 
-        const ThreeBackground = () => {
-            const mountRef = useRef(null);
-            
-            useEffect(() => {
-                const scene = new THREE.Scene();
-                scene.fog = new THREE.FogExp2(0x050505, 0.002);
-                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                camera.position.z = 30;
-                
-                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setPixelRatio(window.devicePixelRatio);
-                
-                if (mountRef.current) mountRef.current.appendChild(renderer.domElement);
+.gd-card {
+background: rgba(25, 25, 25, 0.8);
+border: 1px solid rgba(255, 255, 255, 0.2);
+transition: all 0.3s ease;
+}
+.gd-card:hover {
+border-color: rgba(218, 165, 32, 0.5);
+background: rgba(35, 35, 35, 0.9);
+}
 
-                const geometry = new THREE.BufferGeometry();
-                const count = 900;
-                const positions = new Float32Array(count * 3);
-                for(let i = 0; i < count * 3; i++) positions[i] = (Math.random() - 0.5) * 80;
-                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                
-                const material = new THREE.PointsMaterial({
-                    color: 0xF0E68C, size: 0.15, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending
-                });
-                const particles = new THREE.Points(geometry, material);
-                scene.add(particles);
+.glass-panel {
+background: rgba(25, 25, 25, 0.95);
+backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.25);
+box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+}
 
-                let mouseX = 0, mouseY = 0;
-                
-                const onMove = (e) => {
-                    mouseX = (e.clientX - window.innerWidth/2) * 0.001;
-                    mouseY = (e.clientY - window.innerHeight/2) * 0.001;
-                };
-                
-                const onTouchMove = (e) => {
-                    if (e.touches.length > 0) {
-                        mouseX = (e.touches[0].clientX - window.innerWidth/2) * 0.001;
-                        mouseY = (e.touches[0].clientY - window.innerHeight/2) * 0.001;
-                    }
-                };
+.justified-row {
+display: flex;
+flex-wrap: wrap;
+gap: 14px;
+margin-bottom: 14px;
+}
+.justified-item {
+position: relative;
+overflow: hidden;
+flex-grow: 1;
+border-radius: 4px;
+cursor: zoom-in;
+}
+.justified-item img {
+height: 100%;
+width: 100%;
+object-fit: cover;
+transition: transform 0.5s ease;
+}
+.justified-item:hover img {
+transform: scale(1.05);
+}
 
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('touchmove', onTouchMove, { passive: true });
+/* 完美對齊的向量畫布自由拖曳與縮放物件 */
+.canvas-draggable-photo {
+position: relative;
+display: inline-block;
+user-select: none;
+touch-action: none;
+}
+.canvas-draggable-photo.editing-active {
+cursor: grab;
+outline: 2px dashed #DAA520;
+outline-offset: 4px;
+}
+.canvas-draggable-photo.editing-active:active {
+cursor: grabbing;
+}
 
-                const animate = () => {
-                    requestAnimationFrame(animate);
-                    particles.rotation.y += 0.0008;
-                    particles.rotation.x += 0.05 * (mouseY - particles.rotation.x);
-                    particles.rotation.z += 0.05 * (mouseX - particles.rotation.z);
-                    renderer.render(scene, camera);
-                };
-                animate();
+/* 8 個方向把手精準對齊 */
+.resize-handle {
+display: none;
+position: absolute;
+background: #DAA520;
+border: 2px solid #fff;
+z-index: 30;
+}
+.canvas-draggable-photo.editing-active .resize-handle {
+display: block;
+}
+.handle-tl { width: 12px; height: 12px; top: -6px; left: -6px; cursor: nwse-resize; border-radius: 50%; }
+.handle-tr { width: 12px; height: 12px; top: -6px; right: -6px; cursor: nesw-resize; border-radius: 50%; }
+.handle-bl { width: 12px; height: 12px; bottom: -6px; left: -6px; cursor: nesw-resize; border-radius: 50%; }
+.handle-br { width: 12px; height: 12px; bottom: -6px; right: -6px; cursor: nwse-resize; border-radius: 50%; }
+.handle-t { height: 8px; top: -4px; left: 12px; right: 12px; cursor: ns-resize; }
+.handle-b { height: 8px; bottom: -4px; left: 12px; right: 12px; cursor: ns-resize; }
+.handle-l { width: 8px; left: -4px; top: 12px; bottom: 12px; cursor: ew-resize; }
+.handle-r { width: 8px; right: -4px; top: 12px; bottom: 12px; cursor: ew-resize; }
 
-                const handleResize = () => {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                };
-                window.addEventListener('resize', handleResize);
+.delete-elem-btn {
+display: none;
+position: absolute;
+top: -12px;
+right: -12px;
+width: 26px;
+height: 26px;
+background: #dc2626;
+color: #fff;
+border-radius: 50%;
+border: 2px solid #fff;
+font-size: 14px;
+font-weight: bold;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+z-index: 40;
+box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.canvas-draggable-photo.editing-active .delete-elem-btn,
+.outline-card.editing-active .delete-elem-btn,
+.gd-card.editing-active .delete-elem-btn {
+display: flex;
+}
 
-                return () => {
-                    window.removeEventListener('resize', handleResize);
-                    document.removeEventListener('mousemove', onMove);
-                    document.removeEventListener('touchmove', onTouchMove);
-                    if (mountRef.current && renderer.domElement) mountRef.current.removeChild(renderer.domElement);
-                };
-            }, []);
-            return <div ref={mountRef} className="fixed top-0 left-0 w-full h-full pointer-events-none" />;
-        };
+.editable-active {
+outline: 2px dashed rgba(218, 165, 32, 0.8);
+outline-offset: 4px;
+background: rgba(218, 165, 32, 0.05);
+}
+</style></head>
+<body class="min-h-screen relative flex flex-col justify-between selection:bg-neutral-800 selection:text-white">
 
-        const BEDLAM_IMAGE_URL = "https://img.itch.zone/aW1nLzI0MzUyNTMyLnBuZw==/315x250%23c/KkcSLX.png"; 
-        const CLAW_PATROL_IMAGE_URL = "https://img.itch.zone/aW1hZ2UvMjY1MzY4OS8xNTk2MTY4OS5wbmc=/794x1000/LCgUY6.png";
+<div id="bg-canvas" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
 
-        const portfolioData = {
-            tagline: "Bridging the gap between Engineering & Art.",
-            contact: { 
-                email: "amandahsu0613@gmail.com",
-                phone: "(440) 431-7016",
-                location: "Cleveland, OH"
-            },
-            skills: ["C# / C++ / Python", "Unity & Unreal Engine", "Systems Architecture", "Gameplay Scripting", "Finite State Machines", "Tools Programming"],
-            resumeLink: "Technical Game Design - Resume.pdf",
-            projects: [
-                {
-                    id: 1,
-                    title: "Bedlam",
-                    subtitle: "3D Horror Interaction System",
-                    role: "Technical Designer (Layout & Narrative), Sound Designer", 
-                    tags: ["Unity", "C#", "Event Trigger Sys", "Prop Scripting", "Sound Design"], 
-                    desc: "Engineered a decoupled interaction system using C# Interfaces, allowing designers to drag-and-drop behavior onto any prop without code dependency. Also implemented a custom Event Management System to synchronize lighting and audio scares.",
-                    detailedDesc: "Bedlam is a psychological horror game where environment interaction drives the experience. Players must guide a comatose body to safety as a robot, using light as their only weapon against the dark. My primary role was to architect the interaction system. Instead of hardcoding behaviors, I built a modular component system that allowed level designers to turn any static mesh into an interactive object simply by attaching a script—no additional coding required.",
-                    visual: BEDLAM_IMAGE_URL, 
-                    type: "image",
-                    link: "https://cwru-ecse390.itch.io/bedlam-f2025-team-2"
-                },
-                {
-                    id: 2,
-                    title: "Claw Patrol",
-                    subtitle: "AI State Machine Architecture",
-                    role: "AI Design, Tower Systems & Playtest Iteration",
-                    tags: ["Unity", "C#", "Enemy AI", "Combat Balance", "Iterative Design"],
-                    desc: "Scripted 4 distinct enemy AI behaviors and tower defense functionalities. Heavily utilized weekly playtest data to iterate on movement patterns and difficulty balancing, ensuring a fair yet challenging combat loop.",
-                    detailedDesc: "For Claw Patrol, I designed a modular AI system. The goal was to have enemies that felt responsive but predictable enough for a platformer. I used a State Pattern to manage behaviors.",
-                    visual: CLAW_PATROL_IMAGE_URL, 
-                    type: "image",
-                    link: "https://ecse-csds290.itch.io/2024-team-6"
-                },
-                {
-                    id: 3,
-                    title: "Jade & Co",
-                    subtitle: "Interactive Narrative Adventure",
-                    role: "Gameplay Programmer & Designer",
-                    tags: ["Web", "Gameplay Logic", "Puzzle Design", "Level Design", "State Management"],
-                    desc: "Designed and scripted a non-linear text adventure game focused on exploration and puzzles. Implemented complex state tracking to ensure player actions and inventory choices permanently alter the game world.",
-                    detailedDesc: "Jade & Co is a gameplay-first text adventure. My focus was on designing intricate puzzle dependency chains and scripting the logic to support them. I built a dynamic state system that tracks not just inventory, but world states—allowing players to solve puzzles in different orders while ensuring the narrative logic never breaks.",
-                    type: "terminal", 
-                    terminalLines: [
-                        "> LOOK AROUND",
-                        "You are in a damp cave. A stone face blocks the path.",
-                        "> EXAMINE FACE",
-                        "The statue speaks: 'I have cities, but no houses. What am I?'",
-                        "> SAY MAP",
-                        "The stone face crumbles. The path is clear."
-                    ],
-                    link: "https://play.textadventures.co.uk/textadventures/lk-wccykh0ofauco36ficg"
-                }
-            ],
-            resume: {
-                summary: "Technical Game Designer with a dual background in Computer Science and Theater Arts. Experienced in prototyping gameplay mechanics, implementing game systems, and scripting interactive environments. Passionate about creating immersive, narrative-driven experiences and turning design concepts into playable content using scalable C# frameworks.",
-                education: [
-                    {
-                        school: "Case Western Reserve University",
-                        period: "2023-2027",
-                        degree: "Bachelor of Arts (Double Major)",
-                        details: ["Computer Science Major", "Theater Arts Major", "Gaming Minor", "CSDS Department GPA: 4.0"]
-                    },
-                    {
-                        school: "Trinity College Dublin",
-                        period: "Fall 2024",
-                        degree: "Study Abroad",
-                        details: []
-                    }
-                ],
-                experience: [
-                    {
-                        title: "Bedlam - 3D Horror Hospital Escape",
-                        period: "Fall 2025",
-                        details: [
-                            "Scripted core gameplay mechanics for player interaction and item usage using C#.",
-                            "Designed and implemented the 'Robot vs Gurney' transformation mechanic.",
-                            "Collaborated with level designers to script dynamic scare events and audio triggers."
-                        ]
-                    },
-                    {
-                        title: "Claw Patrol - 2D Tower Defending",
-                        period: "Spring 2024",
-                        details: [
-                            "Programmed 4 unique enemy AI behaviors and wave spawning logic.",
-                            "Designed and balanced tower stats based on playtest feedback to ensure fair difficulty.",
-                            "Implemented the core game loop, including win/loss states and resource management."
-                        ]
-                    },
-                    {
-                        title: "Jade & Co. - Text Adventure",
-                        period: "Spring 2024",
-                        details: [
-                            "Designed the game's puzzle flow and world layout for non-linear exploration.",
-                            "Scripted all gameplay logic, handling complex state changes and inventory puzzles."
-                        ]
-                    }
-                ],
-                work: [
-                    {
-                        role: "Teaching Assistant - Data Structure",
-                        company: "Case Western Reserve University",
-                        period: "Spring 2026",
-                        details: ["Selected to mentor students on core algorithms (Graphs, Trees) and debug complex Java/C++ codebases."]
-                    },
-                    {
-                        role: "Scene Shop Technician",
-                        company: "Theater Department",
-                        period: "2024-Now",
-                        details: ["Built scenery using spatial design and visual composition principles.", "Collaborated with designers in fast-paced productions."]
-                    }
-                ],
-                skillCategories: {
-                    "Core Skills": "Systems Design, Combat Balancing, Level Design, Puzzle Design, UX Flows, Interaction Design",
-                    "Technical": "C#, C++, Java, Python, HTML/CSS, Unity, Git/GitHub, VS Code",
-                    "Design & Multimedia": "Adobe Creative Suite, VectorWorks, Reaper",
-                    "Languages": "Mandarin (Fluent), English (Fluent)"
-                }
-            }
-        };
+<!-- 頂部編輯控制列 -->
+<div id="admin-floating-bar" class="hidden fixed top-4 right-4 z-50 bg-yellow-600/90 text-black px-5 py-2 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
+<span>⚡ Edit Mode (Ctrl+Z Supported)</span>
+<button onclick="saveAllChanges()" class="bg-black text-white px-3 py-1 rounded hover:bg-neutral-800">Save Changes</button>
+<button onclick="openAdminModal()" class="bg-neutral-900 text-white px-3 py-1 rounded hover:bg-black">Add Project</button>
+<button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Logout</button>
+</div>
 
-        const App = () => {
-            const [view, setView] = useState('home');
-            const [selectedProject, setSelectedProject] = useState(null);
-            
-            useEffect(() => {
-                window.scrollTo(0, 0);
-            }, [view]);
+<!-- 圖片放大 LightBox 燈箱 Modal -->
+<div id="lightbox-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightbox()">
+<button onclick="closeLightbox()" class="absolute top-6 right-6 text-neutral-400 hover:text-white text-3xl font-light z-50 focus:outline-none">✕</button>
+<img id="lightbox-img" src="" alt="Zoomed Image" class="max-w-[90vw] max-h-[90vh] object-contain rounded shadow-2xl" onclick="event.stopPropagation()">
+</div>
 
-            const navigateToProject = (project) => {
-                setSelectedProject(project);
-                setView('detail');
-            };
+<!-- 秘密解鎖登入彈窗 -->
+<div id="admin-login-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+<div class="glass-panel p-8 rounded-lg max-w-md w-full relative">
+<button onclick="closeAdminLogin()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
+<h3 class="serif-title text-2xl text-white mb-4 italic">Supabase Admin Login</h3>
+<p class="text-xs text-neutral-400 mb-6 uppercase tracking-widest">Enter your Supabase admin email & password.</p>
+<input type="email" id="admin-email-input" placeholder="Admin Email" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm mb-4 rounded focus:outline-none focus:border-yellow-500">
+<input type="password" id="admin-passcode-input" placeholder="Password" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm mb-4 rounded focus:outline-none focus:border-yellow-500">
+<button onclick="verifySupabaseAdmin()" class="w-full bg-yellow-600 text-black font-bold py-3 uppercase text-xs tracking-widest hover:bg-white transition-colors">Authenticate Securely</button>
+</div>
+</div>
 
-            const Nav = () => (
-                <nav className="fixed top-0 w-full bg-black/80 backdrop-blur-md border-b border-white/10 z-50">
-                    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                        <div 
-                            className="flex items-center gap-3 cursor-pointer group"
-                            onClick={() => setView('home')}
-                        >
-                            <div className="w-10 h-10 border border-yellow-600/50 rounded-sm flex items-center justify-center text-yellow-500 bg-black group-hover:bg-yellow-600 group-hover:text-black transition-colors">
-                                <span className="font-hero font-bold text-xl">A</span>
-                            </div>
-                            <span className="font-hero font-bold text-xl tracking-widest text-white group-hover:text-yellow-500 transition-colors">
-                                AMANDA HSU
-                            </span>
-                        </div>
-                        <div className="flex gap-8 text-sm uppercase tracking-widest font-bold items-center">
-                            <button 
-                                onClick={() => setView('home')}
-                                className={`${view === 'home' ? 'text-yellow-500' : 'text-neutral-300 hover:text-white'} transition-colors duration-300`}
-                            >
-                                Home
-                            </button>
-                            <button 
-                                onClick={() => setView('about')}
-                                className={`${view === 'about' ? 'text-yellow-500' : 'text-neutral-300 hover:text-white'} transition-colors duration-300`}
-                            >
-                                About
-                            </button>
-                            <button 
-                                onClick={() => setView('resume')}
-                                className={`${view === 'resume' ? 'text-black bg-yellow-600 border-yellow-600' : 'text-neutral-200 border-neutral-600 hover:border-yellow-500 hover:text-yellow-500'} border px-4 py-2 transition-all duration-300 flex items-center gap-2`}
-                            >
-                                Resume
-                            </button>
-                        </div>
-                    </div>
-                </nav>
-            );
+<!-- 新增專案彈窗面板 -->
+<div id="admin-modal" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col p-6 md:p-12 overflow-y-auto">
+<div class="max-w-4xl mx-auto w-full space-y-12">
+<div class="flex justify-between items-center border-b border-neutral-800 pb-6">
+<h2 class="serif-title text-3xl text-white italic">Add New Project</h2>
+<button onclick="closeAdminModal()" class="bg-neutral-800 text-white px-4 py-2 text-xs uppercase tracking-widest hover:bg-neutral-700">Close</button>
+</div>
 
-            const TerminalVisual = ({ lines }) => (
-                <div className="w-full h-full bg-[#0a0a0a] border-t-2 border-neutral-800 p-4 font-retro text-lg leading-snug overflow-hidden relative shadow-inner flex flex-col justify-start">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-green-500/20"></div>
-                    <div className="text-green-400">
-                        {lines.map((line, i) => (
-                            <div key={i} className="mb-1">
-                                {line.startsWith('>') ? <span className="text-yellow-500 font-bold">{line}</span> : line}
-                            </div>
-                        ))}
-                        <div className="mt-2 flex">
-                            <span className="text-yellow-500 mr-2">&gt;</span>
-                            <span className="w-3 h-5 bg-green-500 cursor-blink"></span>
-                        </div>
-                    </div>
-                    <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-20"></div>
-                </div>
-            );
+<div class="glass-panel p-8 rounded-lg space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Select Category</label>
+<select id="new-proj-category" onchange="toggleCategoryFields()" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
+<option value="photography-event">Photography (Event)</option>
+<option value="photography-street">Photography (Street)</option>
+<option value="lighting">Lighting Design</option>
+<option value="video-graphic">Video & Graphic Design</option>
+<option value="game">Game Design</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Project Title</label>
+<input type="text" id="new-proj-title" placeholder="e.g. Spring Showcase 2026" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="meta-fields-container">
+<div>
+<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Date / Season / Role</label>
+<input type="text" id="new-proj-date" placeholder="e.g. Spring 2026" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
+</div>
+<div>
+<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Subtitle / Engine</label>
+<input type="text" id="new-proj-subtitle" placeholder="e.g. Unity / C#" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
+</div>
+</div>
+<div>
+<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Description / Details</label>
+<textarea id="new-proj-desc" placeholder="Brief description..." class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded h-24"></textarea>
+</div>
+<div>
+<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Upload Cover Image</label>
+<input type="file" id="new-proj-cover" accept="image/*" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
+</div>
+<div id="gallery-upload-container">
+<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Upload Gallery Photos (Multiple)</label>
+<input type="file" id="new-proj-images" accept="image/*" multiple class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
+</div>
+<button onclick="saveNewProject()" class="w-full bg-yellow-600 text-black font-bold py-4 uppercase text-xs tracking-widest hover:bg-white transition-colors">Publish Project</button>
+</div>
+</div>
+</div>
 
-            const HomeView = () => (
-                <div className="page-enter">
-                    <div className="min-h-screen flex flex-col justify-center items-center text-center px-4 pt-20">
-                        <h2 className="text-yellow-600 font-bold tracking-[0.4em] text-sm mb-6 uppercase animate-pulse">
-                            Portfolio 2026
-                        </h2>
-                        <h1 className="text-7xl md:text-9xl font-hero font-bold mb-8 text-white leading-none uppercase drop-shadow-2xl">
-                            Technical <br />
-                            <span className="text-gold-gradient block mt-2 tracking-wide">Game Designer</span>
-                        </h1>
-                        <p className="text-xl md:text-2xl text-neutral-200 max-w-3xl mx-auto leading-relaxed mb-12 font-light tracking-wide">
-                            {portfolioData.tagline}
-                        </p>
-                        
-                        <div className="flex gap-6 mb-20">
-                             <button 
-                                onClick={() => document.getElementById('projects-grid').scrollIntoView({ behavior: 'smooth' })}
-                                className="bg-transparent border-2 border-yellow-600 text-yellow-500 hover:bg-yellow-600 hover:text-black px-8 py-3 rounded-sm font-hero font-bold text-sm tracking-widest uppercase transition-all flex items-center gap-2"
-                            >
-                                <ArrowRight size={16} className="rotate-90" /> Scroll to Projects
-                            </button>
-                        </div>
+<header id="global-header" class="relative z-20 w-full px-6 md:px-12 py-8 flex items-center justify-between transition-colors bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800/50">
+<a href="#home" class="serif-title text-xl md:text-2xl tracking-widest text-neutral-100 flex items-center gap-2 hover:opacity-80 transition-opacity">
+AMANDA HSU
+</a>
+<nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-[11px] tracking-[0.15em] xl:tracking-[0.2em] text-neutral-300 uppercase font-medium whitespace-nowrap">
+<a href="#home" class="transition-colors hover:text-white">Home</a>
+<a href="#photography" class="transition-colors hover:text-white">Photography</a>
+<a href="#lighting-design" class="transition-colors hover:text-white">Lighting Design</a>
+<a href="#video-graphic-design" class="transition-colors hover:text-white">Video & Graphic Design</a>
+<a href="#game-design" class="transition-colors hover:text-yellow-500">Game Design</a>
+</nav>
+<button onclick="toggleMobileMenu()" class="lg:hidden text-neutral-300 focus:outline-none p-2 hover:text-white transition-colors">
+<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M4 6h16M4 12h16m-7 6h7"></path>
+</svg>
+</button>
+</header>
 
-                        <div className="flex justify-center flex-wrap gap-8 text-neutral-300 text-xs font-bold tracking-[0.2em] uppercase font-hero opacity-80">
-                            {portfolioData.skills.map((skill, idx) => (
-                                <span key={idx}>{skill}</span>
-                            ))}
-                        </div>
-                    </div>
+<div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-[#0b0f15]/95 backdrop-blur-xl flex flex-col justify-center items-center space-y-8 text-sm uppercase tracking-[0.255em]">
+<button onclick="toggleMobileMenu()" class="absolute top-8 right-8 text-neutral-400 hover:text-white text-xl">✕ Close</button>
+<a href="#home" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-white">Home</a>
+<a href="#photography" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-white">Photography</a>
+<a href="#lighting-design" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-white">Lighting Design</a>
+<a href="#video-graphic-design" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-white">Video & Graphic Design</a>
+<a href="#game-design" onclick="toggleMobileMenu()" class="text-yellow-500">Game Design</a>
+</div>
 
-                    <div id="projects-grid" className="py-32 px-6 max-w-7xl mx-auto border-t border-white/10 bg-black/50">
-                        <div className="mb-16 flex items-end justify-between">
-                            <div>
-                                <h2 className="text-5xl font-hero font-bold text-white uppercase mb-2">Selected Works</h2>
-                                <p className="text-neutral-200 font-light text-lg">Systems, Tools, and Gameplay</p>
-                            </div>
-                        </div>
+<main class="relative z-10 flex-grow w-full flex flex-col justify-center">
 
-                        <div className="grid gap-20">
-                            {portfolioData.projects.map((project, index) => (
-                                <div 
-                                    key={project.id} 
-                                    className="group relative bg-neutral-900/80 p-8 rounded-xl border border-white/20 hover:border-yellow-600/50 hover:bg-neutral-800 transition-all duration-300 cursor-pointer shadow-xl"
-                                    onClick={() => navigateToProject(project)}
-                                >
-                                    <div className="grid md:grid-cols-12 gap-10 items-center">
-                                        <div className="md:col-span-6 relative overflow-hidden rounded-lg shadow-2xl border border-white/10 flex flex-col bg-black">
-                                            {project.type === 'terminal' ? (
-                                                <div className="w-full h-96 md:h-auto md:aspect-video">
-                                                     <TerminalVisual lines={project.terminalLines} />
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <img 
-                                                        src={project.visual} 
-                                                        alt={project.title} 
-                                                        className="w-full h-auto object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 block"
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                        <span className="text-white font-hero uppercase tracking-widest text-xl border-b-2 border-yellow-500 pb-1">View Details</span>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </div>
+<div id="view-home" class="w-full page-enter space-y-16">
+<section class="relative w-full h-[850px] md:h-[1200px] overflow-hidden flex items-center justify-center bg-black">
+<div id="home-hero-grid" class="absolute inset-0 opacity-80 filter brightness-95 pointer-events-none flex flex-wrap content-start justify-center items-start gap-x-0 gap-y-12 scale-105 overflow-hidden"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0b0f15] via-[#0b0f15]/20 to-[#0b0f15]/10 pointer-events-none"></div>
 
-                                        <div className="md:col-span-6 flex flex-col justify-center">
-                                            <h3 className="text-5xl font-hero font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors uppercase">{project.title}</h3>
-                                            <h4 className="text-sm text-yellow-500 uppercase tracking-[0.2em] font-bold mb-6">{project.subtitle}</h4>
-                                            
-                                            <p className="text-neutral-100 leading-relaxed text-sm mb-6 font-normal line-clamp-3">
-                                                {project.desc}
-                                            </p>
-                                            
-                                            <div className="flex flex-wrap gap-2 mb-6">
-                                                {project.tags.map(tag => (
-                                                    <span key={tag} className="text-[10px] px-2 py-1 bg-black text-white font-bold uppercase tracking-wider border border-white/30">
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
+<div class="relative z-10 text-center px-4 space-y-3">
+<h1 id="hero-title" class="serif-title text-6xl md:text-8xl lg:text-9xl italic tracking-wider text-white hero-brand-animation" style="text-shadow: 0 4px 35px rgba(0,0,0,0.95), 0 2px 15px rgba(0,0,0,0.9);">
+Amanda Hsu
+</h1>
+<p class="text-xs md:text-sm tracking-[0.5em] uppercase text-neutral-200 font-mono font-medium" style="text-shadow: 0 2px 20px rgba(0,0,0,0.95);">
+Design Portfolio
+</p>
+</div>
+</section>
 
-                                            <span className="text-xs text-yellow-500 uppercase tracking-widest font-bold flex items-center gap-2">
-                                                Read More <ArrowRight size={12} className="-rotate-45" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            );
+<!-- Four Category Cards -->
+<div class="max-w-[1200px] mx-auto px-6 md:px-12 w-full pb-12">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 w-full">
+<a href="#photography" class="group outline-card rounded-sm p-10 transition-all duration-500 cursor-pointer flex flex-col justify-center items-center h-[280px] md:h-[320px] block">
+<h2 class="serif-title text-4xl lg:text-[42px] italic text-neutral-100 mb-4 group-hover:scale-105 transition-transform duration-500">Photography</h2>
+<span class="text-[9px] tracking-[0.3em] text-neutral-400 uppercase group-hover:text-white transition-colors flex items-center gap-2">Explore <span class="text-sm font-light">↗</span></span>
+</a>
+<a href="#lighting-design" class="group outline-card rounded-sm p-10 transition-all duration-500 cursor-pointer flex flex-col justify-center items-center h-[280px] md:h-[320px] block">
+<h2 class="serif-title text-4xl lg:text-[42px] italic text-neutral-100 mb-4 group-hover:scale-105 transition-transform duration-500">Lighting Design</h2>
+<span class="text-[9px] tracking-[0.3em] text-neutral-400 uppercase group-hover:text-white transition-colors flex items-center gap-2">Explore <span class="text-sm font-light">↗</span></span>
+</a>
+<a href="#video-graphic-design" class="group outline-card rounded-sm p-10 transition-all duration-500 cursor-pointer flex flex-col justify-center items-center h-[280px] md:h-[320px] block">
+<h2 class="serif-title text-4xl lg:text-[42px] italic text-neutral-100 mb-4 text-center group-hover:scale-105 transition-transform duration-500 leading-tight">Video & Graphic<br>Design</h2>
+<span class="text-[9px] tracking-[0.3em] text-neutral-400 uppercase group-hover:text-white transition-colors flex items-center gap-2 mt-2">Explore <span class="text-sm font-light">↗</span></span>
+</a>
+<a href="#game-design" class="group outline-card rounded-sm p-10 transition-all duration-500 cursor-pointer flex flex-col justify-center items-center h-[280px] md:h-[320px] hover:border-yellow-600/50 block">
+<h2 class="serif-title text-4xl lg:text-[42px] italic text-neutral-100 mb-4 group-hover:scale-105 transition-transform duration-500 group-hover:text-yellow-500">Game Design</h2>
+<span class="text-[9px] tracking-[0.3em] text-neutral-400 uppercase group-hover:text-yellow-500 transition-colors flex items-center gap-2">Explore <span class="text-sm font-light">↗</span></span>
+</a>
+</div>
+</div>
+</div>
 
-            const ProjectDetailView = () => {
-                if (!selectedProject) return null;
-                return (
-                    <div className="min-h-screen pt-32 pb-20 px-6 max-w-6xl mx-auto page-enter">
-                        <button 
-                            onClick={() => setView('home')} 
-                            className="mb-8 text-neutral-200 hover:text-white flex items-center gap-2 text-sm uppercase tracking-widest font-bold transition-colors"
-                        >
-                            <ArrowLeft size={16} /> Back to Projects
-                        </button>
+<div id="view-photography" class="hidden w-full max-w-[1200px] mx-auto px-6 md:px-12 py-8 page-enter">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 pb-6 border-b border-neutral-800">
+<div>
+<a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors mb-4">
+<span>← Back to Home</span>
+</a>
+<h1 class="serif-title text-4xl md:text-5xl italic text-neutral-100">Photography Projects</h1>
+</div>
 
-                        <div className="grid md:grid-cols-5 gap-12">
-                            <div className="md:col-span-3">
-                                <h1 className="text-6xl font-hero font-bold text-white uppercase mb-4">{selectedProject.title}</h1>
-                                <p className="text-xl text-yellow-500 font-light mb-8">{selectedProject.subtitle}</p>
-                                
-                                <div className="mb-8 w-full bg-black rounded-lg border border-white/20 overflow-hidden relative shadow-2xl">
-                                    {selectedProject.type === 'terminal' ? (
-                                        <div className="w-full h-96 md:h-auto md:aspect-video">
-                                            <TerminalVisual lines={selectedProject.terminalLines} />
-                                        </div>
-                                    ) : (
-                                        <img src={selectedProject.visual} alt={selectedProject.title} className="w-full h-auto object-cover block" />
-                                    )}
-                                </div>
+<div class="flex items-center bg-neutral-900 border border-neutral-800 p-1 rounded-sm self-start md:self-auto">
+<button id="tab-btn-events" onclick="switchPhotoTab('events')" class="px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm">
+event photography
+</button>
+<button id="tab-btn-street" onclick="switchPhotoTab('street')" class="px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm">
+street photography
+</button>
+</div>
+</div>
 
-                                <h3 className="text-xl font-bold text-white uppercase mb-4 border-l-4 border-yellow-600 pl-4">Technical Breakdown</h3>
-                                <div className="text-neutral-100 leading-loose font-light space-y-6">
-                                    <p>{selectedProject.desc}</p>
-                                    <p>{selectedProject.detailedDesc}</p>
-                                </div>
-                            </div>
+<div id="photo-content-events" class="space-y-12">
+<p class="text-neutral-400 text-sm tracking-wide mb-8">Organized as "One Project = One Event" for deep visual storytelling.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="events-grid"></div>
+</div>
 
-                            <div className="md:col-span-2">
-                                <div className="glass-panel p-8 rounded-lg sticky top-32">
-                                    <h4 className="text-xs text-neutral-200 uppercase tracking-widest font-bold mb-8">Project Info</h4>
-                                    
-                                    <div className="space-y-8">
-                                        <div>
-                                            <span className="block text-xs text-neutral-300 uppercase font-bold mb-2">Role</span>
-                                            <span className="text-white text-lg font-light leading-snug block">{selectedProject.role}</span>
-                                        </div>
-                                        <div>
-                                            <span className="block text-xs text-neutral-300 uppercase font-bold mb-2">Engine</span>
-                                            <span className="text-white text-lg font-light">{selectedProject.tags[0]}</span>
-                                        </div>
-                                        <div>
-                                            <span className="block text-xs text-neutral-300 uppercase font-bold mb-3">Key Tech</span>
-                                            <div className="flex flex-wrap gap-2">
-                                                {selectedProject.tags.slice(1).map(tag => (
-                                                    <span key={tag} className="text-xs px-3 py-1.5 bg-white/10 text-yellow-500 border border-white/20 rounded-sm">
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="pt-8 border-t border-white/20">
-                                            <a 
-                                                href={selectedProject.link} 
-                                                target="_blank"
-                                                className="block w-full text-center bg-yellow-600 text-black font-bold py-4 uppercase text-sm hover:bg-white transition-colors tracking-widest"
-                                            >
-                                                Play / Download
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            };
+<div id="photo-content-street" class="hidden space-y-8">
+<p class="text-neutral-400 text-sm tracking-wide mb-8">Capturing candid moments and urban geometry from city streets.</p>
+<div id="street-grid"></div>
+</div>
+</div>
 
-            const ResumeView = () => {
-                const { resume, contact } = portfolioData;
+<div id="view-lighting-design" class="hidden w-full max-w-[1200px] mx-auto px-6 md:px-12 py-8 page-enter">
+<a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors mb-6">
+<span>← Back to Home</span>
+</a>
+<div class="border-b border-neutral-800 pb-6 mb-12">
+<h1 class="serif-title text-4xl md:text-5xl italic text-neutral-100 mb-2">Lighting Design & Technical Portfolio</h1>
+<p class="text-neutral-400 text-sm tracking-wide">Theatrical Lighting, Light Plots, Magic Sheets, Spot Sheets, and Professional Internships</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="lighting-projects-grid"></div>
+</div>
 
-                return (
-                    <div className="min-h-screen pt-32 pb-20 px-4 md:px-6 max-w-4xl mx-auto page-enter print:pt-0 print:pb-0 print:bg-white print:text-black">
-                        <div className="glass-panel p-6 md:p-12 relative overflow-hidden print:shadow-none print:border-none print:p-0 print:text-black bg-neutral-900/90">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 print:hidden"></div>
+<div id="view-lighting-detail" class="hidden w-full page-enter"></div>
+<div id="view-event-detail" class="hidden w-full page-enter"></div>
 
-                            <header className="border-b-2 border-neutral-700 pb-8 mb-8 flex flex-col md:flex-row justify-between items-start md:items-start gap-6 md:gap-0 print:border-black print:flex-row print:gap-0">
-                                <div>
-                                    <h1 className="text-4xl font-bold text-white mb-2 uppercase font-hero tracking-wide print:text-black">Amanda Hsu</h1>
-                                    <h2 className="text-lg text-yellow-500 font-mono tracking-widest uppercase print:text-black">Technical Game Designer</h2>
-                                </div>
-                                <div className="text-left md:text-right text-sm text-neutral-100 leading-relaxed print:text-black print:text-right">
-                                    <p>{contact.phone}</p>
-                                    <p>{contact.email}</p>
-                                    <p>{contact.location}</p>
-                                </div>
-                            </header>
+<div id="view-generic-detail" class="hidden space-y-8 page-enter max-w-[1200px] mx-auto px-6 md:px-12 w-full">
+<a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
+<span>← Back to Home</span>
+</a>
+<div class="border-b border-neutral-800 pb-6 mt-4">
+<h1 id="generic-title" class="serif-title text-4xl md:text-5xl italic text-neutral-100"></h1>
+</div>
+<div id="generic-content-area" class="mt-8"></div>
+</div>
 
-                            <section className="mb-8">
-                                <h3 className="text-sm font-bold text-yellow-500 uppercase tracking-widest mb-3 border-b border-neutral-800 pb-1 print:text-black print:border-black">Professional Summary</h3>
-                                <p className="text-neutral-100 text-sm leading-relaxed font-normal print:text-black">
-                                    {resume.summary}
-                                </p>
-                            </section>
+<div id="view-game-design" class="hidden gd-body max-w-[1200px] mx-auto px-6 md:px-12 w-full page-enter">
+<a href="#home" class="mb-12 inline-flex items-center gap-2 text-sm uppercase tracking-widest text-neutral-400 hover:text-yellow-500 transition-colors font-bold block">
+<span>← Back to Main Portfolio</span>
+</a>
 
-                            <section className="mb-8">
-                                <h3 className="text-sm font-bold text-yellow-500 uppercase tracking-widest mb-3 border-b border-neutral-800 pb-1 print:text-black print:border-black">Skills</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {Object.entries(resume.skillCategories).map(([category, skills]) => (
-                                        <div key={category}>
-                                            <h4 className="text-xs font-bold text-white uppercase mb-1 print:text-black">{category}</h4>
-                                            <p className="text-xs text-neutral-200 print:text-black">{skills}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
+<div class="flex flex-col items-start md:items-center text-left md:text-center px-4 mb-32">
+<h2 class="text-yellow-600 font-bold tracking-[0.4em] text-sm mb-6 uppercase animate-pulse">Portfolio 2026</h2>
+<h1 class="text-6xl md:text-8xl font-hero font-bold mb-6 text-white leading-none uppercase drop-shadow-2xl">
+Technical <br class="hidden md:block" />
+<span class="text-gold-gradient block md:inline-block mt-2 tracking-wide">Game Designer</span>
+</h1>
+<p class="text-xl md:text-2xl text-neutral-200 max-w-3xl mx-auto leading-relaxed mb-10 font-light tracking-wide">
+Bridging the gap between Engineering & Art.
+</p>
+<div class="flex justify-start md:justify-center flex-wrap gap-6 text-neutral-300 text-xs font-bold tracking-[0.2em] uppercase font-hero opacity-80">
+<span>C# / C++ / Python</span>
+<span>Unity & Unreal Engine</span>
+<span>Systems Architecture</span>
+<span>Gameplay Scripting</span>
+<span>Tools Programming</span>
+</div>
+</div>
 
-                            <section className="mb-8">
-                                <h3 className="text-sm font-bold text-yellow-500 uppercase tracking-widest mb-4 border-b border-neutral-800 pb-1 print:text-black print:border-black">Practical Game Design Experience</h3>
-                                <div className="space-y-6">
-                                    {resume.experience.map((exp, idx) => (
-                                        <div key={idx}>
-                                            <div className="flex flex-wrap justify-between items-baseline mb-1">
-                                                <h4 className="text-white font-bold text-sm print:text-black mr-2">{exp.title}</h4>
-                                                <span className="text-xs text-neutral-300 font-mono print:text-black">{exp.period}</span>
-                                            </div>
-                                            <ul className="list-disc list-outside ml-4 space-y-1">
-                                                {exp.details.map((detail, dIdx) => (
-                                                    <li key={dIdx} className="text-xs text-neutral-100 pl-1 print:text-black">{detail}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
+<div class="mb-16 border-b border-white/10 pb-6">
+<h2 class="text-4xl md:text-5xl font-hero font-bold text-white uppercase mb-2">Selected Works</h2>
+<p class="text-neutral-300 font-light text-lg">Systems, Tools, and Gameplay</p>
+</div>
 
-                             <section className="mb-8">
-                                <h3 className="text-sm font-bold text-yellow-500 uppercase tracking-widest mb-4 border-b border-neutral-800 pb-1 print:text-black print:border-black">Work Experience</h3>
-                                <div className="space-y-6">
-                                    {resume.work.map((job, idx) => (
-                                        <div key={idx}>
-                                            <div className="flex flex-wrap justify-between items-baseline mb-1">
-                                                <h4 className="text-white font-bold text-sm print:text-black mr-2">{job.role} <span className="text-neutral-200 font-normal">| {job.company}</span></h4>
-                                                <span className="text-xs text-neutral-300 font-mono print:text-black">{job.period}</span>
-                                            </div>
-                                            <ul className="list-disc list-outside ml-4 space-y-1">
-                                                {job.details.map((detail, dIdx) => (
-                                                    <li key={dIdx} className="text-xs text-neutral-100 pl-1 print:text-black">{detail}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
+<div class="grid gap-16" id="game-projects-grid"></div>
+</div>
 
-                            {/* Education */}
-                            <section>
-                                <h3 className="text-sm font-bold text-yellow-500 uppercase tracking-widest mb-4 border-b border-neutral-800 pb-1 print:text-black print:border-black">Education</h3>
-                                <div className="space-y-4">
-                                    {resume.education.map((edu, idx) => (
-                                        <div key={idx}>
-                                            <div className="flex flex-wrap justify-between items-baseline mb-1">
-                                                <h4 className="text-white font-bold text-sm print:text-black mr-2">{edu.school}</h4>
-                                                <span className="text-xs text-neutral-300 font-mono print:text-black">{edu.period}</span>
-                                            </div>
-                                            <p className="text-xs text-neutral-200 italic mb-1 print:text-black">{edu.degree}</p>
-                                            {edu.details.length > 0 && (
-                                                <p className="text-xs text-neutral-200 print:text-black">{edu.details.join(" • ")}</p>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        </div>
-                    </div>
-                );
-            };
+<div id="view-game-detail" class="hidden gd-body pb-20 max-w-[1200px] mx-auto px-6 md:px-12 w-full page-enter">
+<a href="#game-design" class="mb-8 text-neutral-200 hover:text-white flex items-center gap-2 text-sm uppercase tracking-widest font-bold transition-colors mt-8 inline-flex">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+Back to Projects
+</a>
 
-            const AboutView = () => (
-                <div className="min-h-screen pt-32 pb-20 px-6 max-w-5xl mx-auto page-enter">
-                    <div className="grid md:grid-cols-12 gap-12">
-                        <div className="md:col-span-5">
-                            <div className="glass-panel p-8 relative overflow-hidden rounded-lg border-t-4 border-yellow-600">
-                                <h3 className="text-2xl font-hero font-bold text-white mb-6 uppercase">Contact</h3>
-                                <div className="space-y-4 text-sm text-neutral-100 mb-8">
-                                    <div>
-                                        <p className="text-xs text-neutral-300 uppercase tracking-wider mb-1">Email</p>
-                                        <a href={`mailto:${portfolioData.contact.email}`} className="text-white hover:text-yellow-500 transition-colors flex items-center gap-2">
-                                            {portfolioData.contact.email}
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-neutral-300 uppercase tracking-wider mb-1">Based In</p>
-                                        <p className="text-white">Cleveland, OH (Open to Relocate)</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-neutral-300 uppercase tracking-wider mb-1">Nationality</p>
-                                        <p className="text-white">Taiwan</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-neutral-300 uppercase tracking-wider mb-1">Languages</p>
-                                        <p className="text-white">Mandarin, English</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-neutral-300 uppercase tracking-wider mb-1">Education</p>
-                                        <p className="text-white">Case Western Reserve Univ.</p>
-                                        <p className="text-xs text-yellow-600 mt-1 font-bold">CS & Theater Arts '27</p>
-                                    </div>
-                                </div>
-                            </div>
+<div class="grid md:grid-cols-5 gap-12">
+<div class="md:col-span-3">
+<h1 id="gd-detail-title" class="text-6xl font-hero font-bold text-white uppercase mb-4"></h1>
+<p id="gd-detail-subtitle" class="text-xl text-yellow-500 font-light mb-8"></p>
+<div id="gd-detail-visual" class="mb-8 w-full bg-black rounded-lg border border-white/20 overflow-hidden relative shadow-2xl aspect-video flex justify-center items-center"></div>
 
-                            <div className="mt-8">
-                                <h4 className="text-sm font-bold text-white uppercase tracking-widest mb-4 border-b border-white/20 pb-2">Technical Skills</h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {portfolioData.skills.map(skill => (
-                                        <span key={skill} className="px-3 py-2 bg-neutral-900 text-white text-xs border border-white/30 rounded-sm">
-                                            {skill}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+<h3 class="text-xl font-bold text-white uppercase mb-4 border-l-4 border-yellow-600 pl-4">Technical Breakdown</h3>
+<div class="text-neutral-100 leading-loose font-light space-y-6">
+<p id="gd-detail-desc"></p>
+<p id="gd-detail-detailedDesc"></p>
+</div>
+</div>
 
-                        <div className="md:col-span-7">
-                            <h2 className="text-5xl font-hero font-bold text-white mb-8 uppercase">
-                                About Me
-                            </h2>
-                            <div className="space-y-6 text-lg text-neutral-100 font-light leading-loose">
-                                <p>
-                                    Hi, I’m <strong className="text-white font-bold">Amanda Hsu</strong>. I’m passionate about <strong>hands-on game development</strong> and using scripting and code to bring gameplay ideas to life.
-                                </p>
-                                <p>
-                                    I enjoy prototyping mechanics, implementing game systems, and iterating on features alongside designers and engineers.
-                                </p>
-                                <p>
-                                    I’m especially interested in turning concepts into playable experiences and contributing directly to how a game feels and plays, while learning to work within existing systems and workflows.
-                                </p>
-                                
-                                <p className="mt-8 pt-8 border-t border-white/20 text-neutral-200">
-                                    Currently studying at <strong>CWRU</strong>, I am seeking a <strong>Tech Design Internship</strong> for Summer 2026 where I can contribute directly to gameplay implementation and system design.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
+<div class="md:col-span-2">
+<div class="glass-panel p-8 rounded-lg sticky top-32">
+<h4 class="text-xs text-neutral-200 uppercase tracking-widest font-bold mb-8">Project Info</h4>
+<div class="space-y-8">
+<div>
+<span class="block text-xs text-neutral-300 uppercase font-bold mb-2">Role</span>
+<span id="gd-detail-role" class="text-white text-lg font-light leading-snug block"></span>
+</div>
+<div>
+<span class="block text-xs text-neutral-300 uppercase font-bold mb-2">Engine</span>
+<span id="gd-detail-engine" class="text-white text-lg font-light"></span>
+</div>
+<div>
+<span class="block text-xs text-neutral-300 uppercase font-bold mb-3">Key Tech</span>
+<div id="gd-detail-tags" class="flex flex-wrap gap-2"></div>
+</div>
 
-            return (
-                <div className="relative min-h-screen bg-black selection:bg-yellow-600 selection:text-black">
-                    <ThreeBackground />
-                    
-                    <div className="relative z-10">
-                        <Nav />
-                        
-                        <main className="transition-all duration-500">
-                            {view === 'home' && <HomeView />}
-                            {view === 'detail' && <ProjectDetailView />}
-                            {view === 'about' && <AboutView />}
-                            {view === 'resume' && <ResumeView />}
-                        </main>
+<div class="pt-8 border-t border-white/20">
+<a id="gd-detail-link" href="#" target="_blank" class="block w-full text-center bg-yellow-600 text-black font-bold py-4 uppercase text-sm hover:bg-white transition-colors tracking-widest">
+Play / Download
+</a>
+<p id="gd-detail-notice" class="hidden text-[11px] text-neutral-400 mt-4 text-left leading-relaxed tracking-wide italic border-l-2 border-neutral-600 pl-2"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-                        <footer className="border-t border-white/10 py-12 text-center bg-black/80 backdrop-blur-md print:hidden">
-                            <p className="text-neutral-400 text-[10px] tracking-[0.3em] uppercase font-bold">© 2025 Amanda Hsu. Tech Design.</p>
-                        </footer>
-                    </div>
-                </div>
-            );
-        };
+</main>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+<div class="h-12 w-full"></div>
+
+<script>
+const SUPABASE_URL = 'https://alvboxtaouzggqvkoanz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsdmJveHRhb3V6Z2dxdmtvYW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NzA2MjQsImV4cCI6MjEwNDU0NjYyNH0.oG3E0ngyWqAb2z3ZNgRF8d4faXMRWPtvcpiNTDEwDmU';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let isAdminLoggedIn = false;
+let undoStack = [];
+
+function recordState() {
+const state = document.querySelector('main').innerHTML;
+undoStack.push(state);
+if (undoStack.length > 30) undoStack.shift();
+}
+
+window.addEventListener('keydown', function(e) {
+if (isAdminLoggedIn && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+e.preventDefault();
+if (undoStack.length > 0) {
+const prevState = undoStack.pop();
+document.querySelector('main').innerHTML = prevState;
+enableEditableElements();
+alert('Action Undone (Ctrl+Z)');
+}
+}
+});
+
+const supportedExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG'];
+
+function getSmartImageCandidates(baseName) {
+let candidates = [];
+let cleanBase = baseName.trim();
+let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
+let subfolder = folderMatch ? folderMatch[1].toLowerCase() : '';
+
+for (let ext of supportedExtensions) {
+if (subfolder && subfolder !== cleanBase.toLowerCase()) {
+candidates.push(`${subfolder}/${cleanBase}.${ext}`);
+}
+candidates.push(`${cleanBase}.${ext}`);
+}
+return candidates;
+}
+
+window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
+let candidates = getSmartImageCandidates(baseName);
+let initialSrc = candidates[0];
+let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
+
+let isCoverImg = baseName.toString().includes('-0');
+let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
+let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
+return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" ${clickAttr}>`;
+};
+
+window.handleSmartImageError = function(imgEl) {
+try {
+let candidates = JSON.parse(decodeURIComponent(imgEl.dataset.candidates || "[]"));
+let idx = parseInt(imgEl.dataset.candidateIdx || "0") + 1;
+if (idx < candidates.length) {
+imgEl.dataset.candidateIdx = idx.toString();
+imgEl.src = candidates[idx];
+} else {
+let itemContainer = imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
+if (itemContainer) itemContainer.style.display = 'none';
+}
+} catch (e) {
+let itemContainer = imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
+if (itemContainer) itemContainer.style.display = 'none';
+}
+};
+
+function openLightbox(imgSrc) {
+if (isAdminLoggedIn) return;
+const modal = document.getElementById('lightbox-modal');
+const modalImg = document.getElementById('lightbox-img');
+if (modal && modalImg) {
+modalImg.src = imgSrc;
+modal.classList.remove('hidden');
+}
+}
+
+function closeLightbox() {
+const modal = document.getElementById('lightbox-modal');
+if (modal) modal.classList.add('hidden');
+}
+
+let keySequence = [];
+window.addEventListener('keydown', function(e) {
+keySequence.push(e.key);
+if (keySequence.length > 10) keySequence.shift();
+let seqStr = keySequence.join('');
+if (seqStr.includes('111Enter')) {
+keySequence = [];
+document.getElementById('admin-login-modal').classList.remove('hidden');
+document.getElementById('admin-email-input').focus();
+}
+});
+
+function closeAdminLogin() {
+document.getElementById('admin-login-modal').classList.add('hidden');
+}
+
+async function verifySupabaseAdmin() {
+const email = document.getElementById('admin-email-input').value.trim();
+const password = document.getElementById('admin-passcode-input').value;
+
+if (!email || !password) {
+alert('Please enter both email and password.');
+return;
+}
+
+const { data, error } = await supabaseClient.auth.signInWithPassword({
+email: email,
+password: password,
+});
+
+if (error) {
+alert('Authentication Failed: ' + error.message);
+} else {
+isAdminLoggedIn = true;
+closeAdminLogin();
+document.getElementById('admin-floating-bar').classList.remove('hidden');
+enableEditableElements();
+alert('Successfully Logged In! Smooth Drag, 8-Point Resize & Persistent Storage Enabled.');
+}
+}
+
+function logoutAdmin() {
+supabaseClient.auth.signOut();
+isAdminLoggedIn = false;
+document.getElementById('admin-floating-bar').classList.add('hidden');
+disableEditableElements();
+alert('Logged out.');
+location.reload();
+}
+
+function openAdminModal() {
+document.getElementById('admin-modal').classList.remove('hidden');
+}
+
+function closeAdminModal() {
+document.getElementById('admin-modal').classList.add('hidden');
+}
+
+// 點擊儲存按鈕：將修改後的畫面永久寫入 localStorage
+function saveAllChanges() {
+recordState();
+localStorage.setItem('portfolio_layout_snapshot', document.querySelector('main').innerHTML);
+alert('All changes saved permanently! Reloading will now keep your layout.');
+}
+
+// 啟用編輯模式
+function enableEditableElements() {
+document.querySelectorAll('.serif-title, p, h3').forEach(el => {
+if (!el.closest('#admin-modal')) {
+el.setAttribute('contenteditable', 'true');
+el.classList.add('editable-active');
+el.addEventListener('blur', recordState);
+}
+});
+
+document.querySelectorAll('.justified-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
+if (!el.classList.contains('canvas-draggable-photo')) {
+el.classList.add('canvas-draggable-photo', 'editing-active');
+if (!el.querySelector('.handle-tl')) {
+el.insertAdjacentHTML('beforeend', `
+<div class="resize-handle handle-tl" data-handle="tl"></div>
+<div class="resize-handle handle-tr" data-handle="tr"></div>
+<div class="resize-handle handle-bl" data-handle="bl"></div>
+<div class="resize-handle handle-br" data-handle="br"></div>
+<div class="resize-handle handle-t" data-handle="t"></div>
+<div class="resize-handle handle-b" data-handle="b"></div>
+<div class="resize-handle handle-l" data-handle="l"></div>
+<div class="resize-handle handle-r" data-handle="r"></div>
+<button class="delete-elem-btn" onclick="deleteElement(this)" title="Delete Item">✕</button>
+`);
+}
+attachCanvasInteraction(el);
+}
+});
+}
+
+function disableEditableElements() {
+document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+el.removeAttribute('contenteditable');
+el.classList.remove('editable-active');
+});
+document.querySelectorAll('.canvas-draggable-photo').forEach(el => {
+el.classList.remove('editing-active', 'canvas-draggable-photo');
+el.querySelectorAll('.resize-handle, .delete-elem-btn').forEach(h => h.remove());
+});
+}
+
+function deleteElement(btn) {
+recordState();
+const card = btn.closest('.canvas-draggable-photo') || btn.closest('.outline-card') || btn.closest('.gd-card');
+if (card) {
+card.style.transition = 'all 0.3s ease';
+card.style.transform = 'scale(0)';
+card.style.opacity = '0';
+setTimeout(() => card.remove(), 300);
+}
+}
+
+// 修正版：絕對座標與游標完美對齊的拖曳與 8 點雙向縮放引擎
+function attachCanvasInteraction(elem) {
+let isDragging = false;
+let isResizing = false;
+let currentHandle = null;
+let startX, startY, startWidth, startHeight, startLeft, startTop;
+
+elem.addEventListener('mousedown', function(e) {
+if (!isAdminLoggedIn) return;
+if (e.target.classList.contains('delete-elem-btn')) return;
+recordState();
+
+startX = e.clientX;
+startY = e.clientY;
+const rect = elem.getBoundingClientRect();
+startWidth = rect.width;
+startHeight = rect.height;
+
+// 取得目前的位移量
+let transform = elem.style.transform;
+let match = transform && transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+startLeft = match ? parseFloat(match[1]) : 0;
+startTop = match ? parseFloat(match[2]) : 0;
+
+if (e.target.classList.contains('resize-handle')) {
+isResizing = true;
+currentHandle = e.target.dataset.handle;
+} else {
+isDragging = true;
+}
+
+e.stopPropagation();
+e.preventDefault();
+});
+
+window.addEventListener('mousemove', function(e) {
+if (!isAdminLoggedIn) return;
+const dx = e.clientX - startX;
+const dy = e.clientY - startY;
+
+if (isDragging) {
+elem.style.transform = `translate(${startLeft + dx}px, ${startTop + dy}px)`;
+} else if (isResizing) {
+if (currentHandle === 'br') {
+elem.style.width = `${Math.max(60, startWidth + dx)}px`;
+elem.style.height = `${Math.max(60, startHeight + dy)}px`;
+} else if (currentHandle === 'bl') {
+elem.style.width = `${Math.max(60, startWidth - dx)}px`;
+elem.style.height = `${Math.max(60, startHeight + dy)}px`;
+} else if (currentHandle === 'tr') {
+elem.style.width = `${Math.max(60, startWidth + dx)}px`;
+elem.style.height = `${Math.max(60, startHeight - dy)}px`;
+} else if (currentHandle === 'tl') {
+elem.style.width = `${Math.max(60, startWidth - dx)}px`;
+elem.style.height = `${Math.max(60, startHeight - dy)}px`;
+} else if (currentHandle === 'r') {
+elem.style.width = `${Math.max(60, startWidth + dx)}px`;
+} else if (currentHandle === 'l') {
+elem.style.width = `${Math.max(60, startWidth - dx)}px`;
+} else if (currentHandle === 'b') {
+elem.style.height = `${Math.max(60, startHeight + dy)}px`;
+} else if (currentHandle === 't') {
+elem.style.height = `${Math.max(60, startHeight - dy)}px`;
+}
+}
+});
+
+window.addEventListener('mouseup', function() {
+if (isDragging || isResizing) {
+isDragging = false;
+isResizing = false;
+currentHandle = null;
+}
+});
+}
+
+function toggleCategoryFields() {
+const cat = document.getElementById('new-proj-category').value;
+const meta = document.getElementById('meta-fields-container');
+const gallery = document.getElementById('gallery-upload-container');
+if (cat === 'video-graphic') {
+meta.style.display = 'none';
+gallery.style.display = 'none';
+} else if (cat === 'game') {
+meta.style.display = 'grid';
+gallery.style.display = 'none';
+} else {
+meta.style.display = 'grid';
+gallery.style.display = 'block';
+}
+}
+
+function generateExactBackground() {
+const container = document.getElementById('bg-canvas');
+if (!container) return;
+container.innerHTML = '';
+
+const colors = ['#7dd3fc', '#93c5fd', '#fdba74', '#86efac', '#d8b4fe', '#fde047', '#ffffff'];
+const totalDots = 120;
+
+for (let i = 0; i < totalDots; i++) {
+const el = document.createElement('div');
+el.className = 'particle';
+
+const rand = Math.random();
+let size, opacity, blur;
+
+if (rand < 0.6) {
+size = Math.random() * 18 + 6; opacity = Math.random() * 0.5 + 0.5; blur = 0;
+} else if (rand < 0.9) {
+size = Math.random() * 25 + 20; opacity = Math.random() * 0.4 + 0.4; blur = Math.random() * 1;
+} else {
+size = Math.random() * 40 + 40; opacity = Math.random() * 0.2 + 0.1; blur = Math.random() * 8 + 4;
+}
+
+el.style.width = `${size}px`;
+el.style.height = `${size}px`;
+el.style.opacity = opacity;
+if (blur > 0) el.style.filter = `blur(${blur}px)`;
+
+el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+el.style.left = `${Math.random() * 105 - 2.5}%`;
+el.style.top = `${Math.random() * 105 - 2.5}%`;
+
+const moveX = (Math.random() - 0.5) * 60;
+const moveY = (Math.random() - 0.5) * 60;
+el.style.setProperty('--move-x', `${moveX}px`);
+el.style.setProperty('--move-y', `${moveY}px`);
+
+const duration = Math.random() * 20 + 15;
+el.style.setProperty('--duration', `${duration}s`);
+el.style.animationDelay = `${Math.random() * -30}s`;
+
+container.appendChild(el);
+}
+}
+
+function renderHomeHeroCollage() {
+const grid = document.getElementById('home-hero-grid');
+if (!grid) return;
+let html = '';
+for (let round = 0; round < 2; round++) {
+for (let i = 1; i <= 18; i++) {
+let candidates = getSmartImageCandidates(`home-${i}`);
+let initialSrc = candidates[0];
+let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
+html += `<div class="justified-item w-[200px] h-[320px] shrink-0 overflow-hidden"><img src="${initialSrc}" alt="Home Hero ${i}" class="w-full h-full object-cover" style="cursor: default;" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)"></div>`;
+}
+}
+grid.innerHTML = html;
+}
+
+let eventProjects = [
+{ id: 1, title: "Korean Student Association", date: "Winter 2025", prefix: "ksa-", desc: "Capturing community gatherings, cultural showcases, and vibrant student moments across campus events." },
+{ id: 2, title: "The Trail To Oregon!", date: "Spring 2025", prefix: "TTTO-", desc: "Stage production documentation capturing dramatic moments, costume details, and dynamic performances." },
+{ id: 3, title: "Battle of the Band 2025", date: "Summer 2025", prefix: "botb-", desc: "Battle of the Bands high-energy stage performances, musician portraits, and crowd reactions." },
+{ id: 4, title: "Battle of the Band 2026", date: "Summer 2026", prefix: "botb6-", desc: "Battle of the Bands latest edition featuring electrifying live sets, stage lighting, and crowd engagement." },
+{ id: 5, title: "Haunted Halls - Halloween", date: "Autumn 2025", prefix: "Haunted House-", desc: "Spooky atmospheric lighting, costume details, and immersive haunted house reactions." },
+{ id: 6, title: "Popular Music Group", date: "Winter 2025", prefix: "Popular Music Group-", desc: "Live studio sessions, energetic live band performances, and atmospheric musical documentation." },
+{ id: 7, title: "Thwing Study Over 2025", date: "Spring 2025", prefix: "tso-", desc: "Late-night study sessions, community bonding, and academic focus documentation." },
+{ id: 8, title: "UPBizarre", date: "Winter 2025", prefix: "upba-", desc: "Bizarre showcase capturing unique performances, artistic expressions, and memorable campus highlights." },
+{ id: 9, title: "Student Club Expo", date: "Autumn 2025", prefix: "Student-", desc: "Showcasing student organizations, interactive booths, and campus engagement." }
+];
+
+function loadCustomData() {
+let savedEvents = localStorage.getItem('custom_event_projects');
+if (savedEvents) {
+try { JSON.parse(savedEvents).forEach(p => { if (!eventProjects.some(e => e.id === p.id)) eventProjects.push(p); }); } catch(e){}
+}
+let savedStreet = localStorage.getItem('custom_street_photos');
+if (savedStreet) {
+try { JSON.parse(savedStreet).forEach(url => streetPhotos.push(url)); } catch(e){}
+}
+let savedLighting = localStorage.getItem('custom_lighting_projects');
+if (savedLighting) {
+try { JSON.parse(savedLighting).forEach(p => { if (!lightingProjects.some(l => l.id === p.id)) lightingProjects.push(p); }); } catch(e){}
+}
+let savedGames = localStorage.getItem('custom_game_projects');
+if (savedGames) {
+try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
+}
+}
+
+const originalGetCandidates = getSmartImageCandidates;
+window.getSmartImageCandidates = function(baseName) {
+let localImg = localStorage.getItem(`img_${baseName}`);
+if (localImg) {
+return [localImg, localImg];
+}
+return originalGetCandidates(baseName);
+};
+
+const streetPhotos = [
+"https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1477959858617-67f30bc75b82?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=1000&q=80",
+"https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1000&q=80"
+];
+
+const lightingProjects = [
+{ id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.", aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season." },
+{ id: "beehive", title: "Beehive: The 60s Musical", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "beehive-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization.", aboutPlay: "Beehive is a celebration of powerful female vocalists of the 1960s.", aboutDesign: "PCPA Summer 2026 internship project." },
+{ id: "the-harvest", title: "The Harvest", subtitle: "Samuel D. Hunter / Kalberer Theatre", role: "Lighting Designer", season: "Junior Year at CWRU", prefix: "harvest-", desc: "Set entirely in a church basement, lighting enhances the tension between faith, obligation, and personal struggle.", aboutPlay: "The Harvest takes place in a small evangelical church in Idaho.", aboutDesign: "Every cue is rooted in realism." },
+{ id: "fun-home", title: "Fun Home", subtitle: "Musical / Player's Theater Group", role: "Co-Lighting Designer", season: "First Year in College", prefix: "funhome-", desc: "Reflects the emotional journey of the characters, transitioning from lighthearted to somber.", aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel.", aboutDesign: "Utilized moving lights and color-changing effects." },
+{ id: "hurricane-diane", title: "Hurricane Diane", subtitle: "Play by Madeleine George", role: "Lighting Designer (Final Project)", season: "Lighting Design Class", prefix: "diane-", desc: "Starts with warm steady lighting, shifting into cooler tones and faster transitions as chaos builds.", aboutPlay: "A modern-day version of Dionysus returns as Diane.", aboutDesign: "First full lighting plot experience." },
+{ id: "midsummer", title: "A Midsummer Night's Dream", subtitle: "William Shakespeare", role: "Solo Lighting Designer", season: "Theatrical Showcase", prefix: "midsummer-", desc: "Explores love, magic, and the connection between human and fairy worlds.", aboutPlay: "Four young lovers and amateur actors get lost in an enchanted forest.", aboutDesign: "First independent full lighting design." },
+{ id: "into-the-woods", title: "Into the Woods", subtitle: "High School Musical Production", role: "Tech Lighting Leader", season: "High School Theater Club", prefix: "woods-", desc: "Overcame limited facilities and budget by adjusting light angles and utilizing color gels.", aboutPlay: "Fairy tale characters cross paths with a Baker and his Wife.", aboutDesign: "Relied heavily on precise angle adjustments." },
+{ id: "live-performances", title: "Live Performances & Cultural Showcases", subtitle: "Concerts, Cultural Shows & Cafés", role: "Lighting Team Leader", season: "Annual Showcases", prefix: "live-", desc: "Designed lighting for over ten different showcases each year spanning diverse cultures.", aboutPlay: "Diverse annual student showcases celebrating culture and art.", aboutDesign: "Tailored color palettes to cultural origins." }
+];
+
+const gameProjects = {
+'bedlam': {
+title: "Bedlam", subtitle: "3D Horror Interaction System",
+role: "Technical Designer (Layout & Narrative), Sound Designer",
+engine: "Unity", tags: ["Unity", "C#", "Event Trigger Sys", "Prop Scripting", "Sound Design"],
+desc: "Engineered a decoupled interaction system using C# Interfaces, allowing designers to drag-and-drop behavior onto any prop without code dependency. Also implemented a custom Event Management System to synchronize lighting and audio scares.",
+detailedDesc: "Bedlam is a psychological horror game where environment interaction drives the experience. Players must guide a comatose body to safety as a robot, using light as their only weapon against the dark. My primary role was to architect the interaction system. Instead of hardcoding behaviors, I built a modular component system that allowed level designers to turn any static mesh into an interactive object simply by attaching a script—no additional coding required.",
+visualHtml: `<img src="https://img.itch.zone/aW1nLzI0MzUyNTMyLnBuZw==/315x250%23c/KkcSLX.png" alt="Bedlam" class="w-full h-full object-cover object-top block">`,
+link: "https://cwru-ecse390.itch.io/bedlam-f2025-team-2",
+linkText: "Play / Download"
+},
+'claw-patrol': {
+title: "Claw Patrol", subtitle: "AI State Machine Architecture",
+role: "AI Design, Tower Systems & Playtest Iteration",
+engine: "Unity", tags: ["Unity", "C#", "Enemy AI", "Combat Balance", "Iterative Design"],
+desc: "Scripted 4 distinct enemy AI behaviors and tower defense functionalities. Heavily utilized weekly playtest data to iterate on movement patterns and difficulty balancing, ensuring a fair yet challenging combat loop.",
+detailedDesc: "For Claw Patrol, I designed a modular AI system. The goal was to have enemies that felt responsive but predictable enough for a platformer. I used a State Pattern to manage behaviors.",
+visualHtml: `<img src="https://img.itch.zone/aW1hZ2UvMjY1MzY4OS8xNTk2MTY4OS5wbmc=/794x1000/LCgUY6.png" alt="Claw Patrol" class="w-full h-full object-cover object-top block">`,
+link: "https://ecse-csds290.itch.io/2024-team-6",
+linkText: "Play / Download"
+},
+'jade': {
+title: "Jade & Co", subtitle: "Interactive Narrative Adventure",
+role: "Gameplay Programmer & Designer",
+engine: "Web", tags: ["Web", "Gameplay Logic", "Puzzle Design", "Level Design", "State Management"],
+desc: "Designed and scripted a non-linear text adventure game focused on exploration and puzzles. Implemented complex state tracking to ensure player actions and inventory choices permanently alter the game world.",
+detailedDesc: "Jade & Co is a gameplay-first text adventure. My focus was on designing intricate puzzle dependency chains and scripting the logic to support them. I built a dynamic state system that tracks not just inventory, but world states—allowing players to solve puzzles in different orders while ensuring the narrative logic never breaks.",
+visualHtml: `
+<div class="w-full h-full bg-[#0a0a0a] p-6 font-retro text-xl leading-snug overflow-hidden relative flex flex-col justify-start">
+<div class="absolute top-0 left-0 w-full h-1 bg-green-500/20"></div>
+<div class="text-green-400 relative z-10 text-left">
+<div class="mb-1"><span class="text-yellow-500 font-bold">&gt; LOOK AROUND</span></div>
+<div class="mb-2">You are in a damp cave. A stone face blocks the path.</div>
+<div class="mb-1"><span class="text-yellow-500 font-bold">&gt; EXAMINE FACE</span></div>
+<div class="mb-2">The statue speaks: 'I have cities, but no houses. What am I?'</div>
+<div class="mb-1"><span class="text-yellow-500 font-bold">&gt; SAY MAP</span></div>
+<div class="mb-2">The stone face crumbles. The path is clear.</div>
+<div class="mt-4 flex items-center"><span class="text-yellow-500 mr-2">&gt;</span><span class="w-3 h-6 bg-green-500 cursor-blink"></span></div>
+</div>
+<div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-40 z-20"></div>
+</div>`,
+link: "https://docs.google.com/document/d/15FArA6f5fe7bJtgTXiOwKjdP04uFnTqH3ZW-CcZRRIU/edit?usp=sharing",
+linkText: "View Design Doc",
+notice: "* Original game link unavailable due to platform update. Redirecting to Game Design Document."
+}
+};
+
+function renderLightingContent() {
+const grid = document.getElementById('lighting-projects-grid');
+if (!grid) return;
+grid.innerHTML = lightingProjects.map(p => `
+<a href="#lighting-${p.id}" class="outline-card p-6 rounded-sm group cursor-pointer flex flex-col justify-between block">
+<div class="justified-item overflow-hidden aspect-video mb-4 rounded-sm bg-black relative flex justify-center items-center">
+${smartImageHtml(`${p.prefix}0`, p.title, "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100 object-center")}
+<div class="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 text-[10px] uppercase tracking-widest text-neutral-300 border border-white/10">
+${p.season}
+</div>
+</div>
+<div>
+<h3 class="serif-title text-2xl italic text-neutral-100 mb-1 group-hover:text-yellow-400 transition-colors">${p.title}</h3>
+<p class="text-xs text-yellow-500 uppercase tracking-widest font-mono mb-3">${p.subtitle}</p>
+<p class="text-neutral-400 text-xs leading-relaxed mb-4 font-light">${p.desc}</p>
+<span class="text-[10px] uppercase tracking-[0.2em] text-neutral-300 font-medium group-hover:text-white flex items-center gap-1">
+View Design Portfolio ↗
+</span>
+</div>
+</a>
+`).join('');
+if (isAdminLoggedIn) enableEditableElements();
+}
+
+function renderGameProjectsContent() {
+const grid = document.getElementById('game-projects-grid');
+if (!grid) return;
+let html = '';
+for (let key in gameProjects) {
+let p = gameProjects[key];
+html += `
+<a href="#game-${key}" class="group gd-card p-6 md:p-8 rounded-xl cursor-pointer block">
+<div class="grid md:grid-cols-12 gap-8 items-center">
+<div class="justified-item md:col-span-6 relative overflow-hidden rounded-lg border border-white/10 bg-black aspect-video flex items-center justify-center">
+${p.visualHtml}
+</div>
+<div class="md:col-span-6 flex flex-col justify-center">
+<h3 class="text-4xl font-hero font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors uppercase">${p.title}</h3>
+<h4 class="text-sm text-yellow-500 uppercase tracking-[0.2em] font-bold mb-4">${p.subtitle}</h4>
+<p class="text-neutral-200 leading-relaxed text-base mb-6 font-light">${p.desc}</p>
+<div class="flex flex-wrap gap-2 mb-6">
+${p.tags.map(t => `<span class="text-[10px] px-2 py-1 bg-black text-white font-bold uppercase tracking-wider border border-white/30">${t}</span>`).join('')}
+</div>
+<span class="text-sm text-yellow-500 uppercase tracking-widest font-bold flex items-center gap-2 group-hover:text-white transition-colors">
+View Details ↗
+</span>
+</div>
+</div>
+</a>
+`;
+}
+grid.innerHTML = html;
+if (isAdminLoggedIn) enableEditableElements();
+}
+
+function generateResponsivePhotoGrid(prefix) {
+let allImages = [];
+for (let i = 1; i <= 25; i++) {
+allImages.push(`${prefix}${i}`);
+}
+
+let rowsHtml = '';
+let targetRowHeight = 280;
+let approxPerRow = 3;
+
+for (let i = 0; i < allImages.length; i += approxPerRow) {
+let rowImages = allImages.slice(i, i + approxPerRow);
+rowsHtml += `<div class="justified-row">`;
+rowImages.forEach((imgBase, rIdx) => {
+let ratios = [1.2, 1.0, 1.1, 0.9, 1.3];
+let ratio = ratios[(i + rIdx) % ratios.length];
+let computedWidth = targetRowHeight * ratio;
+
+rowsHtml += `
+<div class="justified-item" style="width: ${computedWidth}px; height: ${targetRowHeight}px;">
+${smartImageHtml(imgBase, `Photo`, "w-full h-full object-cover")}
+</div>
+`;
+});
+rowsHtml += `</div>`;
+}
+
+return `<div class="max-w-[1200px] mx-auto w-full">${rowsHtml}</div>`;
+}
+
+function renderPhotographyContent() {
+const eventsGrid = document.getElementById('events-grid');
+if (!eventsGrid) return;
+
+eventsGrid.innerHTML = eventProjects.map(p => `
+<a href="#event-${p.id}" class="outline-card p-6 rounded-sm group cursor-pointer flex flex-col justify-between block">
+<div class="justified-item overflow-hidden aspect-video mb-4 rounded-sm bg-black relative flex justify-center items-center">
+${smartImageHtml(`${p.prefix}0`, p.title, "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100 object-center")}
+<div class="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 text-[10px] uppercase tracking-widest text-neutral-300 border border-white/10">
+${p.date}
+</div>
+</div>
+<div>
+<h3 class="serif-title text-2xl italic text-neutral-100 mb-2 group-hover:text-yellow-400 transition-colors">${p.title}</h3>
+<p class="text-neutral-400 text-xs leading-relaxed mb-4 font-light">${p.desc}</p>
+<span class="text-[10px] uppercase tracking-[0.2em] text-neutral-300 font-medium group-hover:text-white flex items-center gap-1">
+View Project Gallery ↗
+</span>
+</div>
+</a>
+`).join('');
+
+const streetGrid = document.getElementById('street-grid');
+if (streetGrid) {
+let streetRows = '';
+let targetRowHeight = 280;
+for (let i = 0; i < streetPhotos.length; i += 3) {
+let rowImgs = streetPhotos.slice(i, i + 3);
+streetRows += `<div class="justified-row">`;
+rowImgs.forEach((url, rIdx) => {
+let ratios = [1.1, 1.0, 1.2];
+let ratio = ratios[(i + rIdx) % ratios.length];
+let cWidth = targetRowHeight * ratio;
+streetRows += `
+<div class="justified-item" style="width: ${cWidth}px; height: ${targetRowHeight}px;">
+<img src="${url}" alt="Street Shot" class="w-full h-full object-cover" onclick="openLightbox(this.src)">
+</div>
+`;
+});
+streetRows += `</div>`;
+}
+streetGrid.innerHTML = streetRows;
+}
+if (isAdminLoggedIn) enableEditableElements();
+}
+
+function switchPhotoTab(tab) {
+const btnEvents = document.getElementById('tab-btn-events');
+const btnStreet = document.getElementById('tab-btn-street');
+const contentEvents = document.getElementById('photo-content-events');
+const contentStreet = document.getElementById('photo-content-street');
+
+if (!btnEvents || !btnStreet) return;
+
+if (tab === 'events') {
+btnEvents.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm";
+btnStreet.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm";
+contentEvents.classList.remove('hidden');
+contentStreet.classList.add('hidden');
+} else {
+btnStreet.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm";
+btnEvents.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm";
+contentStreet.classList.remove('hidden');
+contentEvents.classList.add('hidden');
+}
+}
+
+function triggerBrandAnimation() {
+const heroTitle = document.getElementById('hero-title');
+if (heroTitle) {
+heroTitle.classList.remove('hero-brand-animate-active');
+void heroTitle.offsetWidth;
+setTimeout(() => {
+heroTitle.classList.add('hero-brand-animate-active');
+}, 3000);
+}
+}
+
+function handleRouter() {
+const hash = window.location.hash || '#home';
+const views = ['view-home', 'view-photography', 'view-lighting-design', 'view-lighting-detail', 'view-generic-detail', 'view-game-design', 'view-game-detail', 'view-event-detail'];
+views.forEach(id => {
+const el = document.getElementById(id);
+if (el) el.classList.add('hidden');
+});
+
+if (hash === '#home' || hash === '') {
+document.getElementById('view-home').classList.remove('hidden');
+triggerBrandAnimation();
+} else if (hash === '#photography') {
+document.getElementById('view-photography').classList.remove('hidden');
+} else if (hash === '#lighting-design') {
+document.getElementById('view-lighting-design').classList.remove('hidden');
+} else if (hash === '#video-graphic-design') {
+document.getElementById('view-generic-detail').classList.remove('hidden');
+document.getElementById('generic-title').textContent = 'Video & Graphic Design';
+const container = document.getElementById('generic-content-area');
+let customVideo = JSON.parse(localStorage.getItem('custom_video_items') || '[]');
+let html = `<div class="text-neutral-400 text-sm tracking-wide mb-8">Detailed archives are currently being curated. Please check back soon!</div>`;
+if (customVideo.length > 0) {
+html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">`;
+customVideo.forEach(item => {
+html += `<div class="outline-card p-6 rounded-sm"><h3 class="serif-title text-2xl italic text-white mb-2">${item.title}</h3><p class="text-neutral-400 text-xs">${item.desc}</p></div>`;
+});
+html += `</div>`;
+}
+container.innerHTML = html;
+} else if (hash === '#game-design') {
+document.getElementById('view-game-design').classList.remove('hidden');
+} else if (hash.startsWith('#lighting-')) {
+const id = hash.replace('#lighting-', '');
+const project = lightingProjects.find(p => p.id === id);
+if (project) {
+const detailView = document.getElementById('view-lighting-detail');
+const collageHtml = generateResponsivePhotoGrid(project.prefix);
+detailView.innerHTML = `
+<div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
+<div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
+<div class="w-full flex justify-start mb-6">
+<a href="#lighting-design" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
+<span>← Back to Lighting Design</span>
+</a>
+</div>
+<span class="text-xs uppercase tracking-[0.2em] text-yellow-500 font-mono block mb-2">${project.season} — ${project.role}</span>
+<h1 class="serif-title text-4xl md:text-6xl italic text-white mb-3 text-center">${project.title}</h1>
+<p class="text-neutral-300 text-sm md:text-base font-light mb-8 text-center">${project.subtitle}</p>
+<div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/80 border border-neutral-800 p-8 rounded-lg">
+<div>
+<h3 class="serif-title text-xl italic text-white mb-3">About the Production</h3>
+<p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutPlay}</p>
+</div>
+<div>
+<h3 class="serif-title text-xl italic text-white mb-3">Lighting Design & Responsibilities</h3>
+<p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutDesign}</p>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full px-4 md:px-12 mt-8">
+<div class="text-center mb-6">
+<h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack</h3>
+</div>
+${collageHtml}
+</div>
+`;
+detailView.classList.remove('hidden');
+}
+} else if (hash.startsWith('#event-')) {
+const id = parseInt(hash.replace('#event-', ''));
+const project = eventProjects.find(p => p.id === id);
+if (project) {
+let detailView = document.getElementById('view-event-detail');
+if (!detailView) {
+detailView = document.createElement('div');
+detailView.id = 'view-event-detail';
+detailView.className = 'hidden w-full min-h-screen page-enter';
+document.querySelector('main').appendChild(detailView);
+}
+const collageHtml = generateResponsivePhotoGrid(project.prefix);
+detailView.innerHTML = `
+<div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
+<div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
+<div class="w-full flex justify-start mb-6">
+<a href="#photography" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
+<span>← Back to Photography</span>
+</a>
+</div>
+<span class="text-xs uppercase tracking-[0.2em] text-neutral-400 font-mono block mb-2">${project.date}</span>
+<h1 class="serif-title text-4xl md:text-6xl italic text-white mb-4 text-center">${project.title}</h1>
+<p class="text-neutral-300 text-sm md:text-base max-w-2xl font-light leading-relaxed text-center">${project.desc}</p>
+</div>
+</div>
+<div class="w-full px-4 md:px-12 mt-8">${collageHtml}</div>
+`;
+detailView.classList.remove('hidden');
+}
+} else if (hash.startsWith('#game-design') || hash.startsWith('#game-')) {
+const hashVal = window.location.hash;
+if (hashVal === '#game-design') {
+document.getElementById('view-game-design').classList.remove('hidden');
+} else {
+const projectId = hashVal.replace('#game-', '');
+const data = gameProjects[projectId];
+if (data) {
+document.getElementById('gd-detail-title').textContent = data.title;
+document.getElementById('gd-detail-subtitle').textContent = data.subtitle;
+document.getElementById('gd-detail-visual').innerHTML = data.visualHtml;
+document.getElementById('gd-detail-desc').textContent = data.desc;
+document.getElementById('gd-detail-detailedDesc').textContent = data.detailedDesc;
+document.getElementById('gd-detail-role').textContent = data.role;
+document.getElementById('gd-detail-engine').textContent = data.engine;
+
+const tagsContainer = document.getElementById('gd-detail-tags');
+tagsContainer.innerHTML = data.tags.map(tag => `<span class="text-xs px-3 py-1.5 bg-white/10 text-yellow-500 border border-white/20 rounded-sm">${tag}</span>`).join('');
+
+const linkEl = document.getElementById('gd-detail-link');
+linkEl.href = data.link;
+linkEl.textContent = data.linkText;
+
+let noticeEl = document.getElementById('gd-detail-notice');
+if (data.notice) {
+noticeEl.textContent = data.notice;
+noticeEl.classList.remove('hidden');
+noticeEl.classList.add('block');
+} else {
+noticeEl.classList.remove('block');
+noticeEl.classList.add('hidden');
+}
+document.getElementById('view-game-detail').classList.remove('hidden');
+}
+}
+}
+window.scrollTo({ top: 0, behavior: 'smooth' });
+if (isAdminLoggedIn) enableEditableElements();
+}
+
+function toggleMobileMenu() {
+const menu = document.getElementById('mobile-menu');
+if (menu) menu.classList.add('hidden');
+}
+
+window.addEventListener('hashchange', handleRouter);
+
+window.onload = function() {
+generateExactBackground();
+loadCustomData();
+const savedLayout = localStorage.getItem('portfolio_layout_snapshot');
+if (savedLayout) {
+document.querySelector('main').innerHTML = savedLayout;
+} else {
+renderHomeHeroCollage();
+renderPhotographyContent();
+renderLightingContent();
+renderGameProjectsContent();
+}
+handleRouter();
+};
+</script></body></html>
