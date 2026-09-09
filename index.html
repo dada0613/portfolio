@@ -135,6 +135,23 @@ transition: transform 0.5s ease;
 transform: scale(1.05);
 }
 
+/* 首頁大圖拼貼網格：最大化一排 6 個，隨螢幕縮小自動響應式調整 */
+#home-hero-grid {
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 14px;
+width: 100%;
+max-width: 1500px;
+margin: 0 auto;
+padding: 0 24px;
+}
+@media (max-width: 1280px) {
+#home-hero-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 768px) {
+#home-hero-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* 獨立定位畫布物件 */
 .canvas-draggable-photo {
 position: relative;
@@ -202,7 +219,7 @@ display: flex;
 
 <!-- 頂部編輯控制列 -->
 <div id="admin-floating-bar" class="hidden fixed top-4 right-4 z-50 bg-yellow-600/90 text-black px-5 py-2 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-<span>⚡ Edit Mode (Ctrl+Z Supported)</span>
+<span>⚡ Edit Mode (Double-click image to Crop)</span>
 <button onclick="saveAllChanges()" class="bg-black text-white px-3 py-1 rounded hover:bg-neutral-800">Save Changes</button>
 <button onclick="openAdminModal()" class="bg-neutral-900 text-white px-3 py-1 rounded hover:bg-black">Add Project</button>
 <button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Logout</button>
@@ -347,8 +364,8 @@ AMANDA HSU
 <main class="relative z-10 flex-grow w-full flex flex-col justify-center">
 
 <div id="view-home" class="w-full page-enter space-y-16">
-<section class="relative w-full h-[850px] md:h-[1200px] overflow-hidden flex items-center justify-center bg-black">
-<div id="home-hero-grid" class="absolute inset-0 opacity-80 filter brightness-95 pointer-events-none flex flex-wrap content-start justify-center items-start gap-x-0 gap-y-12 scale-105 overflow-hidden"></div>
+<section class="relative w-full h-[850px] md:h-[1100px] overflow-hidden flex items-center justify-center bg-black">
+<div id="home-hero-grid" class="absolute inset-0 opacity-80 filter brightness-95 pointer-events-none"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f15] via-[#0b0f15]/20 to-[#0b0f15]/10 pointer-events-none"></div>
 
 <div class="relative z-10 text-center px-4 space-y-3">
@@ -536,7 +553,6 @@ undoStack.push(state);
 if (undoStack.length > 30) undoStack.shift();
 }
 
-// 修正：Ctrl+Z 還原後立刻重新啟用編輯與拖曳功能
 window.addEventListener('keydown', function(e) {
 if (isAdminLoggedIn && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
 e.preventDefault();
@@ -646,7 +662,7 @@ isAdminLoggedIn = true;
 closeAdminLogin();
 document.getElementById('admin-floating-bar').classList.remove('hidden');
 enableEditableElements();
-alert('Successfully Logged In! All Editors & Ctrl+Z Re-binding Enabled.');
+alert('Successfully Logged In! Hero Grid Restored.');
 }
 }
 
@@ -914,6 +930,7 @@ container.appendChild(el);
 }
 }
 
+// 完整恢復 18 張照片的迴圈邏輯（隨 RWD 縮放，最大化每排 6 張）
 function renderHomeHeroCollage() {
 const grid = document.getElementById('home-hero-grid');
 if (!grid) return;
@@ -923,7 +940,7 @@ for (let i = 1; i <= 18; i++) {
 let candidates = getSmartImageCandidates(`home-${i}`);
 let initialSrc = candidates[0];
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
-html += `<div class="justified-item w-[200px] h-[320px] shrink-0 overflow-hidden"><img src="${initialSrc}" alt="Home Hero ${i}" class="w-full h-full object-cover" style="cursor: default;" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)"></div>`;
+html += `<div class="justified-item h-[280px] overflow-hidden"><img src="${initialSrc}" alt="Home Hero ${i}" class="w-full h-full object-cover" style="cursor: default;" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)"></div>`;
 }
 }
 grid.innerHTML = html;
@@ -1347,15 +1364,11 @@ window.addEventListener('hashchange', handleRouter);
 window.onload = function() {
 generateExactBackground();
 loadCustomData();
-const savedLayout = localStorage.getItem('portfolio_layout_snapshot');
-if (savedLayout) {
-document.querySelector('main').innerHTML = savedLayout;
-} else {
+localStorage.removeItem('portfolio_layout_snapshot');
 renderHomeHeroCollage();
 renderPhotographyContent();
 renderLightingContent();
 renderGameProjectsContent();
-}
 handleRouter();
 };
 </script></body></html>
