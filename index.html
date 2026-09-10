@@ -565,7 +565,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【不分大小寫、不看附檔名、只認前綴】
+// 【全面升級：支援資料夾大小寫容錯、副檔名大小寫容錯、檔名前綴大小寫容錯】
 const supportedExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'webp', 'WEBP'];
 
 function getSmartImageCandidates(baseName) {
@@ -573,21 +573,44 @@ let candidates = [];
 let cleanBase = baseName.trim();
 let lowerBase = cleanBase.toLowerCase();
 
-// 自動將前綴轉換為大小寫混合或全小寫/全大寫嘗試
+// 解析是否有子資料夾 (例如 ksa-0 或 KSA-0)
 let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
-let subfolder = folderMatch ? folderMatch[1].toLowerCase() : '';
+let subfolder = folderMatch ? folderMatch[1] : '';
 
+if (subfolder) {
+let lowerSub = subfolder.toLowerCase();
+let upperSub = subfolder.toUpperCase();
+let capSub = subfolder.charAt(0).toUpperCase() + subfolder.slice(1).toLowerCase();
+
+let possibleFolders = [subfolder, lowerSub, upperSub, capSub];
+let remainder = cleanBase.slice(subfolder.length);
+
+let possibleFileNames = [
+cleanBase,
+lowerBase,
+cleanBase.toUpperCase(),
+lowerSub + remainder,
+upperSub + remainder,
+capSub + remainder
+];
+
+for (let folder of possibleFolders) {
+for (let fname of possibleFileNames) {
 for (let ext of supportedExtensions) {
-if (subfolder && subfolder !== lowerBase) {
-candidates.push(`${subfolder}/${cleanBase}.${ext}`);
-candidates.push(`${subfolder}/${lowerBase}.${ext}`);
-candidates.push(`${subfolder}/${cleanBase.toUpperCase()}.${ext}`);
+candidates.push(`${folder}/${fname}.${ext}`);
 }
+}
+}
+}
+
+// 根目錄的各種大小寫與副檔名組合
+for (let ext of supportedExtensions) {
 candidates.push(`${cleanBase}.${ext}`);
 candidates.push(`${lowerBase}.${ext}`);
 candidates.push(`${cleanBase.toUpperCase()}.${ext}`);
 }
-// 過濾重複項目
+
+// 過濾掉重複的候選路徑
 return [...new Set(candidates)];
 }
 
@@ -1246,7 +1269,6 @@ heroTitle.classList.add('hero-brand-animate-active');
 
 function handleRouter() {
 const rawHash = window.location.hash || '#home';
-// 讓路由比對也支援大小寫不敏感
 const hash = rawHash.toLowerCase();
 const views = ['view-home', 'view-photography', 'view-lighting-design', 'view-lighting-detail', 'view-generic-detail', 'view-game-design', 'view-game-detail', 'view-event-detail'];
 views.forEach(id => {
@@ -1346,7 +1368,7 @@ detailView.innerHTML = `
 </div>
 <div class="w-full px-4 md:px-12 mt-8">${collageHtml}</div>
 `;
-detailView.classList.remove('hidden');
+detailView.classList.min?.('hidden') || detailView.classList.remove('hidden');
 }
 } else if (hash.startsWith('#game-design') || hash.startsWith('#game-')) {
 if (hash === '#game-design') {
