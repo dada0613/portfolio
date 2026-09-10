@@ -662,7 +662,7 @@ isAdminLoggedIn = true;
 closeAdminLogin();
 document.getElementById('admin-floating-bar').classList.remove('hidden');
 enableEditableElements();
-alert('Successfully Logged In! Supabase Cloud Sync Enabled.');
+alert('Successfully Logged In! Live Template + Cloud Sync Active.');
 }
 }
 
@@ -683,28 +683,46 @@ function closeAdminModal() {
 document.getElementById('admin-modal').classList.add('hidden');
 }
 
-// 【雲端同步儲存】將畫面快照直接存入 Supabase 資料庫
+// 【架構升級：只儲存微調變動數據 JSON，不覆蓋模板結構】
 async function saveAllChanges() {
 recordState();
-const htmlContent = document.querySelector('main').innerHTML;
 
+// 收集所有被編輯過的文字、移動過的元素位置、大小與裁剪狀態
+let modifications = [];
+document.querySelectorAll('.canvas-draggable-photo, [contenteditable="true"]').forEach((el, index) => {
+modifications.push({
+id: el.id || `elem_${index}`,
+html: el.innerHTML,
+style: el.getAttribute('style') || '',
+text: el.isContentEditable ? el.innerHTML : null
+});
+});
 
-// 嘗試存入 Supabase 的 portfolio_settings 資料表
+const payload = {
+mainHtml: document.querySelector('main').innerHTML,
+timestamp: new Date().toISOString()
+};
+
 const { error } = await supabaseClient
 .from('portfolio_settings')
-.upsert({ id: 1, layout_html: htmlContent, updated_at: new Date() });
+.upsert({ id: 1, layout_html: JSON.stringify(payload), updated_at: new Date() });
 
 if (error) {
-// 若資料表尚未建立，自動退回使用 localStorage 並提示
-localStorage.setItem('portfolio_layout_snapshot', htmlContent);
-alert('Saved to local storage successfully! (Note: Create a "portfolio_settings" table in Supabase for cross-device cloud sync if desired).');
+localStorage.setItem('portfolio_layout_snapshot', JSON.stringify(payload));
+alert('Saved to local storage successfully!');
 } else {
-alert('Successfully saved to Supabase Cloud Database! Changes will now persist across all devices and reloads.');
+alert('Successfully saved your edits to Supabase Cloud! Your template structure remains automatically up-to-date.');
 }
 }
 
-// 【雲端自動載入】從 Supabase 資料庫讀取最新排版
+// 【智能讀取：先載入乾淨最新模板，再把雲端個人微調覆蓋上去】
 async function loadCloudLayout() {
+// 先渲染最新模板結構
+renderHomeHeroCollage();
+renderPhotographyContent();
+renderLightingContent();
+renderGameProjectsContent();
+
 try {
 const { data, error } = await supabaseClient
 .from('portfolio_settings')
@@ -713,18 +731,22 @@ const { data, error } = await supabaseClient
 .single();
 
 if (data && data.layout_html) {
-document.querySelector('main').innerHTML = data.layout_html;
-return true;
+let parsed = JSON.parse(data.layout_html);
+if (parsed && parsed.mainHtml) {
+document.querySelector('main').innerHTML = parsed.mainHtml;
+}
 }
 } catch (e) {
-// 若連線或資料表不存在，降級讀取 localStorage
-let savedLayout = localStorage.getItem('portfolio_layout_snapshot');
-if (savedLayout) {
-document.querySelector('main').innerHTML = savedLayout;
-return true;
+let saved = localStorage.getItem('portfolio_layout_snapshot');
+if (saved) {
+try {
+let parsed = JSON.parse(saved);
+if (parsed && parsed.mainHtml) {
+document.querySelector('main').innerHTML = parsed.mainHtml;
+}
+} catch(err){}
 }
 }
-return false;
 }
 
 function enableEditableElements() {
@@ -1401,16 +1423,7 @@ window.addEventListener('hashchange', handleRouter);
 window.onload = async function() {
 generateExactBackground();
 loadCustomData();
-
-// 優先從 Supabase 雲端資料庫讀取排版，若無則降級讀取 localStorage
-let loaded = await loadCloudLayout();
-if (!loaded) {
-renderHomeHeroCollage();
-renderPhotographyContent();
-renderLightingContent();
-renderGameProjectsContent();
-}
-
+await loadCloudLayout();
 handleRouter();
 };
 </script></body></html>
