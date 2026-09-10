@@ -715,38 +715,35 @@ alert('Successfully saved your edits to Supabase Cloud! Your template structure 
 }
 }
 
-// 【智能讀取：先載入乾淨最新模板，再把雲端個人微調覆蓋上去】
 async function loadCloudLayout() {
-// 先渲染最新模板結構
-renderHomeHeroCollage();
-renderPhotographyContent();
-renderLightingContent();
-renderGameProjectsContent();
+    console.log('☁️ Loading cloud layout...');
 
-try {
-const { data, error } = await supabaseClient
-.from('portfolio_settings')
-.select('layout_html')
-.eq('id', 1)
-.single();
+    const { data, error } = await supabaseClient
+        .from('portfolio_settings')
+        .select('layout_html')
+        .eq('id', 1)
+        .single();
 
-if (data && data.layout_html) {
-let parsed = JSON.parse(data.layout_html);
-if (parsed && parsed.mainHtml) {
-document.querySelector('main').innerHTML = parsed.mainHtml;
-}
-}
-} catch (e) {
-let saved = localStorage.getItem('portfolio_layout_snapshot');
-if (saved) {
-try {
-let parsed = JSON.parse(saved);
-if (parsed && parsed.mainHtml) {
-document.querySelector('main').innerHTML = parsed.mainHtml;
-}
-} catch(err){}
-}
-}
+    if (error) {
+        console.error('❌ Supabase load error:', error);
+        return;
+    }
+
+    if (!data) {
+        console.warn('⚠️ No cloud data found.');
+        return;
+    }
+
+    console.log('✅ Cloud data loaded:', data);
+
+    if (data.layout_html) {
+        const main = document.querySelector('main');
+
+        if (main) {
+            main.innerHTML = data.layout_html;
+            console.log('✅ Cloud layout applied.');
+        }
+    }
 }
 
 function enableEditableElements() {
