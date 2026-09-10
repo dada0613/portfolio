@@ -562,45 +562,30 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【極速精簡版候選路徑：直接鎖定真實結構，大幅降低載入等待時間】
-const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-
+// 【極速直達路徑配置：直接對應實際存在的資料夾與標準副檔名】
 function getSmartImageCandidates(baseName) {
-let candidates = [];
 let cleanBase = baseName.trim();
-let lowerBase = cleanBase.toLowerCase();
-
 let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
 let subfolder = folderMatch ? folderMatch[1].toLowerCase() : '';
-
-if (subfolder) {
-let remainder = cleanBase.slice(subfolder.length);
-for (let ext of supportedExtensions) {
-candidates.push(`${subfolder}/${subfolder}${remainder}.${ext}`);
-candidates.push(`${subfolder}/${cleanBase}.${ext}`);
-candidates.push(`${subfolder}/${lowerBase}.${ext}`);
-}
-}
-
-for (let ext of supportedExtensions) {
-candidates.push(`${cleanBase}.${ext}`);
-candidates.push(`${lowerBase}.${ext}`);
-}
-
 let idxMatch = cleanBase.match(/[-_](\d+)$/);
 let idx = idxMatch ? idxMatch[1] : '0';
 
-if (cleanBase.toLowerCase().includes('haunted')) {
-candidates.push(`haunted/Haunted House-${idx}.jpeg`, `haunted/Haunted House-${idx}.jpg`);
-} else if (cleanBase.toLowerCase().includes('popular')) {
-candidates.push(`popular/Popular Music Group-${idx}.jpg`, `popular/Popular Music Group-${idx}.jpeg`);
-} else if (cleanBase.toLowerCase().includes('upba')) {
-candidates.push(`upba/UPBa-${idx}.jpg`, `upba/UPBa-${idx}.png`);
-} else if (cleanBase.toLowerCase().includes('graphic')) {
-candidates.push(`graphic/graphic-${idx}.jpg`, `graphic/graphic-${idx}.png`);
-}
+// 針對已知資料夾結構直接返回精準路徑（大幅減少 404 請求與載入時間）
+if (subfolder === 'ksa') return [`ksa/ksa-${idx}.jpg`, `ksa/ksa-${idx}.JPG`, `ksa/Ksa-${idx}.jpg`];
+if (subfolder === 'ttto') return [`ttto/TTTO-${idx}.jpg`, `ttto/TTTO-${idx}.JPG`];
+if (subfolder === 'botb') return [`botb/botb-${idx}.jpg`, `botb/botb-${idx}.JPG`];
+if (subfolder === 'botb6') return [`botb6/botb6-${idx}.jpg`, `botb6/botb6-${idx}.JPG`];
+if (cleanBase.toLowerCase().includes('haunted')) return [`haunted/Haunted House-${idx}.jpeg`, `haunted/Haunted House-${idx}.jpg`];
+if (cleanBase.toLowerCase().includes('popular')) return [`popular/Popular Music Group-${idx}.jpg`, `popular/Popular Music Group-${idx}.jpeg`];
+if (subfolder === 'tso') return [`tso/tso-${idx}.jpg`, `tso/tso-${idx}.JPG`];
+if (subfolder === 'upba') return [`upba/UPBa-${idx}.jpg`, `upba/UPBa-${idx}.png`];
+if (subfolder === 'student') return [`student/Student-${idx}.jpg`, `student/student-${idx}.jpg`];
+if (subfolder === 'graphic') return [`graphic/graphic-${idx}.jpg`, `graphic/graphic-${idx}.png`];
+if (subfolder === 'street') return [`street/street-${idx}.jpg`, `street/street-${idx}.JPG`];
+if (subfolder === 'home') return [`home/home-${idx}.jpg`, `home/home-${idx}.JPG`];
 
-return [...new Set(candidates)];
+// 預設直達
+return [`${cleanBase}.jpg`, `${cleanBase}.jpeg`, `${cleanBase}.png`];
 }
 
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
