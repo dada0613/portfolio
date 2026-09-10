@@ -565,7 +565,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【全面升級：支援資料夾大小寫容錯、副檔名大小寫容錯、檔名前綴大小寫容錯】
+// 【全面升級：支援資料夾大小寫、空格自動替換為 %20、檔名與副檔名容錯】
 const supportedExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'webp', 'WEBP'];
 
 function getSmartImageCandidates(baseName) {
@@ -573,7 +573,6 @@ let candidates = [];
 let cleanBase = baseName.trim();
 let lowerBase = cleanBase.toLowerCase();
 
-// 解析是否有子資料夾 (例如 ksa-0 或 KSA-0)
 let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
 let subfolder = folderMatch ? folderMatch[1] : '';
 
@@ -603,14 +602,31 @@ candidates.push(`${folder}/${fname}.${ext}`);
 }
 }
 
-// 根目錄的各種大小寫與副檔名組合
+// 根目錄與常見名稱對應
 for (let ext of supportedExtensions) {
 candidates.push(`${cleanBase}.${ext}`);
 candidates.push(`${lowerBase}.${ext}`);
 candidates.push(`${cleanBase.toUpperCase()}.${ext}`);
 }
 
-// 過濾掉重複的候選路徑
+// 【針對 Haunted Halls 與 Popular Music Group 的實際資料夾與檔名空白對應】
+if (cleanBase.toLowerCase().includes('haunted')) {
+let idx = cleanBase.split('-').pop();
+for (let ext of supportedExtensions) {
+candidates.push(`Haunted%20Halls/Haunted%20House-${idx}.${ext}`);
+candidates.push(`Haunted Halls/Haunted House-${idx}.${ext}`);
+candidates.push(`haunted%20halls/haunted%20house-${idx}.${ext}`);
+}
+}
+if (cleanBase.toLowerCase().includes('popular')) {
+let idx = cleanBase.split('-').pop();
+for (let ext of supportedExtensions) {
+candidates.push(`Popular%20Music%20Group/Popular%20Music%20Group-${idx}.${ext}`);
+candidates.push(`Popular Music Group/Popular Music Group-${idx}.${ext}`);
+candidates.push(`popular%20music%20group/popular%20music%20group-${idx}.${ext}`);
+}
+}
+
 return [...new Set(candidates)];
 }
 
@@ -1368,7 +1384,7 @@ detailView.innerHTML = `
 </div>
 <div class="w-full px-4 md:px-12 mt-8">${collageHtml}</div>
 `;
-detailView.classList.min?.('hidden') || detailView.classList.remove('hidden');
+detailView.classList.remove('hidden');
 }
 } else if (hash.startsWith('#game-design') || hash.startsWith('#game-')) {
 if (hash === '#game-design') {
