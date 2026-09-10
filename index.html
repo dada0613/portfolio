@@ -564,18 +564,14 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【智慧雙軌對應機制】：同時支援 Supabase 雲端與本地端路徑，確保絕對不會破圖！
 const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG'];
 
 function getSmartImageCandidates(baseName) {
 let candidates = [];
 let cleanBase = baseName.trim();
-let lowerBase = cleanBase.toLowerCase();
-
 let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
 let subfolder = folderMatch ? folderMatch[1] : '';
 
-// 1. 優先嘗試從 Supabase 雲端抓取
 if (subfolder) {
 let lowSub = subfolder.toLowerCase();
 for (let ext of supportedExtensions) {
@@ -588,7 +584,6 @@ candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.${ext}`);
 candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.${ext}`);
 }
 
-// 2. 備份機制：如果雲端找不到，自動切回本地端資料夾抓取
 if (subfolder) {
 let lowSub = subfolder.toLowerCase();
 for (let ext of supportedExtensions) {
@@ -601,7 +596,6 @@ candidates.push(`${cleanBase}.${ext}`);
 candidates.push(`${cleanBase.toLowerCase()}.${ext}`);
 }
 
-// 特殊專案補強
 let idxMatch = cleanBase.match(/[-_](\d+)$/);
 let idx = idxMatch ? idxMatch[1] : '0';
 if (cleanBase.toLowerCase().includes('haunted')) {
@@ -1043,7 +1037,8 @@ try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
 }
 }
 
-const streetPhotos = Array.from({length: 18}, (_, i) => `street/street-${i + 1}.jpg`);
+// 【Street Photography 智慧動態自動偵測陣列】：支援自動過濾，放幾張就顯示幾張，絕不破圖
+const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
 const lightingProjects = [
 { id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.", aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season." },
@@ -1217,13 +1212,13 @@ let targetRowHeight = 280;
 for (let i = 0; i < streetPhotos.length; i += 3) {
 let rowImgs = streetPhotos.slice(i, i + 3);
 streetRows += `<div class="justified-row">`;
-rowImgs.forEach((url, rIdx) => {
+rowImgs.forEach((imgBase, rIdx) => {
 let ratios = [1.1, 1.0, 1.2];
 let ratio = ratios[(i + rIdx) % ratios.length];
 let cWidth = targetRowHeight * ratio;
 streetRows += `
 <div class="justified-item" style="width: ${cWidth}px; height: ${targetRowHeight}px;">
-<img src="${url}" alt="Street Shot" class="w-full h-full object-cover" onclick="openLightbox(this.src)" loading="lazy" decoding="async">
+${smartImageHtml(imgBase, `Street Shot`, "w-full h-full object-cover")}
 </div>
 `;
 });
