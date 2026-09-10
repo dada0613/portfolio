@@ -568,38 +568,43 @@ alert('Action Undone (Ctrl+Z)');
 const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG'];
 
 function getSmartImageCandidates(baseName) {
-let candidates = [];
-let cleanBase = baseName.trim();
+  let candidates = [];
+  let cleanBase = baseName.trim();
 
-let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
-let subfolder = folderMatch ? folderMatch[1] : '';
+  let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
+  let subfolder = folderMatch ? folderMatch[1] : '';
 
-// 自動窮舉 Supabase 雲端與本地端所有副檔名組合
-for (let ext of supportedExtensions) {
-if (subfolder) {
-let lowSub = subfolder.toLowerCase();
-candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase}.${ext}`);
-candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
-candidates.push(`${lowSub}/${cleanBase}.${ext}`);
-candidates.push(`${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
-}
-candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.${ext}`);
-candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.${ext}`);
-candidates.push(`${cleanBase}.${ext}`);
-candidates.push(`${cleanBase.toLowerCase()}.${ext}`);
-}
+  // 自動窮舉所有副檔名與大小寫
+  for (let ext of supportedExtensions) {
+    if (subfolder) {
+      let lowSub = subfolder.toLowerCase();
+      candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase}.${ext}`);
+      candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
+    }
+    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.${ext}`);
+    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.${ext}`);
+  }
 
-// 特殊專案補強
-let idxMatch = cleanBase.match(/[-_](\d+)$/);
-let idx = idxMatch ? idxMatch[1] : '0';
-if (cleanBase.toLowerCase().includes('haunted')) {
-candidates.push(`${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpeg`, `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpg`);
-}
-if (cleanBase.toLowerCase().includes('popular')) {
-candidates.push(`${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpg`, `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpeg`);
-}
+  // 針對 Popular Music Group 這種帶有空格與大寫的特例直接精準對應
+  let idxMatch = cleanBase.match(/[-_](\d+)$/);
+  let idx = idxMatch ? idxMatch[1] : '0';
+  
+  if (cleanBase.toLowerCase().includes('popular')) {
+    candidates.unshift(
+      `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.JPG`,
+      `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpg`,
+      `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpeg`
+    );
+  }
+  if (cleanBase.toLowerCase().includes('haunted')) {
+    candidates.unshift(
+      `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpeg`,
+      `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.JPG`,
+      `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpg`
+    );
+  }
 
-return [...new Set(candidates)];
+  return [...new Set(candidates)];
 }
 
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
