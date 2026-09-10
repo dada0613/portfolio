@@ -656,14 +656,18 @@ password: password,
 });
 
 if (error) {
-alert('Authentication Failed: ' + error.message);
-} else {
-isAdminLoggedIn = true;
-closeAdminLogin();
-document.getElementById('admin-floating-bar').classList.remove('hidden');
-enableEditableElements();
-alert('Successfully Logged In! Live Template + Cloud Sync Active.');
+    console.error('❌ Supabase save error:', error);
+
+    localStorage.setItem(
+        'portfolio_layout_snapshot',
+        JSON.stringify(payload)
+    );
+
+    alert('Supabase save failed. A local backup was created. Check the console for details.');
+    return;
 }
+
+alert('Successfully saved your edits to Supabase Cloud!');
 }
 
 function logoutAdmin() {
