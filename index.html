@@ -544,7 +544,6 @@ let isAdminLoggedIn = false;
 let undoStack = [];
 let currentCropImg = null;
 
-// 【請確認這是你在 Supabase Storage 複製出來的 Public URL 基礎路徑】
 const SUPABASE_STORAGE_URL = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
 
 function recordState() {
@@ -565,29 +564,54 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【 Supabase 雲端智慧路徑產生器：完全自動組合，免手動調整】
+// 【智慧雙軌對應機制】：同時支援 Supabase 雲端與本地端路徑，確保絕對不會破圖！
+const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG'];
+
 function getSmartImageCandidates(baseName) {
+let candidates = [];
 let cleanBase = baseName.trim();
+let lowerBase = cleanBase.toLowerCase();
+
 let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
-let subfolder = folderMatch ? folderMatch[1].toLowerCase() : '';
+let subfolder = folderMatch ? folderMatch[1] : '';
+
+// 1. 優先嘗試從 Supabase 雲端抓取
+if (subfolder) {
+let lowSub = subfolder.toLowerCase();
+for (let ext of supportedExtensions) {
+candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase}.${ext}`);
+candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
+}
+}
+for (let ext of supportedExtensions) {
+candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.${ext}`);
+candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.${ext}`);
+}
+
+// 2. 備份機制：如果雲端找不到，自動切回本地端資料夾抓取
+if (subfolder) {
+let lowSub = subfolder.toLowerCase();
+for (let ext of supportedExtensions) {
+candidates.push(`${lowSub}/${cleanBase}.${ext}`);
+candidates.push(`${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
+}
+}
+for (let ext of supportedExtensions) {
+candidates.push(`${cleanBase}.${ext}`);
+candidates.push(`${cleanBase.toLowerCase()}.${ext}`);
+}
+
+// 特殊專案補強
 let idxMatch = cleanBase.match(/[-_](\d+)$/);
 let idx = idxMatch ? idxMatch[1] : '0';
+if (cleanBase.toLowerCase().includes('haunted')) {
+candidates.push(`${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpeg`, `haunted/Haunted House-${idx}.jpeg`);
+}
+if (cleanBase.toLowerCase().includes('popular')) {
+candidates.push(`${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpg`, `popular/Popular Music Group-${idx}.jpg`);
+}
 
-// 針對不同專案自動對應 Supabase 內的檔案路徑
-if (subfolder === 'ksa') return [`${SUPABASE_STORAGE_URL}ksa/ksa-${idx}.jpg`, `${SUPABASE_STORAGE_URL}ksa/ksa-${idx}.JPG`];
-if (subfolder === 'ttto') return [`${SUPABASE_STORAGE_URL}ttto/TTTO-${idx}.jpg`, `${SUPABASE_STORAGE_URL}ttto/TTTO-${idx}.JPG`];
-if (subfolder === 'botb') return [`${SUPABASE_STORAGE_URL}botb/botb-${idx}.jpg`, `${SUPABASE_STORAGE_URL}botb/botb-${idx}.JPG`];
-if (subfolder === 'botb6') return [`${SUPABASE_STORAGE_URL}botb6/botb6-${idx}.jpg`, `${SUPABASE_STORAGE_URL}botb6/botb6-${idx}.JPG`];
-if (cleanBase.toLowerCase().includes('haunted')) return [`${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpeg`, `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpg`];
-if (cleanBase.toLowerCase().includes('popular')) return [`${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpg`, `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpeg`];
-if (subfolder === 'tso') return [`${SUPABASE_STORAGE_URL}tso/tso-${idx}.jpg`, `${SUPABASE_STORAGE_URL}tso/tso-${idx}.JPG`];
-if (subfolder === 'upba') return [`${SUPABASE_STORAGE_URL}upba/UPBa-${idx}.jpg`, `${SUPABASE_STORAGE_URL}upba/UPBa-${idx}.png`];
-if (subfolder === 'student') return [`${SUPABASE_STORAGE_URL}student/Student-${idx}.jpg`];
-if (subfolder === 'graphic') return [`${SUPABASE_STORAGE_URL}graphic/graphic-${idx}.jpg`, `${SUPABASE_STORAGE_URL}graphic/graphic-${idx}.png`];
-if (subfolder === 'street') return [`${SUPABASE_STORAGE_URL}street/street-${idx}.jpg`];
-if (subfolder === 'home') return [`${SUPABASE_STORAGE_URL}home/home-${idx}.jpg`];
-
-return [`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`];
+return [...new Set(candidates)];
 }
 
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
