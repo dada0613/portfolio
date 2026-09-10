@@ -602,14 +602,12 @@ let idx = idxMatch ? idxMatch[1] : '0';
 
 if (cleanBase.toLowerCase().includes('haunted')) {
 for (let ext of supportedExtensions) {
-candidates.push(`Haunted Halls/Haunted House-${idx}.${ext}`);
-candidates.push(`Haunted%20Halls/Haunted%20House-${idx}.${ext}`);
+candidates.push(`haunted/Haunted House-${idx}.${ext}`);
 }
 }
 if (cleanBase.toLowerCase().includes('popular')) {
 for (let ext of supportedExtensions) {
-candidates.push(`Popular Music Group/Popular Music Group-${idx}.${ext}`);
-candidates.push(`Popular%20Music%20Group/Popular Music Group-${idx}.${ext}`);
+candidates.push(`popular/Popular Music Group-${idx}.${ext}`);
 }
 }
 if (cleanBase.toLowerCase().includes('upba')) {
