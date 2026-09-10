@@ -565,23 +565,30 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【核心修改：全面不看大小寫、不看副檔名、只認前綴】
+// 【不分大小寫、不看附檔名、只認前綴】
 const supportedExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'webp', 'WEBP'];
 
 function getSmartImageCandidates(baseName) {
 let candidates = [];
 let cleanBase = baseName.trim();
-// 處理資料夾前綴 (例如 ksa-0 -> 資料夾 ksa 內的 0)
+let lowerBase = cleanBase.toLowerCase();
+
+// 自動將前綴轉換為大小寫混合或全小寫/全大寫嘗試
 let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
 let subfolder = folderMatch ? folderMatch[1].toLowerCase() : '';
 
 for (let ext of supportedExtensions) {
-if (subfolder && subfolder !== cleanBase.toLowerCase()) {
+if (subfolder && subfolder !== lowerBase) {
 candidates.push(`${subfolder}/${cleanBase}.${ext}`);
+candidates.push(`${subfolder}/${lowerBase}.${ext}`);
+candidates.push(`${subfolder}/${cleanBase.toUpperCase()}.${ext}`);
 }
 candidates.push(`${cleanBase}.${ext}`);
+candidates.push(`${lowerBase}.${ext}`);
+candidates.push(`${cleanBase.toUpperCase()}.${ext}`);
 }
-return candidates;
+// 過濾重複項目
+return [...new Set(candidates)];
 }
 
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
@@ -589,7 +596,7 @@ let candidates = getSmartImageCandidates(baseName);
 let initialSrc = candidates[0];
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 
-let isCoverImg = baseName.toString().includes('-0');
+let isCoverImg = baseName.toString().toLowerCase().includes('-0');
 let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
 let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
 return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" ${clickAttr}>`;
@@ -643,7 +650,6 @@ function closeAdminLogin() {
 document.getElementById('admin-login-modal').classList.add('hidden');
 }
 
-// 【修復：支援離線或連線錯誤時的直接解鎖編輯功能】
 async function verifySupabaseAdmin() {
 const email = document.getElementById('admin-email-input').value.trim();
 const password = document.getElementById('admin-passcode-input').value;
@@ -662,7 +668,6 @@ if (error) {
 console.warn('Supabase auth warning (falling back to local admin mode):', error.message);
 }
 
-// 無論 Supabase 網路是否擋下，只要輸入密碼即成功解鎖編輯器
 isAdminLoggedIn = true;
 closeAdminLogin();
 document.getElementById('admin-floating-bar').classList.remove('hidden');
@@ -1240,7 +1245,9 @@ heroTitle.classList.add('hero-brand-animate-active');
 }
 
 function handleRouter() {
-const hash = window.location.hash || '#home';
+const rawHash = window.location.hash || '#home';
+// 讓路由比對也支援大小寫不敏感
+const hash = rawHash.toLowerCase();
 const views = ['view-home', 'view-photography', 'view-lighting-design', 'view-lighting-detail', 'view-generic-detail', 'view-game-design', 'view-game-detail', 'view-event-detail'];
 views.forEach(id => {
 const el = document.getElementById(id);
@@ -1276,7 +1283,7 @@ document.getElementById('view-game-design').classList.remove('hidden');
 renderGameProjectsContent();
 } else if (hash.startsWith('#lighting-')) {
 const id = hash.replace('#lighting-', '');
-const project = lightingProjects.find(p => p.id === id);
+const project = lightingProjects.find(p => p.id.toLowerCase() === id);
 if (project) {
 const detailView = document.getElementById('view-lighting-detail');
 const collageHtml = generateResponsivePhotoGrid(project.prefix);
@@ -1342,12 +1349,11 @@ detailView.innerHTML = `
 detailView.classList.remove('hidden');
 }
 } else if (hash.startsWith('#game-design') || hash.startsWith('#game-')) {
-const hashVal = window.location.hash;
-if (hashVal === '#game-design') {
+if (hash === '#game-design') {
 document.getElementById('view-game-design').classList.remove('hidden');
 renderGameProjectsContent();
 } else {
-const projectId = hashVal.replace('#game-', '');
+const projectId = hash.replace('#game-', '');
 const data = gameProjects[projectId];
 if (data) {
 document.getElementById('gd-detail-title').textContent = data.title;
