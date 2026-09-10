@@ -135,10 +135,12 @@ transition: transform 0.5s ease;
 transform: scale(1.05);
 }
 
+/* 【底片感排版】：左右無縫貼齊 (gap-x: 0)，上下行距拉開 (gap-y: 28px) 呈現三行寬鬆感 */
 #home-hero-grid {
 display: grid;
 grid-template-columns: repeat(6, 1fr);
-gap: 14px;
+column-gap: 0px;
+row-gap: 28px;
 width: 100%;
 max-width: 1500px;
 margin: 0 auto;
@@ -564,7 +566,6 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【智慧副檔名全自動窮舉器】：自動嘗試 .jpg / .jpeg / .png / .JPG 等所有可能，無需手動對應副檔名
 const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG'];
 
 function getSmartImageCandidates(baseName) {
@@ -574,21 +575,22 @@ function getSmartImageCandidates(baseName) {
   let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
   let subfolder = folderMatch ? folderMatch[1] : '';
 
-  // 自動窮舉所有副檔名與大小寫
   for (let ext of supportedExtensions) {
     if (subfolder) {
       let lowSub = subfolder.toLowerCase();
       candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase}.${ext}`);
       candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
+      candidates.push(`${lowSub}/${cleanBase}.${ext}`);
+      candidates.push(`${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
     }
     candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.${ext}`);
     candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.${ext}`);
+    candidates.push(`${cleanBase}.${ext}`);
+    candidates.push(`${cleanBase.toLowerCase()}.${ext}`);
   }
 
-  // 針對 Popular Music Group 這種帶有空格與大寫的特例直接精準對應
   let idxMatch = cleanBase.match(/[-_](\d+)$/);
   let idx = idxMatch ? idxMatch[1] : '0';
-  
   if (cleanBase.toLowerCase().includes('popular')) {
     candidates.unshift(
       `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.JPG`,
@@ -1036,7 +1038,6 @@ try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
 }
 }
 
-// 【Street Photography 自動偵測陣列】：支援自動過濾未上傳的照片，有幾張就顯示幾張
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
 const lightingProjects = [
@@ -1211,7 +1212,7 @@ let targetRowHeight = 280;
 for (let i = 0; i < streetPhotos.length; i += 3) {
 let rowImgs = streetPhotos.slice(i, i + 3);
 streetRows += `<div class="justified-row">`;
-rowImgs.forEach((imgBase, rIdx) => {
+rowImgs.forEach((url, rIdx) => {
 let ratios = [1.1, 1.0, 1.2];
 let ratio = ratios[(i + rIdx) % ratios.length];
 let cWidth = targetRowHeight * ratio;
