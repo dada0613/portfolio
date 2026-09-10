@@ -544,6 +544,9 @@ let isAdminLoggedIn = false;
 let undoStack = [];
 let currentCropImg = null;
 
+// 【請確認這是你在 Supabase Storage 複製出來的 Public URL 基礎路徑】
+const SUPABASE_STORAGE_URL = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
+
 function recordState() {
 const state = document.querySelector('main').innerHTML;
 undoStack.push(state);
@@ -562,7 +565,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【極速直達路徑配置：直接對應實際存在的資料夾與標準副檔名】
+// 【 Supabase 雲端智慧路徑產生器：完全自動組合，免手動調整】
 function getSmartImageCandidates(baseName) {
 let cleanBase = baseName.trim();
 let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
@@ -570,22 +573,21 @@ let subfolder = folderMatch ? folderMatch[1].toLowerCase() : '';
 let idxMatch = cleanBase.match(/[-_](\d+)$/);
 let idx = idxMatch ? idxMatch[1] : '0';
 
-// 針對已知資料夾結構直接返回精準路徑（大幅減少 404 請求與載入時間）
-if (subfolder === 'ksa') return [`ksa/ksa-${idx}.jpg`, `ksa/ksa-${idx}.JPG`, `ksa/Ksa-${idx}.jpg`];
-if (subfolder === 'ttto') return [`ttto/TTTO-${idx}.jpg`, `ttto/TTTO-${idx}.JPG`];
-if (subfolder === 'botb') return [`botb/botb-${idx}.jpg`, `botb/botb-${idx}.JPG`];
-if (subfolder === 'botb6') return [`botb6/botb6-${idx}.jpg`, `botb6/botb6-${idx}.JPG`];
-if (cleanBase.toLowerCase().includes('haunted')) return [`haunted/Haunted House-${idx}.jpeg`, `haunted/Haunted House-${idx}.jpg`];
-if (cleanBase.toLowerCase().includes('popular')) return [`popular/Popular Music Group-${idx}.jpg`, `popular/Popular Music Group-${idx}.jpeg`];
-if (subfolder === 'tso') return [`tso/tso-${idx}.jpg`, `tso/tso-${idx}.JPG`];
-if (subfolder === 'upba') return [`upba/UPBa-${idx}.jpg`, `upba/UPBa-${idx}.png`];
-if (subfolder === 'student') return [`student/Student-${idx}.jpg`, `student/student-${idx}.jpg`];
-if (subfolder === 'graphic') return [`graphic/graphic-${idx}.jpg`, `graphic/graphic-${idx}.png`];
-if (subfolder === 'street') return [`street/street-${idx}.jpg`, `street/street-${idx}.JPG`];
-if (subfolder === 'home') return [`home/home-${idx}.jpg`, `home/home-${idx}.JPG`];
+// 針對不同專案自動對應 Supabase 內的檔案路徑
+if (subfolder === 'ksa') return [`${SUPABASE_STORAGE_URL}ksa/ksa-${idx}.jpg`, `${SUPABASE_STORAGE_URL}ksa/ksa-${idx}.JPG`];
+if (subfolder === 'ttto') return [`${SUPABASE_STORAGE_URL}ttto/TTTO-${idx}.jpg`, `${SUPABASE_STORAGE_URL}ttto/TTTO-${idx}.JPG`];
+if (subfolder === 'botb') return [`${SUPABASE_STORAGE_URL}botb/botb-${idx}.jpg`, `${SUPABASE_STORAGE_URL}botb/botb-${idx}.JPG`];
+if (subfolder === 'botb6') return [`${SUPABASE_STORAGE_URL}botb6/botb6-${idx}.jpg`, `${SUPABASE_STORAGE_URL}botb6/botb6-${idx}.JPG`];
+if (cleanBase.toLowerCase().includes('haunted')) return [`${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpeg`, `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpg`];
+if (cleanBase.toLowerCase().includes('popular')) return [`${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpg`, `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpeg`];
+if (subfolder === 'tso') return [`${SUPABASE_STORAGE_URL}tso/tso-${idx}.jpg`, `${SUPABASE_STORAGE_URL}tso/tso-${idx}.JPG`];
+if (subfolder === 'upba') return [`${SUPABASE_STORAGE_URL}upba/UPBa-${idx}.jpg`, `${SUPABASE_STORAGE_URL}upba/UPBa-${idx}.png`];
+if (subfolder === 'student') return [`${SUPABASE_STORAGE_URL}student/Student-${idx}.jpg`];
+if (subfolder === 'graphic') return [`${SUPABASE_STORAGE_URL}graphic/graphic-${idx}.jpg`, `${SUPABASE_STORAGE_URL}graphic/graphic-${idx}.png`];
+if (subfolder === 'street') return [`${SUPABASE_STORAGE_URL}street/street-${idx}.jpg`];
+if (subfolder === 'home') return [`${SUPABASE_STORAGE_URL}home/home-${idx}.jpg`];
 
-// 預設直達
-return [`${cleanBase}.jpg`, `${cleanBase}.jpeg`, `${cleanBase}.png`];
+return [`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`];
 }
 
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
