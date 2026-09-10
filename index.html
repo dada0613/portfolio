@@ -135,7 +135,6 @@ transition: transform 0.5s ease;
 transform: scale(1.05);
 }
 
-/* 首頁大圖拼貼網格：最大化一排 6 個，隨螢幕縮小自動響應式調整 */
 #home-hero-grid {
 display: grid;
 grid-template-columns: repeat(6, 1fr);
@@ -152,7 +151,6 @@ padding: 0 24px;
 #home-hero-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* 獨立定位畫布物件 */
 .canvas-draggable-photo {
 position: relative;
 display: inline-block;
@@ -168,7 +166,6 @@ outline-offset: 4px;
 cursor: grabbing;
 }
 
-/* 8 個方向把手 */
 .resize-handle {
 display: none;
 position: absolute;
@@ -565,7 +562,8 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG'];
+// 【極速精簡版候選路徑：直接鎖定真實結構，大幅降低載入等待時間】
+const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
 
 function getSmartImageCandidates(baseName) {
 let candidates = [];
@@ -573,20 +571,14 @@ let cleanBase = baseName.trim();
 let lowerBase = cleanBase.toLowerCase();
 
 let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
-let subfolder = folderMatch ? folderMatch[1] : '';
+let subfolder = folderMatch ? folderMatch[1].toLowerCase() : '';
 
 if (subfolder) {
-let lowerSub = subfolder.toLowerCase();
-let capSub = subfolder.charAt(0).toUpperCase() + subfolder.slice(1).toLowerCase();
-let possibleFolders = [subfolder, lowerSub, capSub];
 let remainder = cleanBase.slice(subfolder.length);
-
-for (let folder of possibleFolders) {
 for (let ext of supportedExtensions) {
-candidates.push(`${folder}/${cleanBase}.${ext}`);
-candidates.push(`${folder}/${lowerBase}.${ext}`);
-candidates.push(`${folder}/${capSub}${remainder}.${ext}`);
-}
+candidates.push(`${subfolder}/${subfolder}${remainder}.${ext}`);
+candidates.push(`${subfolder}/${cleanBase}.${ext}`);
+candidates.push(`${subfolder}/${lowerBase}.${ext}`);
 }
 }
 
@@ -599,28 +591,13 @@ let idxMatch = cleanBase.match(/[-_](\d+)$/);
 let idx = idxMatch ? idxMatch[1] : '0';
 
 if (cleanBase.toLowerCase().includes('haunted')) {
-for (let ext of supportedExtensions) {
-candidates.push(`haunted/Haunted House-${idx}.${ext}`);
-candidates.push(`Haunted Halls/Haunted House-${idx}.${ext}`);
-}
-}
-if (cleanBase.toLowerCase().includes('popular')) {
-for (let ext of supportedExtensions) {
-candidates.push(`popular/Popular Music Group-${idx}.${ext}`);
-candidates.push(`Popular Music Group/Popular Music Group-${idx}.${ext}`);
-}
-}
-if (cleanBase.toLowerCase().includes('upba')) {
-for (let ext of supportedExtensions) {
-candidates.push(`upba/UPBa-${idx}.${ext}`);
-}
-}
-// 【新增 graphic 資料夾支援：支援 graphic-0, 1...】
-if (cleanBase.toLowerCase().includes('graphic')) {
-for (let ext of supportedExtensions) {
-candidates.push(`graphic/graphic-${idx}.${ext}`);
-candidates.push(`graphic/Graphic-${idx}.${ext}`);
-}
+candidates.push(`haunted/Haunted House-${idx}.jpeg`, `haunted/Haunted House-${idx}.jpg`);
+} else if (cleanBase.toLowerCase().includes('popular')) {
+candidates.push(`popular/Popular Music Group-${idx}.jpg`, `popular/Popular Music Group-${idx}.jpeg`);
+} else if (cleanBase.toLowerCase().includes('upba')) {
+candidates.push(`upba/UPBa-${idx}.jpg`, `upba/UPBa-${idx}.png`);
+} else if (cleanBase.toLowerCase().includes('graphic')) {
+candidates.push(`graphic/graphic-${idx}.jpg`, `graphic/graphic-${idx}.png`);
 }
 
 return [...new Set(candidates)];
@@ -634,7 +611,7 @@ let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 let isCoverImg = baseName.toString().toLowerCase().includes('-0');
 let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
 let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
-return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" ${clickAttr}>`;
+return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
 };
 
 window.handleSmartImageError = function(imgEl) {
@@ -1022,7 +999,7 @@ for (let i = 1; i <= 18; i++) {
 let candidates = getSmartImageCandidates(`home-${i}`);
 let initialSrc = candidates[0];
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
-html += `<div class="justified-item h-[280px] overflow-hidden"><img src="${initialSrc}" alt="Home Hero ${i}" class="w-full h-full object-cover" style="cursor: default;" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy"></div>`;
+html += `<div class="justified-item h-[280px] overflow-hidden"><img src="${initialSrc}" alt="Home Hero ${i}" class="w-full h-full object-cover" style="cursor: default;" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async"></div>`;
 }
 }
 grid.innerHTML = html;
@@ -1075,7 +1052,7 @@ role: "Technical Designer (Layout & Narrative), Sound Designer",
 engine: "Unity", tags: ["Unity", "C#", "Event Trigger Sys", "Prop Scripting", "Sound Design"],
 desc: "Engineered a decoupled interaction system using C# Interfaces, allowing designers to drag-and-drop behavior onto any prop without code dependency. Also implemented a custom Event Management System to synchronize lighting and audio scares.",
 detailedDesc: "Bedlam is a psychological horror game where environment interaction drives the experience. Players must guide a comatose body to safety as a robot, using light as their only weapon against the dark. My primary role was to architect the interaction system. Instead of hardcoding behaviors, I built a modular component system that allowed level designers to turn any static mesh into an interactive object simply by attaching a script—no additional coding required.",
-visualHtml: `<img src="https://img.itch.zone/aW1nLzI0MzUyNTMyLnBuZw==/315x250%23c/KkcSLX.png" alt="Bedlam" class="w-full h-full object-cover object-top block" loading="lazy">`,
+visualHtml: `<img src="https://img.itch.zone/aW1nLzI0MzUyNTMyLnBuZw==/315x250%23c/KkcSLX.png" alt="Bedlam" class="w-full h-full object-cover object-top block" loading="lazy" decoding="async">`,
 link: "https://cwru-ecse390.itch.io/bedlam-f2025-team-2",
 linkText: "Play / Download"
 },
@@ -1085,7 +1062,7 @@ role: "AI Design, Tower Systems & Playtest Iteration",
 engine: "Unity", tags: ["Unity", "C#", "Enemy AI", "Combat Balance", "Iterative Design"],
 desc: "Scripted 4 distinct enemy AI behaviors and tower defense functionalities. Heavily utilized weekly playtest data to iterate on movement patterns and difficulty balancing, ensuring a fair yet challenging combat loop.",
 detailedDesc: "For Claw Patrol, I designed a modular AI system. The goal was to have enemies that felt responsive but predictable enough for a platformer. I used a State Pattern to manage behaviors.",
-visualHtml: `<img src="https://img.itch.zone/aW1hZ2UvMjY1MzY4OS8xNTk2MTY4OS5wbmc=/794x1000/LCgUY6.png" alt="Claw Patrol" class="w-full h-full object-cover object-top block" loading="lazy">`,
+visualHtml: `<img src="https://img.itch.zone/aW1hZ2UvMjY1MzY4OS8xNTk2MTY4OS5wbmc=/794x1000/LCgUY6.png" alt="Claw Patrol" class="w-full h-full object-cover object-top block" loading="lazy" decoding="async">`,
 link: "https://ecse-csds290.itch.io/2024-team-6",
 linkText: "Play / Download"
 },
@@ -1235,7 +1212,7 @@ let ratio = ratios[(i + rIdx) % ratios.length];
 let cWidth = targetRowHeight * ratio;
 streetRows += `
 <div class="justified-item" style="width: ${cWidth}px; height: ${targetRowHeight}px;">
-<img src="${url}" alt="Street Shot" class="w-full h-full object-cover" onclick="openLightbox(this.src)" loading="lazy">
+<img src="${url}" alt="Street Shot" class="w-full h-full object-cover" onclick="openLightbox(this.src)" loading="lazy" decoding="async">
 </div>
 `;
 });
@@ -1301,7 +1278,6 @@ renderLightingContent();
 document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
-// 【動態載入 graphic 資料夾的圖片堆疊】
 let collageHtml = generateResponsivePhotoGrid('graphic-');
 container.innerHTML = `
 <div class="text-neutral-400 text-sm tracking-wide mb-8">Graphic Design & Brand Identity Showcase</div>
