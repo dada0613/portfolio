@@ -565,7 +565,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【全面升級：支援資料夾大小寫、空格自動替換為 %20、檔名與副檔名容錯】
+// 【終極強固的智慧檔名與資料夾解析器】
 const supportedExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'webp', 'WEBP'];
 
 function getSmartImageCandidates(baseName) {
@@ -602,28 +602,37 @@ candidates.push(`${folder}/${fname}.${ext}`);
 }
 }
 
-// 根目錄與常見名稱對應
+// 根目錄對應
 for (let ext of supportedExtensions) {
 candidates.push(`${cleanBase}.${ext}`);
 candidates.push(`${lowerBase}.${ext}`);
 candidates.push(`${cleanBase.toUpperCase()}.${ext}`);
 }
 
-// 【針對 Haunted Halls 與 Popular Music Group 的實際資料夾與檔名空白對應】
+// 【專門針對有空白鍵與檔案前綴不一致的資料夾進行智慧對應】
+let idxMatch = cleanBase.match(/[-_](\d+)$/);
+let idx = idxMatch ? idxMatch[1] : '0';
+
 if (cleanBase.toLowerCase().includes('haunted')) {
-let idx = cleanBase.split('-').pop();
 for (let ext of supportedExtensions) {
-candidates.push(`Haunted%20Halls/Haunted%20House-${idx}.${ext}`);
 candidates.push(`Haunted Halls/Haunted House-${idx}.${ext}`);
-candidates.push(`haunted%20halls/haunted%20house-${idx}.${ext}`);
+candidates.push(`Haunted%20Halls/Haunted%20House-${idx}.${ext}`);
+candidates.push(`haunted halls/Haunted House-${idx}.${ext}`);
+candidates.push(`haunted halls/haunted house-${idx}.${ext}`);
 }
 }
 if (cleanBase.toLowerCase().includes('popular')) {
-let idx = cleanBase.split('-').pop();
 for (let ext of supportedExtensions) {
-candidates.push(`Popular%20Music%20Group/Popular%20Music%20Group-${idx}.${ext}`);
 candidates.push(`Popular Music Group/Popular Music Group-${idx}.${ext}`);
-candidates.push(`popular%20music%20group/popular%20music%20group-${idx}.${ext}`);
+candidates.push(`Popular%20Music%20Group/Popular Music Group-${idx}.${ext}`);
+candidates.push(`popular music group/Popular Music Group-${idx}.${ext}`);
+candidates.push(`popular music group/popular music group-${idx}.${ext}`);
+}
+}
+if (cleanBase.toLowerCase().includes('upba')) {
+for (let ext of supportedExtensions) {
+candidates.push(`UPBa/UPBa-${idx}.${ext}`);
+candidates.push(`UPBa/upba-${idx}.${ext}`);
 }
 }
 
@@ -1034,7 +1043,7 @@ let eventProjects = [
 { id: 5, title: "Haunted Halls - Halloween", date: "Autumn 2025", prefix: "Haunted House-", desc: "Spooky atmospheric lighting, costume details, and immersive haunted house reactions." },
 { id: 6, title: "Popular Music Group", date: "Winter 2025", prefix: "Popular Music Group-", desc: "Live studio sessions, energetic live band performances, and atmospheric musical documentation." },
 { id: 7, title: "Thwing Study Over 2025", date: "Spring 2025", prefix: "tso-", desc: "Late-night study sessions, community bonding, and academic focus documentation." },
-{ id: 8, title: "UPBizarre", date: "Winter 2025", prefix: "upba-", desc: "Bizarre showcase capturing unique performances, artistic expressions, and memorable campus highlights." },
+{ id: 8, title: "UPBizarre", date: "Winter 2025", prefix: "UPBa-", desc: "Bizarre showcase capturing unique performances, artistic expressions, and memorable campus highlights." },
 { id: 9, title: "Student Club Expo", date: "Autumn 2025", prefix: "Student-", desc: "Showcasing student organizations, interactive booths, and campus engagement." }
 ];
 
