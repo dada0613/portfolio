@@ -565,8 +565,8 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【終極強固的智慧檔名與資料夾解析器】
-const supportedExtensions = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'webp', 'WEBP'];
+// 【精簡並加速的圖片候選路徑產生器（支援副檔名與大小寫容錯）】
+const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG'];
 
 function getSmartImageCandidates(baseName) {
 let candidates = [];
@@ -578,38 +578,25 @@ let subfolder = folderMatch ? folderMatch[1] : '';
 
 if (subfolder) {
 let lowerSub = subfolder.toLowerCase();
-let upperSub = subfolder.toUpperCase();
 let capSub = subfolder.charAt(0).toUpperCase() + subfolder.slice(1).toLowerCase();
-
-let possibleFolders = [subfolder, lowerSub, upperSub, capSub];
+let possibleFolders = [subfolder, lowerSub, capSub];
 let remainder = cleanBase.slice(subfolder.length);
 
-let possibleFileNames = [
-cleanBase,
-lowerBase,
-cleanBase.toUpperCase(),
-lowerSub + remainder,
-upperSub + remainder,
-capSub + remainder
-];
-
 for (let folder of possibleFolders) {
-for (let fname of possibleFileNames) {
 for (let ext of supportedExtensions) {
-candidates.push(`${folder}/${fname}.${ext}`);
-}
+candidates.push(`${folder}/${cleanBase}.${ext}`);
+candidates.push(`${folder}/${lowerBase}.${ext}`);
+candidates.push(`${folder}/${capSub}${remainder}.${ext}`);
 }
 }
 }
 
-// 根目錄對應
 for (let ext of supportedExtensions) {
 candidates.push(`${cleanBase}.${ext}`);
 candidates.push(`${lowerBase}.${ext}`);
-candidates.push(`${cleanBase.toUpperCase()}.${ext}`);
 }
 
-// 【專門針對有空白鍵與檔案前綴不一致的資料夾進行智慧對應】
+// 針對特殊資料夾進行精準對應
 let idxMatch = cleanBase.match(/[-_](\d+)$/);
 let idx = idxMatch ? idxMatch[1] : '0';
 
@@ -617,22 +604,17 @@ if (cleanBase.toLowerCase().includes('haunted')) {
 for (let ext of supportedExtensions) {
 candidates.push(`Haunted Halls/Haunted House-${idx}.${ext}`);
 candidates.push(`Haunted%20Halls/Haunted%20House-${idx}.${ext}`);
-candidates.push(`haunted halls/Haunted House-${idx}.${ext}`);
-candidates.push(`haunted halls/haunted house-${idx}.${ext}`);
 }
 }
 if (cleanBase.toLowerCase().includes('popular')) {
 for (let ext of supportedExtensions) {
 candidates.push(`Popular Music Group/Popular Music Group-${idx}.${ext}`);
 candidates.push(`Popular%20Music%20Group/Popular Music Group-${idx}.${ext}`);
-candidates.push(`popular music group/Popular Music Group-${idx}.${ext}`);
-candidates.push(`popular music group/popular music group-${idx}.${ext}`);
 }
 }
 if (cleanBase.toLowerCase().includes('upba')) {
 for (let ext of supportedExtensions) {
 candidates.push(`UPBa/UPBa-${idx}.${ext}`);
-candidates.push(`UPBa/upba-${idx}.${ext}`);
 }
 }
 
@@ -647,7 +629,8 @@ let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 let isCoverImg = baseName.toString().toLowerCase().includes('-0');
 let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
 let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
-return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" ${clickAttr}>`;
+// 【加入 loading="lazy" 實現極速懶載入，大幅加快頁面流暢度】
+return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" ${clickAttr}>`;
 };
 
 window.handleSmartImageError = function(imgEl) {
@@ -668,12 +651,13 @@ if (itemContainer) itemContainer.style.display = 'none';
 };
 
 function openLightbox(imgSrc) {
-if (isAdminLoggedIn) return;
+if (!isAdminLoggedIn) {
 const modal = document.getElementById('lightbox-modal');
 const modalImg = document.getElementById('lightbox-img');
 if (modal && modalImg) {
 modalImg.src = imgSrc;
 modal.classList.remove('hidden');
+}
 }
 }
 
@@ -713,7 +697,7 @@ password: password,
 });
 
 if (error) {
-console.warn('Supabase auth warning (falling back to local admin mode):', error.message);
+console.warn('Supabase auth warning:', error.message);
 }
 
 isAdminLoggedIn = true;
@@ -772,7 +756,10 @@ try {
 const saved = JSON.parse(data.layout_html);
 if (saved.mainHtml) {
 const main = document.querySelector('main');
-if (main) main.innerHTML = saved.mainHtml;
+// 【修復安全漏洞】：只有當目前處於管理員登入狀態時，才套用雲端存檔；否則強制保持唯讀，防止未授權編輯
+if (main && isAdminLoggedIn) {
+main.innerHTML = saved.mainHtml;
+}
 }
 } catch (err) {
 console.error('Failed to parse cloud data:', err);
@@ -780,6 +767,7 @@ console.error('Failed to parse cloud data:', err);
 }
 
 function enableEditableElements() {
+if (!isAdminLoggedIn) return; // 安全鎖定
 document.querySelectorAll('.serif-title, p, h3').forEach(el => {
 if (!el.closest('#admin-modal')) {
 el.setAttribute('contenteditable', 'true');
@@ -821,6 +809,7 @@ el.querySelectorAll('.resize-handle, .delete-elem-btn').forEach(h => h.remove())
 }
 
 function deleteElement(btn) {
+if (!isAdminLoggedIn) return;
 recordState();
 const card = btn.closest('.canvas-draggable-photo') || btn.closest('.outline-card') || btn.closest('.gd-card');
 if (card) {
@@ -949,6 +938,7 @@ if (previewImg) previewImg.style.objectFit = mode;
 }
 
 function applyCropChanges() {
+if (!isAdminLoggedIn) return;
 if (currentCropImg) {
 const previewImg = document.getElementById('crop-preview-img');
 currentCropImg.style.objectFit = previewImg.style.objectFit || 'cover';
@@ -1029,7 +1019,7 @@ for (let i = 1; i <= 18; i++) {
 let candidates = getSmartImageCandidates(`home-${i}`);
 let initialSrc = candidates[0];
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
-html += `<div class="justified-item h-[280px] overflow-hidden"><img src="${initialSrc}" alt="Home Hero ${i}" class="w-full h-full object-cover" style="cursor: default;" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)"></div>`;
+html += `<div class="justified-item h-[280px] overflow-hidden"><img src="${initialSrc}" alt="Home Hero ${i}" class="w-full h-full object-cover" style="cursor: default;" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy"></div>`;
 }
 }
 grid.innerHTML = html;
@@ -1089,7 +1079,7 @@ role: "Technical Designer (Layout & Narrative), Sound Designer",
 engine: "Unity", tags: ["Unity", "C#", "Event Trigger Sys", "Prop Scripting", "Sound Design"],
 desc: "Engineered a decoupled interaction system using C# Interfaces, allowing designers to drag-and-drop behavior onto any prop without code dependency. Also implemented a custom Event Management System to synchronize lighting and audio scares.",
 detailedDesc: "Bedlam is a psychological horror game where environment interaction drives the experience. Players must guide a comatose body to safety as a robot, using light as their only weapon against the dark. My primary role was to architect the interaction system. Instead of hardcoding behaviors, I built a modular component system that allowed level designers to turn any static mesh into an interactive object simply by attaching a script—no additional coding required.",
-visualHtml: `<img src="https://img.itch.zone/aW1nLzI0MzUyNTMyLnBuZw==/315x250%23c/KkcSLX.png" alt="Bedlam" class="w-full h-full object-cover object-top block">`,
+visualHtml: `<img src="https://img.itch.zone/aW1nLzI0MzUyNTMyLnBuZw==/315x250%23c/KkcSLX.png" alt="Bedlam" class="w-full h-full object-cover object-top block" loading="lazy">`,
 link: "https://cwru-ecse390.itch.io/bedlam-f2025-team-2",
 linkText: "Play / Download"
 },
@@ -1099,7 +1089,7 @@ role: "AI Design, Tower Systems & Playtest Iteration",
 engine: "Unity", tags: ["Unity", "C#", "Enemy AI", "Combat Balance", "Iterative Design"],
 desc: "Scripted 4 distinct enemy AI behaviors and tower defense functionalities. Heavily utilized weekly playtest data to iterate on movement patterns and difficulty balancing, ensuring a fair yet challenging combat loop.",
 detailedDesc: "For Claw Patrol, I designed a modular AI system. The goal was to have enemies that felt responsive but predictable enough for a platformer. I used a State Pattern to manage behaviors.",
-visualHtml: `<img src="https://img.itch.zone/aW1hZ2UvMjY1MzY4OS8xNTk2MTY4OS5wbmc=/794x1000/LCgUY6.png" alt="Claw Patrol" class="w-full h-full object-cover object-top block">`,
+visualHtml: `<img src="https://img.itch.zone/aW1hZ2UvMjY1MzY4OS8xNTk2MTY4OS5wbmc=/794x1000/LCgUY6.png" alt="Claw Patrol" class="w-full h-full object-cover object-top block" loading="lazy">`,
 link: "https://ecse-csds290.itch.io/2024-team-6",
 linkText: "Play / Download"
 },
@@ -1249,7 +1239,7 @@ let ratio = ratios[(i + rIdx) % ratios.length];
 let cWidth = targetRowHeight * ratio;
 streetRows += `
 <div class="justified-item" style="width: ${cWidth}px; height: ${targetRowHeight}px;">
-<img src="${url}" alt="Street Shot" class="w-full h-full object-cover" onclick="openLightbox(this.src)">
+<img src="${url}" alt="Street Shot" class="w-full h-full object-cover" onclick="openLightbox(this.src)" loading="lazy">
 </div>
 `;
 });
