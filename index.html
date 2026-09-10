@@ -565,7 +565,6 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 【精簡並加速的圖片候選路徑產生器（支援副檔名與大小寫容錯）】
 const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG'];
 
 function getSmartImageCandidates(baseName) {
@@ -596,23 +595,31 @@ candidates.push(`${cleanBase}.${ext}`);
 candidates.push(`${lowerBase}.${ext}`);
 }
 
-// 針對特殊資料夾進行精準對應
 let idxMatch = cleanBase.match(/[-_](\d+)$/);
 let idx = idxMatch ? idxMatch[1] : '0';
 
 if (cleanBase.toLowerCase().includes('haunted')) {
 for (let ext of supportedExtensions) {
 candidates.push(`haunted/Haunted House-${idx}.${ext}`);
+candidates.push(`Haunted Halls/Haunted House-${idx}.${ext}`);
 }
 }
 if (cleanBase.toLowerCase().includes('popular')) {
 for (let ext of supportedExtensions) {
 candidates.push(`popular/Popular Music Group-${idx}.${ext}`);
+candidates.push(`Popular Music Group/Popular Music Group-${idx}.${ext}`);
 }
 }
 if (cleanBase.toLowerCase().includes('upba')) {
 for (let ext of supportedExtensions) {
-candidates.push(`UPBa/UPBa-${idx}.${ext}`);
+candidates.push(`upba/UPBa-${idx}.${ext}`);
+}
+}
+// 【新增 graphic 資料夾支援：支援 graphic-0, 1...】
+if (cleanBase.toLowerCase().includes('graphic')) {
+for (let ext of supportedExtensions) {
+candidates.push(`graphic/graphic-${idx}.${ext}`);
+candidates.push(`graphic/Graphic-${idx}.${ext}`);
 }
 }
 
@@ -627,7 +634,6 @@ let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 let isCoverImg = baseName.toString().toLowerCase().includes('-0');
 let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
 let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
-// 【加入 loading="lazy" 實現極速懶載入，大幅加快頁面流暢度】
 return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" ${clickAttr}>`;
 };
 
@@ -754,7 +760,6 @@ try {
 const saved = JSON.parse(data.layout_html);
 if (saved.mainHtml) {
 const main = document.querySelector('main');
-// 【修復安全漏洞】：只有當目前處於管理員登入狀態時，才套用雲端存檔；否則強制保持唯讀，防止未授權編輯
 if (main && isAdminLoggedIn) {
 main.innerHTML = saved.mainHtml;
 }
@@ -765,7 +770,7 @@ console.error('Failed to parse cloud data:', err);
 }
 
 function enableEditableElements() {
-if (!isAdminLoggedIn) return; // 安全鎖定
+if (!isAdminLoggedIn) return;
 document.querySelectorAll('.serif-title, p, h3').forEach(el => {
 if (!el.closest('#admin-modal')) {
 el.setAttribute('contenteditable', 'true');
@@ -1303,16 +1308,12 @@ renderLightingContent();
 document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
-let customVideo = JSON.parse(localStorage.getItem('custom_video_items') || '[]');
-let html = `<div class="text-neutral-400 text-sm tracking-wide mb-8">Detailed archives are currently being curated. Please check back soon!</div>`;
-if (customVideo.length > 0) {
-html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">`;
-customVideo.forEach(item => {
-html += `<div class="outline-card p-6 rounded-sm"><h3 class="serif-title text-2xl italic text-white mb-2">${item.title}</h3><p class="text-neutral-400 text-xs">${item.desc}</p></div>`;
-});
-html += `</div>`;
-}
-container.innerHTML = html;
+// 【動態載入 graphic 資料夾的圖片堆疊】
+let collageHtml = generateResponsivePhotoGrid('graphic-');
+container.innerHTML = `
+<div class="text-neutral-400 text-sm tracking-wide mb-8">Graphic Design & Brand Identity Showcase</div>
+<div class="w-full px-4 md:px-12 mt-4">${collageHtml}</div>
+`;
 } else if (hash === '#game-design') {
 document.getElementById('view-game-design').classList.remove('hidden');
 renderGameProjectsContent();
