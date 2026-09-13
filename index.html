@@ -617,20 +617,8 @@ return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${
 };
 
 window.handleSmartImageError = function(imgEl) {
-try {
-let candidates = JSON.parse(decodeURIComponent(imgEl.dataset.candidates || "[]"));
-let idx = parseInt(imgEl.dataset.candidateIdx || "0") + 1;
-if (idx < candidates.length) {
-imgEl.dataset.candidateIdx = idx.toString();
-imgEl.src = candidates[idx];
-} else {
 let itemContainer = imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
 if (itemContainer) itemContainer.style.display = 'none';
-}
-} catch (e) {
-let itemContainer = imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
-if (itemContainer) itemContainer.style.display = 'none';
-}
 };
 
 function openLightbox(imgSrc) {
@@ -709,10 +697,16 @@ document.getElementById('admin-modal').classList.add('hidden');
 
 async function saveAllChanges() {
 recordState();
+// 儲存前先暫時拔除所有的編輯狀態、黃色框線與刪除按鈕
+disableEditableElements();
+
 const payload = {
 mainHtml: document.querySelector('main').innerHTML,
 timestamp: new Date().toISOString()
 };
+
+// 儲存完後立刻恢復編輯模式
+enableEditableElements();
 
 const { error } = await supabaseClient
 .from('portfolio_settings')
@@ -1002,25 +996,22 @@ if (!grid) return;
 let html = '';
 for (let round = 0; round < 2; round++) {
 for (let i = 1; i <= 18; i++) {
-let candidates = getSmartImageCandidates(`home-${i}`);
-let initialSrc = candidates[0];
-let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
-html += `<div class="justified-item h-[280px] overflow-hidden"><img src="${initialSrc}" alt="Home Hero ${i}" class="w-full h-full object-cover" style="cursor: default;" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async"></div>`;
+html += `<div class="justified-item h-[280px] overflow-hidden">${smartImageHtml(`home/home-${i}`, `Home Hero ${i}`)}</div>`;
 }
 }
 grid.innerHTML = html;
 }
 
 let eventProjects = [
-{ id: 1, title: "Korean Student Association", date: "Winter 2025", prefix: "ksa-", desc: "Capturing community gatherings, cultural showcases, and vibrant student moments across campus events." },
-{ id: 2, title: "The Trail To Oregon!", date: "Spring 2025", prefix: "TTTO-", desc: "Stage production documentation capturing dramatic moments, costume details, and dynamic performances." },
-{ id: 3, title: "Battle of the Band 2025", date: "Summer 2025", prefix: "botb-", desc: "Battle of the Bands high-energy stage performances, musician portraits, and crowd reactions." },
-{ id: 4, title: "Battle of the Band 2026", date: "Summer 2026", prefix: "botb6-", desc: "Battle of the Bands latest edition featuring electrifying live sets, stage lighting, and crowd engagement." },
-{ id: 5, title: "Haunted Halls - Halloween", date: "Autumn 2025", prefix: "Haunted House-", desc: "Spooky atmospheric lighting, costume details, and immersive haunted house reactions." },
-{ id: 6, title: "Popular Music Group", date: "Winter 2025", prefix: "Popular Music Group-", desc: "Live studio sessions, energetic live band performances, and atmospheric musical documentation." },
-{ id: 7, title: "Thwing Study Over 2025", date: "Spring 2025", prefix: "tso-", desc: "Late-night study sessions, community bonding, and academic focus documentation." },
-{ id: 8, title: "UPBizarre", date: "Winter 2025", prefix: "UPBa-", desc: "Bizarre showcase capturing unique performances, artistic expressions, and memorable campus highlights." },
-{ id: 9, title: "Student Club Expo", date: "Autumn 2025", prefix: "Student-", desc: "Showcasing student organizations, interactive booths, and campus engagement." }
+{ id: 1, title: "Korean Student Association", date: "Winter 2025", prefix: "ksa/ksa-", desc: "Capturing community gatherings, cultural showcases, and vibrant student moments across campus events." },
+{ id: 2, title: "The Trail To Oregon!", date: "Spring 2025", prefix: "ttto/ttto-", desc: "Stage production documentation capturing dramatic moments, costume details, and dynamic performances." },
+{ id: 3, title: "Battle of the Band 2025", date: "Summer 2025", prefix: "botb/botb-", desc: "Battle of the Bands high-energy stage performances, musician portraits, and crowd reactions." },
+{ id: 4, title: "Battle of the Band 2026", date: "Summer 2026", prefix: "botb6/botb6-", desc: "Battle of the Bands latest edition featuring electrifying live sets, stage lighting, and crowd engagement." },
+{ id: 5, title: "Haunted Halls - Halloween", date: "Autumn 2025", prefix: "haunted/Haunted House-", desc: "Spooky atmospheric lighting, costume details, and immersive haunted house reactions." },
+{ id: 6, title: "Popular Music Group", date: "Winter 2025", prefix: "popular/Popular Music Group-", desc: "Live studio sessions, energetic live band performances, and atmospheric musical documentation." },
+{ id: 7, title: "Thwing Study Over 2025", date: "Spring 2025", prefix: "tso/tso-", desc: "Late-night study sessions, community bonding, and academic focus documentation." },
+{ id: 8, title: "UPBizarre", date: "Winter 2025", prefix: "upba/UPBa-", desc: "Bizarre showcase capturing unique performances, artistic expressions, and memorable campus highlights." },
+{ id: 9, title: "Student Club Expo", date: "Autumn 2025", prefix: "student/Student-", desc: "Showcasing student organizations, interactive booths, and campus engagement." }
 ];
 
 function loadCustomData() {
@@ -1041,14 +1032,14 @@ try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
 const lightingProjects = [
-{ id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.", aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season." },
-{ id: "beehive", title: "Beehive: The 60s Musical", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "beehive-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization.", aboutPlay: "Beehive is a celebration of powerful female vocalists of the 1960s.", aboutDesign: "PCPA Summer 2026 internship project." },
-{ id: "the-harvest", title: "The Harvest", subtitle: "Samuel D. Hunter / Kalberer Theatre", role: "Lighting Designer", season: "Junior Year at CWRU", prefix: "harvest-", desc: "Set entirely in a church basement, lighting enhances the tension between faith, obligation, and personal struggle.", aboutPlay: "The Harvest takes place in a small evangelical church in Idaho.", aboutDesign: "Every cue is rooted in realism." },
-{ id: "fun-home", title: "Fun Home", subtitle: "Musical / Player's Theater Group", role: "Co-Lighting Designer", season: "First Year in College", prefix: "funhome-", desc: "Reflects the emotional journey of the characters, transitioning from lighthearted to somber.", aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel.", aboutDesign: "Utilized moving lights and color-changing effects." },
-{ id: "hurricane-diane", title: "Hurricane Diane", subtitle: "Play by Madeleine George", role: "Lighting Designer (Final Project)", season: "Lighting Design Class", prefix: "diane-", desc: "Starts with warm steady lighting, shifting into cooler tones and faster transitions as chaos builds.", aboutPlay: "A modern-day version of Dionysus returns as Diane.", aboutDesign: "First full lighting plot experience." },
-{ id: "midsummer", title: "A Midsummer Night's Dream", subtitle: "William Shakespeare", role: "Solo Lighting Designer", season: "Theatrical Showcase", prefix: "midsummer-", desc: "Explores love, magic, and the connection between human and fairy worlds.", aboutPlay: "Four young lovers and amateur actors get lost in an enchanted forest.", aboutDesign: "First independent full lighting design." },
-{ id: "into-the-woods", title: "Into the Woods", subtitle: "High School Musical Production", role: "Tech Lighting Leader", season: "High School Theater Club", prefix: "woods-", desc: "Overcame limited facilities and budget by adjusting light angles and utilizing color gels.", aboutPlay: "Fairy tale characters cross paths with a Baker and his Wife.", aboutDesign: "Relied heavily on precise angle adjustments." },
-{ id: "live-performances", title: "Live Performances & Cultural Showcases", subtitle: "Concerts, Cultural Shows & Cafés", role: "Lighting Team Leader", season: "Annual Showcases", prefix: "live-", desc: "Designed lighting for over ten different showcases each year spanning diverse cultures.", aboutPlay: "Diverse annual student showcases celebrating culture and art.", aboutDesign: "Tailored color palettes to cultural origins." }
+{ id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora/luchadora-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.", aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season." },
+{ id: "beehive", title: "Beehive: The 60s Musical", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "beehive/beehive-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization.", aboutPlay: "Beehive is a celebration of powerful female vocalists of the 1960s.", aboutDesign: "PCPA Summer 2026 internship project." },
+{ id: "the-harvest", title: "The Harvest", subtitle: "Samuel D. Hunter / Kalberer Theatre", role: "Lighting Designer", season: "Junior Year at CWRU", prefix: "harvest/harvest-", desc: "Set entirely in a church basement, lighting enhances the tension between faith, obligation, and personal struggle.", aboutPlay: "The Harvest takes place in a small evangelical church in Idaho.", aboutDesign: "Every cue is rooted in realism." },
+{ id: "fun-home", title: "Fun Home", subtitle: "Musical / Player's Theater Group", role: "Co-Lighting Designer", season: "First Year in College", prefix: "funhome/funhome-", desc: "Reflects the emotional journey of the characters, transitioning from lighthearted to somber.", aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel.", aboutDesign: "Utilized moving lights and color-changing effects." },
+{ id: "hurricane-diane", title: "Hurricane Diane", subtitle: "Play by Madeleine George", role: "Lighting Designer (Final Project)", season: "Lighting Design Class", prefix: "diane/diane-", desc: "Starts with warm steady lighting, shifting into cooler tones and faster transitions as chaos builds.", aboutPlay: "A modern-day version of Dionysus returns as Diane.", aboutDesign: "First full lighting plot experience." },
+{ id: "midsummer", title: "A Midsummer Night's Dream", subtitle: "William Shakespeare", role: "Solo Lighting Designer", season: "Theatrical Showcase", prefix: "midsummer/midsummer-", desc: "Explores love, magic, and the connection between human and fairy worlds.", aboutPlay: "Four young lovers and amateur actors get lost in an enchanted forest.", aboutDesign: "First independent full lighting design." },
+{ id: "into-the-woods", title: "Into the Woods", subtitle: "High School Musical Production", role: "Tech Lighting Leader", season: "High School Theater Club", prefix: "woods/woods-", desc: "Overcame limited facilities and budget by adjusting light angles and utilizing color gels.", aboutPlay: "Fairy tale characters cross paths with a Baker and his Wife.", aboutDesign: "Relied heavily on precise angle adjustments." },
+{ id: "live-performances", title: "Live Performances & Cultural Showcases", subtitle: "Concerts, Cultural Shows & Cafés", role: "Lighting Team Leader", season: "Annual Showcases", prefix: "live/live-", desc: "Designed lighting for over ten different showcases each year spanning diverse cultures.", aboutPlay: "Diverse annual student showcases celebrating culture and art.", aboutDesign: "Tailored color palettes to cultural origins." }
 ];
 
 const gameProjects = {
@@ -1153,10 +1144,10 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
-function generateResponsivePhotoGrid(prefix) {
+function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
-allImages.push(`${prefix}${i}`);
+allImages.push(`${folderPrefix}-${i}`);
 }
 
 let rowsHtml = '';
@@ -1284,7 +1275,7 @@ renderLightingContent();
 document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
-let collageHtml = generateResponsivePhotoGrid('graphic-');
+let collageHtml = generateResponsivePhotoGrid('graphic/graphic');
 container.innerHTML = `
 <div class="text-neutral-400 text-sm tracking-wide mb-8">Graphic Design & Brand Identity Showcase</div>
 <div class="w-full px-4 md:px-12 mt-4">${collageHtml}</div>
@@ -1297,7 +1288,7 @@ const id = hash.replace('#lighting-', '');
 const project = lightingProjects.find(p => p.id.toLowerCase() === id);
 if (project) {
 const detailView = document.getElementById('view-lighting-detail');
-const collageHtml = generateResponsivePhotoGrid(project.prefix);
+const collageHtml = generateResponsivePhotoGrid(project.prefix.replace(/-$/, ''));
 detailView.innerHTML = `
 <div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
 <div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
@@ -1341,7 +1332,7 @@ detailView.id = 'view-event-detail';
 detailView.className = 'hidden w-full min-h-screen page-enter';
 document.querySelector('main').appendChild(detailView);
 }
-const collageHtml = generateResponsivePhotoGrid(project.prefix);
+const collageHtml = generateResponsivePhotoGrid(project.prefix.replace(/-$/, ''));
 detailView.innerHTML = `
 <div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
 <div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
