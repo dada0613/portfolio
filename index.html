@@ -580,13 +580,9 @@ function getSmartImageCandidates(baseName) {
       let lowSub = subfolder.toLowerCase();
       candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase}.${ext}`);
       candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
-      candidates.push(`${lowSub}/${cleanBase}.${ext}`);
-      candidates.push(`${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
     }
     candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.${ext}`);
     candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.${ext}`);
-    candidates.push(`${cleanBase}.${ext}`);
-    candidates.push(`${cleanBase.toLowerCase()}.${ext}`);
   }
 
   let idxMatch = cleanBase.match(/[-_](\d+)$/);
