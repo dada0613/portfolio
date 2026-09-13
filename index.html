@@ -733,27 +733,18 @@ async function loadCloudLayout() {
     .eq('id', 1)
     .single();
 
-  if (error) {
-    console.error('從雲端讀取失敗:', error.message);
-    return;
-  }
-
-  if (!data || !data.layout_html) {
-    console.warn('雲端沒有找到任何排版資料');
-    return;
-  }
+  if (error || !data || !data.layout_html) return;
 
   try {
     const saved = JSON.parse(data.layout_html);
     if (saved.mainHtml) {
       const main = document.querySelector('main');
-      if (main) {
+      if (main) { // <--- 拿掉 isAdminLoggedIn 限制
         main.innerHTML = saved.mainHtml;
-        console.log('成功從雲端還原排版！');
       }
     }
   } catch (err) {
-    console.error('解析雲端 HTML 資料失敗:', err);
+    console.error('Failed to parse cloud data:', err);
   }
 }
 
