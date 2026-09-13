@@ -727,25 +727,34 @@ alert('Successfully saved your edits to Supabase Cloud!');
 }
 
 async function loadCloudLayout() {
-const { data, error } = await supabaseClient
-.from('portfolio_settings')
-.select('layout_html')
-.eq('id', 1)
-.single();
+  const { data, error } = await supabaseClient
+    .from('portfolio_settings')
+    .select('layout_html')
+    .eq('id', 1)
+    .single();
 
-if (error || !data || !data.layout_html) return;
+  if (error) {
+    console.error('從雲端讀取失敗:', error.message);
+    return;
+  }
 
-try {
-const saved = JSON.parse(data.layout_html);
-if (saved.mainHtml) {
-const main = document.querySelector('main');
-if (main && isAdminLoggedIn) {
-main.innerHTML = saved.mainHtml;
-}
-}
-} catch (err) {
-console.error('Failed to parse cloud data:', err);
-}
+  if (!data || !data.layout_html) {
+    console.warn('雲端沒有找到任何排版資料');
+    return;
+  }
+
+  try {
+    const saved = JSON.parse(data.layout_html);
+    if (saved.mainHtml) {
+      const main = document.querySelector('main');
+      if (main) {
+        main.innerHTML = saved.mainHtml;
+        console.log('成功從雲端還原排版！');
+      }
+    }
+  } catch (err) {
+    console.error('解析雲端 HTML 資料失敗:', err);
+  }
 }
 
 function enableEditableElements() {
