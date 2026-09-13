@@ -739,8 +739,12 @@ async function loadCloudLayout() {
     const saved = JSON.parse(data.layout_html);
     if (saved.mainHtml) {
       const main = document.querySelector('main');
-      if (main) { // <--- 拿掉 isAdminLoggedIn 限制
+      if (main) {
         main.innerHTML = saved.mainHtml;
+        // 只有在管理員登入的情況下，載入完排版後才重新掛載編輯互動！
+        if (isAdminLoggedIn) {
+          enableEditableElements();
+        }
       }
     }
   } catch (err) {
