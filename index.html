@@ -697,7 +697,6 @@ document.getElementById('admin-modal').classList.add('hidden');
 
 async function saveAllChanges() {
 recordState();
-// 儲存前先暫時拔除所有的編輯狀態、黃色框線與刪除按鈕
 disableEditableElements();
 
 const payload = {
@@ -705,7 +704,6 @@ mainHtml: document.querySelector('main').innerHTML,
 timestamp: new Date().toISOString()
 };
 
-// 儲存完後立刻恢復編輯模式
 enableEditableElements();
 
 const { error } = await supabaseClient
@@ -719,6 +717,8 @@ alert('Saved to local storage successfully!');
 alert('Successfully saved your edits to Supabase Cloud!');
 }
 }
+
+let isCloudLoaded = false;
 
 async function loadCloudLayout() {
   const { data, error } = await supabaseClient
@@ -735,7 +735,7 @@ async function loadCloudLayout() {
       const main = document.querySelector('main');
       if (main) {
         main.innerHTML = saved.mainHtml;
-        // 只有在管理員登入的情況下，載入完排版後才重新掛載編輯互動！
+        isCloudLoaded = true; // 標記雲端排版已成功還原！
         if (isAdminLoggedIn) {
           enableEditableElements();
         }
@@ -1263,31 +1263,35 @@ if (el) el.classList.add('hidden');
 
 if (hash === '#home' || hash === '') {
 document.getElementById('view-home').classList.remove('hidden');
-renderHomeHeroCollage();
+// 只有在雲端沒有載入排版時，才呼叫預設格網生成
+if (!isCloudLoaded) renderHomeHeroCollage();
 triggerBrandAnimation();
 } else if (hash === '#photography') {
 document.getElementById('view-photography').classList.remove('hidden');
-renderPhotographyContent();
+if (!isCloudLoaded) renderPhotographyContent();
 } else if (hash === '#lighting-design') {
 document.getElementById('view-lighting-design').classList.remove('hidden');
-renderLightingContent();
+if (!isCloudLoaded) renderLightingContent();
 } else if (hash === '#video-graphic-design') {
 document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
+if (!isCloudLoaded) {
 let collageHtml = generateResponsivePhotoGrid('graphic/graphic');
 container.innerHTML = `
 <div class="text-neutral-400 text-sm tracking-wide mb-8">Graphic Design & Brand Identity Showcase</div>
 <div class="w-full px-4 md:px-12 mt-4">${collageHtml}</div>
 `;
+}
 } else if (hash === '#game-design') {
 document.getElementById('view-game-design').classList.remove('hidden');
-renderGameProjectsContent();
+if (!isCloudLoaded) renderGameProjectsContent();
 } else if (hash.startsWith('#lighting-')) {
 const id = hash.replace('#lighting-', '');
 const project = lightingProjects.find(p => p.id.toLowerCase() === id);
 if (project) {
 const detailView = document.getElementById('view-lighting-detail');
+if (!isCloudLoaded || detailView.innerHTML.trim() === '') {
 const collageHtml = generateResponsivePhotoGrid(project.prefix.replace(/-$/, ''));
 detailView.innerHTML = `
 <div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
@@ -1319,6 +1323,7 @@ detailView.innerHTML = `
 ${collageHtml}
 </div>
 `;
+}
 detailView.classList.remove('hidden');
 }
 } else if (hash.startsWith('#event-')) {
@@ -1332,6 +1337,7 @@ detailView.id = 'view-event-detail';
 detailView.className = 'hidden w-full min-h-screen page-enter';
 document.querySelector('main').appendChild(detailView);
 }
+if (!isCloudLoaded || detailView.innerHTML.trim() === '') {
 const collageHtml = generateResponsivePhotoGrid(project.prefix.replace(/-$/, ''));
 detailView.innerHTML = `
 <div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
@@ -1348,12 +1354,13 @@ detailView.innerHTML = `
 </div>
 <div class="w-full px-4 md:px-12 mt-8">${collageHtml}</div>
 `;
+}
 detailView.classList.remove('hidden');
 }
 } else if (hash.startsWith('#game-design') || hash.startsWith('#game-')) {
 if (hash === '#game-design') {
 document.getElementById('view-game-design').classList.remove('hidden');
-renderGameProjectsContent();
+if (!isCloudLoaded) renderGameProjectsContent();
 } else {
 const projectId = hash.replace('#game-', '');
 const data = gameProjects[projectId];
@@ -1401,8 +1408,11 @@ window.addEventListener('hashchange', handleRouter);
 window.onload = async function() {
 generateExactBackground();
 loadCustomData();
-await loadCloudLayout();
+await loadCloudLayout(); // 先從雲端載入你儲存的排版
+// 只有在雲端沒有資料時才呼叫預設產生器，避免覆蓋你調整好的照片 Layout
+if (!isCloudLoaded) {
 renderHomeHeroCollage();
+}
 handleRouter();
 };
 </script></body></html>
