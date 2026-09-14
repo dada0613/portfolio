@@ -566,7 +566,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 萬能智慧圖片載入：自動將檔名與資料夾全部轉成小寫、大寫、原樣組合，支援所有大小寫變體
+// 終極智慧圖片載入：自動將資料夾與檔名進行全小寫、全大寫、首字大寫等各種大小寫窮舉匹配
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = baseName.trim();
 let parts = cleanBase.split('/');
@@ -576,10 +576,13 @@ let fileName = parts.length > 1 ? parts[1] : cleanBase;
 let candidates = [
   `${SUPABASE_STORAGE_URL}${cleanBase}.jpg`,
   `${SUPABASE_STORAGE_URL}${cleanBase}.JPG`,
+  // 資料夾與檔名大小寫矩陣窮舉
   `${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toLowerCase()}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder.toUpperCase()}/${fileName.toUpperCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder.toUpperCase()}/${fileName.toLowerCase()}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName.toLowerCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder}/${fileName.toUpperCase()}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName}.JPG`,
   `${SUPABASE_STORAGE_URL}${fileName.toLowerCase()}.jpg`,
