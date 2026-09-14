@@ -566,7 +566,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 智慧圖片載入：預設為 .jpg，並完美忽略大小寫、自動比對各種組合
+// 萬能智慧圖片載入：自動將檔名與資料夾全部轉成小寫、大寫、原樣組合，支援所有大小寫變體
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = baseName.trim();
 let parts = cleanBase.split('/');
@@ -576,10 +576,14 @@ let fileName = parts.length > 1 ? parts[1] : cleanBase;
 let candidates = [
   `${SUPABASE_STORAGE_URL}${cleanBase}.jpg`,
   `${SUPABASE_STORAGE_URL}${cleanBase}.JPG`,
+  `${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toLowerCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder.toUpperCase()}/${fileName.toUpperCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName.toLowerCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder}/${fileName.toUpperCase()}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName}.JPG`,
+  `${SUPABASE_STORAGE_URL}${fileName.toLowerCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${fileName.toUpperCase()}.jpg`,
   `${SUPABASE_STORAGE_URL}${fileName}.jpg`,
   `${SUPABASE_STORAGE_URL}${fileName}.JPG`
 ];
@@ -993,7 +997,7 @@ grid.innerHTML = html;
 
 let eventProjects = [
 { id: 1, title: "Korean Student Association", date: "Winter 2025", prefix: "ksa/ksa-", desc: "Capturing community gatherings, cultural showcases, and vibrant student moments across campus events." },
-{ id: 2, title: "The Trail To Oregon!", date: "Spring 2025", prefix: "ttto/TTTO-", desc: "Stage production documentation capturing dramatic moments, costume details, and dynamic performances." },
+{ id: 2, title: "The Trail To Oregon!", date: "Spring 2025", prefix: "ttto/ttto-", desc: "Stage production documentation capturing dramatic moments, costume details, and dynamic performances." },
 { id: 3, title: "Battle of the Band 2025", date: "Summer 2025", prefix: "botb/botb-", desc: "Battle of the Bands high-energy stage performances, musician portraits, and crowd reactions." },
 { id: 4, title: "Battle of the Band 2026", date: "Summer 2026", prefix: "botb6/botb6-", desc: "Battle of the Bands latest edition featuring electrifying live sets, stage lighting, and crowd engagement." },
 { id: 5, title: "Haunted Halls - Halloween", date: "Autumn 2025", prefix: "haunted/Haunted House-", desc: "Spooky atmospheric lighting, costume details, and immersive haunted house reactions." },
