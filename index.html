@@ -566,29 +566,33 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
+// 完美對齊你的 Supabase 結構：小寫資料夾 ttto + 大寫檔名 TTTO-
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = (baseName || "").trim();
-let storageUrl = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
+let parts = cleanBase.split('/');
+let folder = parts.length > 1 ? parts[0].toLowerCase() : '';
+let fileName = parts.length > 1 ? parts[1] : cleanBase;
 
-let candidates = [
-  `${storageUrl}${cleanBase}.jpg`,
-  `${storageUrl}${cleanBase}.JPG`,
-  `${storageUrl}${cleanBase.toLowerCase()}.jpg`,
-  `${storageUrl}${cleanBase.toUpperCase()}.jpg`,
-  `${storageUrl}ttto/ttto-0.jpg`,
-  `${storageUrl}ttto/TTTO-0.jpg`,
-  `${storageUrl}ttto/ttto-2.jpg`,
-  `${storageUrl}ttto/TTTO-2.jpg`
-];
+// 自動把檔名前綴轉成大寫（例如 ttto-0 變成 TTTO-0）
+let prefixMatch = fileName.match(/^([a-zA-Z]+)([-_]\d+)$/);
+let formattedFileName = prefixMatch ? prefixMatch[1].toUpperCase() + prefixMatch[2] : fileName;
 
-candidates = [...new Set(candidates)].filter(url => url && !url.includes('undefined'));
+let candidates = [];
+if (folder === 'ttto') {
+  candidates.push(`${SUPABASE_STORAGE_URL}ttto/${formattedFileName}.jpg`);
+  candidates.push(`${SUPABASE_STORAGE_URL}ttto/${formattedFileName}.JPG`);
+}
+candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
+candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
+candidates.push(`${SUPABASE_STORAGE_URL}${folder}/${formattedFileName}.jpg`);
+
+candidates = [...new Set(candidates)].filter(url => url && !url.includes('//') && !url.includes('undefined'));
 let initialSrc = candidates.length > 0 ? candidates[0] : '';
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 
 let isCoverImg = cleanBase.toLowerCase().includes('-0');
 let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
 let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
-
 return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
 };
 
