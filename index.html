@@ -566,6 +566,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
+// 智慧圖片載入：預設為 .jpg，並完美忽略大小寫、自動比對各種組合
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = baseName.trim();
 let parts = cleanBase.split('/');
@@ -575,9 +576,8 @@ let fileName = parts.length > 1 ? parts[1] : cleanBase;
 let candidates = [
   `${SUPABASE_STORAGE_URL}${cleanBase}.jpg`,
   `${SUPABASE_STORAGE_URL}${cleanBase}.JPG`,
-  `${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`,
-  `${SUPABASE_STORAGE_URL}${folder}/${fileName.toUpperCase()}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName.toLowerCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder}/${fileName.toUpperCase()}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName}.jpg`,
   `${SUPABASE_STORAGE_URL}${folder}/${fileName}.JPG`,
   `${SUPABASE_STORAGE_URL}${fileName}.jpg`,
