@@ -566,37 +566,29 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 終極智慧圖片載入：自動將資料夾與檔名進行全小寫、全大寫、首字大寫等各種大小寫窮舉匹配
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
-let cleanBase = baseName.trim();
-let parts = cleanBase.split('/');
-let folder = parts.length > 1 ? parts[0] : '';
-let fileName = parts.length > 1 ? parts[1] : cleanBase;
+let cleanBase = (baseName || "").trim();
+let storageUrl = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
 
 let candidates = [
-  `${SUPABASE_STORAGE_URL}${cleanBase}.jpg`,
-  `${SUPABASE_STORAGE_URL}${cleanBase}.JPG`,
-  // 資料夾與檔名大小寫矩陣窮舉
-  `${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toLowerCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder.toUpperCase()}/${fileName.toUpperCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder.toUpperCase()}/${fileName.toLowerCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder}/${fileName.toLowerCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder}/${fileName.toUpperCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder}/${fileName}.jpg`,
-  `${SUPABASE_STORAGE_URL}${folder}/${fileName}.JPG`,
-  `${SUPABASE_STORAGE_URL}${fileName.toLowerCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${fileName.toUpperCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${fileName}.jpg`,
-  `${SUPABASE_STORAGE_URL}${fileName}.JPG`
+  `${storageUrl}${cleanBase}.jpg`,
+  `${storageUrl}${cleanBase}.JPG`,
+  `${storageUrl}${cleanBase.toLowerCase()}.jpg`,
+  `${storageUrl}${cleanBase.toUpperCase()}.jpg`,
+  `${storageUrl}ttto/ttto-0.jpg`,
+  `${storageUrl}ttto/TTTO-0.jpg`,
+  `${storageUrl}ttto/ttto-2.jpg`,
+  `${storageUrl}ttto/TTTO-2.jpg`
 ];
-candidates = [...new Set(candidates)].filter(url => !url.includes('//'));
-let initialSrc = candidates[0];
+
+candidates = [...new Set(candidates)].filter(url => url && !url.includes('undefined'));
+let initialSrc = candidates.length > 0 ? candidates[0] : '';
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 
-let isCoverImg = baseName.toString().toLowerCase().includes('-0');
+let isCoverImg = cleanBase.toLowerCase().includes('-0');
 let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
 let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
+
 return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
 };
 
