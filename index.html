@@ -571,14 +571,7 @@ let cleanBase = (baseName || "").trim();
 let storageUrl = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
 
 let candidates = [
-  `${storageUrl}${cleanBase}.jpg`,
-  `${storageUrl}${cleanBase}.JPG`,
-  `${storageUrl}${cleanBase.toLowerCase()}.jpg`,
-  `${storageUrl}${cleanBase.toUpperCase()}.jpg`,
-  `${storageUrl}ttto/TTTO-0.jpg`,
-  `${storageUrl}ttto/ttto-0.jpg`,
-  `${storageUrl}ttto/TTTO-2.jpg`,
-  `${storageUrl}ttto/ttto-2.jpg`
+  `${storageUrl}${cleanBase}.jpg`
 ];
 
 candidates = [...new Set(candidates)].filter(url => url && !url.includes('undefined'));
