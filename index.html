@@ -606,7 +606,17 @@ function getSmartImageCandidates(baseName) {
 }
 
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
-let candidates = getSmartImageCandidates(baseName);
+let cleanBase = baseName.trim();
+let candidates = [
+  `${SUPABASE_STORAGE_URL}${cleanBase}.jpg`,
+  `${SUPABASE_STORAGE_URL}${cleanBase}.JPG`,
+  `${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${cleanBase.toUpperCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`,
+  `${SUPABASE_STORAGE_URL}${cleanBase}.JPEG`
+];
+// 去除重複的候選網址
+candidates = [...new Set(candidates)];
 let initialSrc = candidates[0];
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 
@@ -617,8 +627,20 @@ return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${
 };
 
 window.handleSmartImageError = function(imgEl) {
+try {
+let candidates = JSON.parse(decodeURIComponent(imgEl.dataset.candidates || "[]"));
+let idx = parseInt(imgEl.dataset.candidateIdx || "0") + 1;
+if (idx < candidates.length) {
+imgEl.dataset.candidateIdx = idx.toString();
+imgEl.src = candidates[idx];
+} else {
 let itemContainer = imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
 if (itemContainer) itemContainer.style.display = 'none';
+}
+} catch (e) {
+let itemContainer = imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
+if (itemContainer) itemContainer.style.display = 'none';
+}
 };
 
 function openLightbox(imgSrc) {
