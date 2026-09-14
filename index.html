@@ -566,57 +566,24 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-const supportedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG'];
-
-function getSmartImageCandidates(baseName) {
-  let candidates = [];
-  let cleanBase = baseName.trim();
-
-  let folderMatch = cleanBase.match(/^([a-zA-Z0-9_-]+?)[-_]/);
-  let subfolder = folderMatch ? folderMatch[1] : '';
-
-  for (let ext of supportedExtensions) {
-    if (subfolder) {
-      let lowSub = subfolder.toLowerCase();
-      candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase}.${ext}`);
-      candidates.push(`${SUPABASE_STORAGE_URL}${lowSub}/${cleanBase.toLowerCase()}.${ext}`);
-    }
-    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.${ext}`);
-    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.${ext}`);
-  }
-
-  let idxMatch = cleanBase.match(/[-_](\d+)$/);
-  let idx = idxMatch ? idxMatch[1] : '0';
-  if (cleanBase.toLowerCase().includes('popular')) {
-    candidates.unshift(
-      `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.JPG`,
-      `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpg`,
-      `${SUPABASE_STORAGE_URL}popular/Popular Music Group-${idx}.jpeg`
-    );
-  }
-  if (cleanBase.toLowerCase().includes('haunted')) {
-    candidates.unshift(
-      `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpeg`,
-      `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.JPG`,
-      `${SUPABASE_STORAGE_URL}haunted/Haunted House-${idx}.jpg`
-    );
-  }
-
-  return [...new Set(candidates)];
-}
-
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = baseName.trim();
+let parts = cleanBase.split('/');
+let folder = parts.length > 1 ? parts[0] : '';
+let fileName = parts.length > 1 ? parts[1] : cleanBase;
+
 let candidates = [
   `${SUPABASE_STORAGE_URL}${cleanBase}.jpg`,
   `${SUPABASE_STORAGE_URL}${cleanBase}.JPG`,
-  `${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`,
-  `${SUPABASE_STORAGE_URL}${cleanBase.toUpperCase()}.jpg`,
   `${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`,
-  `${SUPABASE_STORAGE_URL}${cleanBase}.JPEG`
+  `${SUPABASE_STORAGE_URL}${folder}/${fileName.toUpperCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder}/${fileName.toLowerCase()}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder}/${fileName}.jpg`,
+  `${SUPABASE_STORAGE_URL}${folder}/${fileName}.JPG`,
+  `${SUPABASE_STORAGE_URL}${fileName}.jpg`,
+  `${SUPABASE_STORAGE_URL}${fileName}.JPG`
 ];
-// 去除重複的候選網址
-candidates = [...new Set(candidates)];
+candidates = [...new Set(candidates)].filter(url => !url.includes('//'));
 let initialSrc = candidates[0];
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 
@@ -757,7 +724,7 @@ async function loadCloudLayout() {
       const main = document.querySelector('main');
       if (main) {
         main.innerHTML = saved.mainHtml;
-        isCloudLoaded = true; // 標記雲端排版已成功還原！
+        isCloudLoaded = true;
         if (isAdminLoggedIn) {
           enableEditableElements();
         }
@@ -1285,7 +1252,6 @@ if (el) el.classList.add('hidden');
 
 if (hash === '#home' || hash === '') {
 document.getElementById('view-home').classList.remove('hidden');
-// 只有在雲端沒有載入排版時，才呼叫預設格網生成
 if (!isCloudLoaded) renderHomeHeroCollage();
 triggerBrandAnimation();
 } else if (hash === '#photography') {
@@ -1430,8 +1396,7 @@ window.addEventListener('hashchange', handleRouter);
 window.onload = async function() {
 generateExactBackground();
 loadCustomData();
-await loadCloudLayout(); // 先從雲端載入你儲存的排版
-// 只有在雲端沒有資料時才呼叫預設產生器，避免覆蓋你調整好的照片 Layout
+await loadCloudLayout();
 if (!isCloudLoaded) {
 renderHomeHeroCollage();
 }
