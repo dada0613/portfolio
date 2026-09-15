@@ -111,35 +111,43 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* Instagram / Pinterest 瀑布流自適應排版（不切圖） */
-.masonry-flow-container {
-column-count: 3;
-column-gap: 20px;
+/* 真正的 Instagram Explore 滿版流式瀑布流 */
+.ig-fullscreen-masonry {
+column-count: 4;
+column-gap: 12px;
 width: 100%;
+padding: 0 16px;
+margin: 0 auto;
 }
-@media (max-width: 1024px) {
-.masonry-flow-container { column-count: 2; column-gap: 16px; }
+@media (max-width: 1400px) {
+.ig-fullscreen-masonry { column-count: 3; column-gap: 10px; padding: 0 12px; }
 }
-@media (max-width: 640px) {
-.masonry-flow-container { column-count: 1; }
+@media (max-width: 900px) {
+.ig-fullscreen-masonry { column-count: 2; column-gap: 8px; padding: 0 8px; }
+}
+@media (max-width: 500px) {
+.ig-fullscreen-masonry { column-count: 1; column-gap: 6px; padding: 0 6px; }
 }
 
-.masonry-item {
+.ig-masonry-item {
 break-inside: avoid;
-margin-bottom: 20px;
+margin-bottom: 12px;
 position: relative;
-border-radius: 6px;
+border-radius: 4px;
 overflow: hidden;
-background: rgba(255, 255, 255, 0.02);
-border: 1px solid rgba(255, 255, 255, 0.1);
-transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+background: #12161f;
+cursor: zoom-in;
+transition: transform 0.3s ease, filter 0.3s ease;
 }
-.masonry-item:hover {
-transform: translateY(-4px);
-border-color: rgba(218, 165, 32, 0.4);
-box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+@media (max-width: 900px) {
+.ig-masonry-item { margin-bottom: 8px; }
 }
-.masonry-item img {
+.ig-masonry-item:hover {
+transform: scale(1.015);
+z-index: 10;
+filter: brightness(1.05);
+}
+.ig-masonry-item img {
 width: 100%;
 height: auto;
 display: block;
@@ -276,7 +284,7 @@ display: flex;
 <!-- 圖片放大 LightBox 燈箱 Modal -->
 <div id="lightbox-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightbox()">
 <button onclick="closeLightbox()" class="absolute top-6 right-6 text-neutral-400 hover:text-white text-3xl font-light z-50 focus:outline-none">✕</button>
-<img id="lightbox-img" src="" alt="Zoomed Image" class="max-w-[90vw] max-h-[90vh] object-contain rounded shadow-2xl" onclick="event.stopPropagation()">
+<img id="lightbox-img" src="" alt="Zoomed Image" class="max-w-[95vw] max-h-[95vh] object-contain rounded shadow-2xl" onclick="event.stopPropagation()">
 </div>
 
 <!-- 秘密解鎖登入彈窗 -->
@@ -435,7 +443,7 @@ street photography
 </div>
 
 <div id="photo-content-street" class="hidden space-y-8">
-<p class="text-neutral-400 text-sm tracking-wide mb-8">Capturing candid moments and urban geometry from city streets (Full View Masonry).</p>
+<p class="text-neutral-400 text-sm tracking-wide mb-8">Capturing candid moments and urban geometry from city streets (Full-bleed IG Masonry).</p>
 <div id="street-grid"></div>
 </div>
 </div>
@@ -454,14 +462,16 @@ street photography
 <div id="view-lighting-detail" class="hidden w-full page-enter"></div>
 <div id="view-event-detail" class="hidden w-full page-enter"></div>
 
-<div id="view-generic-detail" class="hidden space-y-8 page-enter max-w-[1200px] mx-auto px-6 md:px-12 w-full">
+<div id="view-generic-detail" class="hidden space-y-8 page-enter w-full">
+<div class="max-w-[1200px] mx-auto px-6 md:px-12 w-full">
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
 <span>← Back to Home</span>
 </a>
 <div class="border-b border-neutral-800 pb-6 mt-4">
 <h1 id="generic-title" class="serif-title text-4xl md:text-5xl italic text-neutral-100"></h1>
 </div>
-<div id="generic-content-area" class="mt-8"></div>
+</div>
+<div id="generic-content-area" class="w-full mt-4"></div>
 </div>
 
 <div id="view-game-design" class="hidden gd-body max-w-[1200px] mx-auto px-6 md:px-12 w-full page-enter">
@@ -576,7 +586,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 絕對滿版自適應載入：自動依據照片原始比例縮放，不強制裁切
+// 智能載入：滿版顯示（w-full h-auto object-contain），保留真實解析度與比例
 window.smartImageHtml = function(baseName, altText, className = "w-full h-auto object-contain") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
@@ -619,11 +629,11 @@ if (idx < candidates.length) {
 imgEl.dataset.candidateIdx = idx.toString();
 imgEl.src = candidates[idx];
 } else {
-let itemContainer = imgEl.closest('.masonry-item') || imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
+let itemContainer = imgEl.closest('.ig-masonry-item') || imgEl.closest('.outline-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 } catch (e) {
-let itemContainer = imgEl.closest('.masonry-item') || imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
+let itemContainer = imgEl.closest('.ig-masonry-item') || imgEl.closest('.outline-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 };
@@ -735,7 +745,7 @@ el.addEventListener('blur', recordState);
 }
 });
 
-document.querySelectorAll('.masonry-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
+document.querySelectorAll('.ig-masonry-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
 if (!el.classList.contains('canvas-draggable-photo')) {
 el.classList.add('canvas-draggable-photo', 'editing-active');
 if (!el.querySelector('.handle-tl')) {
@@ -1142,7 +1152,7 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
-// 【IG 滿版自適應瀑布流】：完全不裁切照片，依據圖片自身高寬自由組合、整齊填滿
+// 【真·全螢幕滿版 IG 瀑布流】：不設外層 max-width，完全不裁切照片
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
@@ -1152,21 +1162,21 @@ allImages.push(`${folderPrefix}-${i}`);
 let itemsHtml = '';
 allImages.forEach((imgBase) => {
 itemsHtml += `
-<div class="masonry-item">
-  ${smartImageHtml(imgBase, `Production Shot`, "w-full h-auto object-contain block")}
+<div class="ig-masonry-item">
+  ${smartImageHtml(imgBase, `Photo Work`, "w-full h-auto object-contain block")}
 </div>
 `;
 });
 
-return `<div class="max-w-[1300px] mx-auto w-full"><div class="masonry-flow-container">${itemsHtml}</div></div>`;
+return `<div class="w-full"><div class="ig-fullscreen-masonry">${itemsHtml}</div></div>`;
 }
 
-// Graphic Design 專用：A4 完整展示、不裁切比例的滿版瀑布流
+// Graphic Design 專用：全螢幕滿版流式 A4 呈現
 function generateGraphicDesignGrid() {
-let html = '<div class="masonry-flow-container max-w-[1300px] mx-auto w-full">';
+let html = '<div class="ig-fullscreen-masonry">';
 for (let i = 1; i <= 20; i++) {
   html += `
-  <div class="masonry-item p-2 bg-neutral-900/60 border border-white/10">
+  <div class="ig-masonry-item p-2 bg-neutral-900/60 border border-white/10">
     ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-auto object-contain block rounded")}
   </div>
   `;
@@ -1206,8 +1216,8 @@ function generatePaperworkView(project) {
   `).join('');
 
   return `
-    <div class="max-w-[1200px] mx-auto px-4 md:px-12 py-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="w-full px-4 md:px-12 py-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1500px] mx-auto">
         ${cardsHtml}
       </div>
     </div>
@@ -1262,12 +1272,12 @@ if (streetGrid) {
 let streetItems = '';
 streetPhotos.forEach((url) => {
   streetItems += `
-  <div class="masonry-item">
+  <div class="ig-masonry-item">
     ${smartImageHtml(url, `Street Shot`, "w-full h-auto object-contain block")}
   </div>
   `;
 });
-streetGrid.innerHTML = `<div class="masonry-flow-container max-w-[1300px] mx-auto w-full">${streetItems}</div>`;
+streetGrid.innerHTML = `<div class="ig-fullscreen-masonry">${streetItems}</div>`;
 }
 if (isAdminLoggedIn) enableEditableElements();
 }
@@ -1329,7 +1339,7 @@ document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
 container.innerHTML = `
 <div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Masonry)</div>
-<div class="w-full px-4 md:px-12 mt-4">${generateGraphicDesignGrid()}</div>
+<div class="w-full">${generateGraphicDesignGrid()}</div>
 `;
 } else if (hash === '#game-design') {
 document.getElementById('view-game-design').classList.remove('hidden');
@@ -1365,7 +1375,6 @@ detailView.innerHTML = `
 </div>
 </div>
 
-<!-- 頂部雙分頁切換按鈕：Production Photos vs. Technical Paperwork -->
 <div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
   <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
     Production Photos
@@ -1378,14 +1387,14 @@ detailView.innerHTML = `
 </div>
 </div>
 
-<div id="ld-tab-content-photos" class="w-full px-4 md:px-12 mt-8">
+<div id="ld-tab-content-photos" class="w-full mt-6">
   <div class="text-center mb-6">
-    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (Uncropped View)</h3>
+    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (Uncropped IG View)</h3>
   </div>
   ${collageHtml}
 </div>
 
-<div id="ld-tab-content-paperwork" class="hidden w-full px-4 md:px-12 mt-8">
+<div id="ld-tab-content-paperwork" class="hidden w-full mt-6">
   <div class="text-center mb-6">
     <h3 class="text-xs uppercase tracking-[0.3em] text-yellow-500 font-mono">Technical Drawings, Systems & Plots</h3>
   </div>
@@ -1419,7 +1428,7 @@ detailView.innerHTML = `
 <p class="text-neutral-300 text-sm md:text-base max-w-2xl font-light leading-relaxed text-center">${project.desc}</p>
 </div>
 </div>
-<div class="w-full px-4 md:px-12 mt-8">${collageHtml}</div>
+<div class="w-full mt-6">${collageHtml}</div>
 `;
 detailView.classList.remove('hidden');
 }
