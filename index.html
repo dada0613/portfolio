@@ -111,27 +111,39 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-.justified-row {
-display: flex;
-flex-wrap: wrap;
-gap: 14px;
-margin-bottom: 14px;
-}
-.justified-item {
-position: relative;
-overflow: hidden;
-flex-grow: 1;
-border-radius: 4px;
-cursor: zoom-in;
-}
-.justified-item img {
-height: 100%;
+/* Instagram / Pinterest 瀑布流自適應排版（不切圖） */
+.masonry-flow-container {
+column-count: 3;
+column-gap: 20px;
 width: 100%;
-object-fit: cover;
-transition: transform 0.5s ease;
 }
-.justified-item:hover img {
-transform: scale(1.05);
+@media (max-width: 1024px) {
+.masonry-flow-container { column-count: 2; column-gap: 16px; }
+}
+@media (max-width: 640px) {
+.masonry-flow-container { column-count: 1; }
+}
+
+.masonry-item {
+break-inside: avoid;
+margin-bottom: 20px;
+position: relative;
+border-radius: 6px;
+overflow: hidden;
+background: rgba(255, 255, 255, 0.02);
+border: 1px solid rgba(255, 255, 255, 0.1);
+transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.masonry-item:hover {
+transform: translateY(-4px);
+border-color: rgba(218, 165, 32, 0.4);
+box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+.masonry-item img {
+width: 100%;
+height: auto;
+display: block;
+object-fit: contain;
 }
 
 #home-hero-grid {
@@ -423,7 +435,7 @@ street photography
 </div>
 
 <div id="photo-content-street" class="hidden space-y-8">
-<p class="text-neutral-400 text-sm tracking-wide mb-8">Capturing candid moments and urban geometry from city streets.</p>
+<p class="text-neutral-400 text-sm tracking-wide mb-8">Capturing candid moments and urban geometry from city streets (Full View Masonry).</p>
 <div id="street-grid"></div>
 </div>
 </div>
@@ -564,8 +576,8 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 精準路徑比對器：自動相容 ttto/TTTO- 與標準小寫/大寫檔名
-window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
+// 絕對滿版自適應載入：自動依據照片原始比例縮放，不強制裁切
+window.smartImageHtml = function(baseName, altText, className = "w-full h-auto object-contain") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
 let folder = parts.length > 1 ? parts[0] : '';
@@ -607,11 +619,11 @@ if (idx < candidates.length) {
 imgEl.dataset.candidateIdx = idx.toString();
 imgEl.src = candidates[idx];
 } else {
-let itemContainer = imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
+let itemContainer = imgEl.closest('.masonry-item') || imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 } catch (e) {
-let itemContainer = imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
+let itemContainer = imgEl.closest('.masonry-item') || imgEl.closest('.justified-item') || imgEl.closest('.outline-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 };
@@ -690,7 +702,6 @@ function closeAdminModal() {
 document.getElementById('admin-modal').classList.add('hidden');
 }
 
-// 雲端儲存：儲存前清除編輯標籤，並記錄狀態
 async function saveAllChanges() {
 recordState();
 disableEditableElements();
@@ -724,7 +735,7 @@ el.addEventListener('blur', recordState);
 }
 });
 
-document.querySelectorAll('.justified-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
+document.querySelectorAll('.masonry-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
 if (!el.classList.contains('canvas-draggable-photo')) {
 el.classList.add('canvas-draggable-photo', 'editing-active');
 if (!el.querySelector('.handle-tl')) {
@@ -964,7 +975,7 @@ if (!grid) return;
 let html = '';
 for (let round = 0; round < 2; round++) {
 for (let i = 1; i <= 18; i++) {
-html += `<div class="justified-item h-[280px] overflow-hidden">${smartImageHtml(`home/home-${i}`, `Home Hero ${i}`)}</div>`;
+html += `<div class="justified-item h-[280px] overflow-hidden">${smartImageHtml(`home/home-${i}`, `Home Hero ${i}`, "w-full h-full object-cover")}</div>`;
 }
 }
 grid.innerHTML = html;
@@ -999,7 +1010,6 @@ try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 燈光專案資料清單（已內建 Paperwork 結構，可隨時替換真實圖檔與 PDF 連結）
 const lightingProjects = [
 { 
   id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora/luchadora-", 
@@ -1082,7 +1092,7 @@ const grid = document.getElementById('lighting-projects-grid');
 if (!grid) return;
 grid.innerHTML = lightingProjects.map(p => `
 <a href="#lighting-${p.id}" class="outline-card p-6 rounded-sm group cursor-pointer flex flex-col justify-between block">
-<div class="justified-item overflow-hidden aspect-video mb-4 rounded-sm bg-black relative flex justify-center items-center">
+<div class="overflow-hidden aspect-video mb-4 rounded-sm bg-black relative flex justify-center items-center">
 ${smartImageHtml(`${p.prefix}0`, p.title, "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100 object-center")}
 <div class="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 text-[10px] uppercase tracking-widest text-neutral-300 border border-white/10">
 ${p.season}
@@ -1110,7 +1120,7 @@ let p = gameProjects[key];
 html += `
 <a href="#game-${key}" class="group gd-card p-6 md:p-8 rounded-xl cursor-pointer block">
 <div class="grid md:grid-cols-12 gap-8 items-center">
-<div class="justified-item md:col-span-6 relative overflow-hidden rounded-lg border border-white/10 bg-black aspect-video flex items-center justify-center">
+<div class="md:col-span-6 relative overflow-hidden rounded-lg border border-white/10 bg-black aspect-video flex items-center justify-center">
 ${p.visualHtml}
 </div>
 <div class="md:col-span-6 flex flex-col justify-center">
@@ -1132,46 +1142,32 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
-// 攝影與舞台標準相片牆
+// 【IG 滿版自適應瀑布流】：完全不裁切照片，依據圖片自身高寬自由組合、整齊填滿
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
 allImages.push(`${folderPrefix}-${i}`);
 }
 
-let rowsHtml = '';
-let targetRowHeight = 280;
-let approxPerRow = 3;
-
-for (let i = 0; i < allImages.length; i += approxPerRow) {
-let rowImages = allImages.slice(i, i + approxPerRow);
-rowsHtml += `<div class="justified-row">`;
-rowImages.forEach((imgBase, rIdx) => {
-let ratios = [1.2, 1.0, 1.1, 0.9, 1.3];
-let ratio = ratios[(i + rIdx) % ratios.length];
-let computedWidth = targetRowHeight * ratio;
-
-rowsHtml += `
-<div class="justified-item" style="width: ${computedWidth}px; height: ${targetRowHeight}px;">
-${smartImageHtml(imgBase, `Photo`, "w-full h-full object-cover")}
+let itemsHtml = '';
+allImages.forEach((imgBase) => {
+itemsHtml += `
+<div class="masonry-item">
+  ${smartImageHtml(imgBase, `Production Shot`, "w-full h-auto object-contain block")}
 </div>
 `;
 });
-rowsHtml += `</div>`;
+
+return `<div class="max-w-[1300px] mx-auto w-full"><div class="masonry-flow-container">${itemsHtml}</div></div>`;
 }
 
-return `<div class="max-w-[1200px] mx-auto w-full">${rowsHtml}</div>`;
-}
-
-// Graphic Design 專用：A4 完整展示、不裁切比例的清晰網格
+// Graphic Design 專用：A4 完整展示、不裁切比例的滿版瀑布流
 function generateGraphicDesignGrid() {
-let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1200px] mx-auto w-full">';
+let html = '<div class="masonry-flow-container max-w-[1300px] mx-auto w-full">';
 for (let i = 1; i <= 20; i++) {
   html += `
-  <div class="outline-card p-3 rounded-lg flex flex-col items-center justify-center bg-black/40 border border-white/10 hover:border-white/30 transition-all">
-    <div class="w-full aspect-[1/1.414] bg-neutral-950 rounded flex items-center justify-center overflow-hidden">
-      ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-full object-contain p-2")}
-    </div>
+  <div class="masonry-item p-2 bg-neutral-900/60 border border-white/10">
+    ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-auto object-contain block rounded")}
   </div>
   `;
 }
@@ -1203,8 +1199,8 @@ function generatePaperworkView(project) {
         <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
         <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
       </div>
-      <div class="w-full aspect-[4/3] bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
-        ${smartImageHtml(pw.image, pw.title, "w-full h-full object-contain p-2")}
+      <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
+        ${smartImageHtml(pw.image, pw.title, "w-full h-auto object-contain p-2")}
       </div>
     </div>
   `).join('');
@@ -1218,7 +1214,6 @@ function generatePaperworkView(project) {
   `;
 }
 
-// 切換燈光專案內的雙分頁（Photos vs. Paperwork）
 function switchLightingTab(mode) {
   const btnPhotos = document.getElementById('tab-btn-ld-photos');
   const btnPaper = document.getElementById('tab-btn-ld-paperwork');
@@ -1246,7 +1241,7 @@ if (!eventsGrid) return;
 
 eventsGrid.innerHTML = eventProjects.map(p => `
 <a href="#event-${p.id}" class="outline-card p-6 rounded-sm group cursor-pointer flex flex-col justify-between block">
-<div class="justified-item overflow-hidden aspect-video mb-4 rounded-sm bg-black relative flex justify-center items-center">
+<div class="overflow-hidden aspect-video mb-4 rounded-sm bg-black relative flex justify-center items-center">
 ${smartImageHtml(`${p.prefix}0`, p.title, "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100 object-center")}
 <div class="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 text-[10px] uppercase tracking-widest text-neutral-300 border border-white/10">
 ${p.date}
@@ -1264,24 +1259,15 @@ View Project Gallery ↗
 
 const streetGrid = document.getElementById('street-grid');
 if (streetGrid) {
-let streetRows = '';
-let targetRowHeight = 280;
-for (let i = 0; i < streetPhotos.length; i += 3) {
-let rowImgs = streetPhotos.slice(i, i + 3);
-streetRows += `<div class="justified-row">`;
-rowImgs.forEach((url, rIdx) => {
-let ratios = [1.1, 1.0, 1.2];
-let ratio = ratios[(i + rIdx) % ratios.length];
-let cWidth = targetRowHeight * ratio;
-streetRows += `
-<div class="justified-item" style="width: ${cWidth}px; height: ${targetRowHeight}px;">
-${smartImageHtml(url, `Street Shot`, "w-full h-full object-cover")}
-</div>
-`;
+let streetItems = '';
+streetPhotos.forEach((url) => {
+  streetItems += `
+  <div class="masonry-item">
+    ${smartImageHtml(url, `Street Shot`, "w-full h-auto object-contain block")}
+  </div>
+  `;
 });
-streetRows += `</div>`;
-}
-streetGrid.innerHTML = streetRows;
+streetGrid.innerHTML = `<div class="masonry-flow-container max-w-[1300px] mx-auto w-full">${streetItems}</div>`;
 }
 if (isAdminLoggedIn) enableEditableElements();
 }
@@ -1342,7 +1328,7 @@ document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
 container.innerHTML = `
-<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full A4 View)</div>
+<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Masonry)</div>
 <div class="w-full px-4 md:px-12 mt-4">${generateGraphicDesignGrid()}</div>
 `;
 } else if (hash === '#game-design') {
@@ -1394,7 +1380,7 @@ detailView.innerHTML = `
 
 <div id="ld-tab-content-photos" class="w-full px-4 md:px-12 mt-8">
   <div class="text-center mb-6">
-    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack</h3>
+    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (Uncropped View)</h3>
   </div>
   ${collageHtml}
 </div>
@@ -1488,7 +1474,6 @@ window.addEventListener('hashchange', handleRouter);
 window.onload = function() {
 generateExactBackground();
 loadCustomData();
-// 確保所有子頁面與最新結構即時渲染
 renderHomeHeroCollage();
 renderPhotographyContent();
 renderLightingContent();
