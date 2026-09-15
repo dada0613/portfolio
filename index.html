@@ -3,7 +3,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AMANDA HSU — Portfolio</title>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<!-- 引入 Supabase JS SDK 用於安全後端驗證與雲端儲存 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -218,9 +217,9 @@ display: flex;
 <!-- 頂部編輯控制列 -->
 <div id="admin-floating-bar" class="hidden fixed top-4 right-4 z-50 bg-yellow-600/90 text-black px-5 py-2 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
 <span>⚡ Cloud Sync Edit Mode</span>
-<button onclick="saveAllChanges()" class="bg-black text-white px-3 py-1 rounded hover:bg-neutral-800">Save to Cloud</button>
-<button onclick="openAdminModal()" class="bg-neutral-900 text-white px-3 py-1 rounded hover:bg-black">Add Project</button>
-<button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Logout</button>
+<button onclick="saveAllChanges()" class="bg-black text-white px-3 py-1 rounded hover:bg-neutral-800 cursor-pointer">Save to Cloud</button>
+<button onclick="openAdminModal()" class="bg-neutral-900 text-white px-3 py-1 rounded hover:bg-black cursor-pointer">Add Project</button>
+<button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 cursor-pointer">Logout</button>
 </div>
 
 <!-- 圖片裁減九宮格 Modal -->
@@ -276,7 +275,7 @@ display: flex;
 <p class="text-xs text-neutral-400 mb-6 uppercase tracking-widest">Enter your Supabase admin email & password.</p>
 <input type="email" id="admin-email-input" placeholder="Admin Email" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm mb-4 rounded focus:outline-none focus:border-yellow-500">
 <input type="password" id="admin-passcode-input" placeholder="Password" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm mb-4 rounded focus:outline-none focus:border-yellow-500">
-<button onclick="verifySupabaseAdmin()" class="w-full bg-yellow-600 text-black font-bold py-3 uppercase text-xs tracking-widest hover:bg-white transition-colors">Authenticate Securely</button>
+<button onclick="verifySupabaseAdmin()" class="w-full bg-yellow-600 text-black font-bold py-3 uppercase text-xs tracking-widest hover:bg-white transition-colors cursor-pointer">Authenticate Securely</button>
 </div>
 </div>
 
@@ -371,7 +370,7 @@ AMANDA HSU
 Amanda Hsu
 </h1>
 <p class="text-xs md:text-sm tracking-[0.5em] uppercase text-neutral-200 font-mono font-medium" style="text-shadow: 0 2px 20px rgba(0,0,0,0.95);">
-Creative Portfolio
+Design Portfolio
 </p>
 </div>
 </section>
@@ -409,10 +408,10 @@ Creative Portfolio
 </div>
 
 <div class="flex items-center bg-neutral-900 border border-neutral-800 p-1 rounded-sm self-start md:self-auto">
-<button id="tab-btn-events" onclick="switchPhotoTab('events')" class="px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm">
+<button id="tab-btn-events" onclick="switchPhotoTab('events')" class="px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
 event photography
 </button>
-<button id="tab-btn-street" onclick="switchPhotoTab('street')" class="px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm">
+<button id="tab-btn-street" onclick="switchPhotoTab('street')" class="px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
 street photography
 </button>
 </div>
@@ -565,7 +564,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 絕對精準載入器：支援小寫/大寫資料夾及多種檔名變形，失敗自動切換下一張
+// 精準路徑比對器：自動相容 ttto/TTTO- 與標準小寫/大寫檔名
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
@@ -574,7 +573,6 @@ let fileName = parts.length > 1 ? parts[1] : cleanBase;
 
 let candidates = [];
 
-// 專門針對 ttto 資料夾的精準匹配 (小寫資料夾 + 大寫檔名 TTTO-)
 if (folder.toLowerCase() === 'ttto') {
   let numMatch = fileName.match(/(\d+)$/);
   let num = numMatch ? numMatch[1] : '0';
@@ -692,6 +690,7 @@ function closeAdminModal() {
 document.getElementById('admin-modal').classList.add('hidden');
 }
 
+// 雲端儲存：儲存前清除編輯標籤，並記錄狀態
 async function saveAllChanges() {
 recordState();
 disableEditableElements();
@@ -1000,9 +999,29 @@ try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
+// 燈光專案資料清單（已內建 Paperwork 結構，可隨時替換真實圖檔與 PDF 連結）
 const lightingProjects = [
-{ id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora/luchadora-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.", aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season." },
-{ id: "beehive", title: "Beehive: The 60s Musical", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "beehive/beehive-", desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization.", aboutPlay: "Beehive is a celebration of powerful female vocalists of the 1960s.", aboutDesign: "PCPA Summer 2026 internship project." },
+{ 
+  id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora/luchadora-", 
+  desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.", 
+  aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", 
+  aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season.",
+  paperwork: [
+    { title: "Vectorworks Light Plot", type: "CAD Plot (1/4\" Scale)", image: "luchadora/plot", pdfUrl: "#", desc: "Full venue lighting layout with rigging points, DMX distribution, and instrument numbering." },
+    { title: "Magic Sheet / Systems Layout", type: "Focus & Systems", image: "luchadora/magic", pdfUrl: "#", desc: "Color system matrix, moving head beam angles, and area system breakdown." },
+    { title: "Spot Sheets & Cue Tracker", type: "ALD Production Paperwork", image: "luchadora/spot", pdfUrl: "#", desc: "Followspot pick-up sheets with frame counts and scene transition cues." }
+  ]
+},
+{ 
+  id: "beehive", title: "Beehive: The 60s Musical", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "beehive/beehive-", 
+  desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization.", 
+  aboutPlay: "Beehive is a celebration of powerful female vocalists of the 1960s.", 
+  aboutDesign: "PCPA Summer 2026 internship project.",
+  paperwork: [
+    { title: "Vectorworks Light Plot", type: "CAD Plot", image: "beehive/plot", pdfUrl: "#", desc: "Main stage plot including moving head wash units and cyc backlight systems." },
+    { title: "Hookup & Instrument Schedule", type: "Lightwright Export", image: "beehive/hookup", pdfUrl: "#", desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." }
+  ]
+},
 { id: "the-harvest", title: "The Harvest", subtitle: "Samuel D. Hunter / Kalberer Theatre", role: "Lighting Designer", season: "Junior Year at CWRU", prefix: "harvest/harvest-", desc: "Set entirely in a church basement, lighting enhances the tension between faith, obligation, and personal struggle.", aboutPlay: "The Harvest takes place in a small evangelical church in Idaho.", aboutDesign: "Every cue is rooted in realism." },
 { id: "fun-home", title: "Fun Home", subtitle: "Musical / Player's Theater Group", role: "Co-Lighting Designer", season: "First Year in College", prefix: "funhome/funhome-", desc: "Reflects the emotional journey of the characters, transitioning from lighthearted to somber.", aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel.", aboutDesign: "Utilized moving lights and color-changing effects." },
 { id: "hurricane-diane", title: "Hurricane Diane", subtitle: "Play by Madeleine George", role: "Lighting Designer (Final Project)", season: "Lighting Design Class", prefix: "diane/diane-", desc: "Starts with warm steady lighting, shifting into cooler tones and faster transitions as chaos builds.", aboutPlay: "A modern-day version of Dionysus returns as Diane.", aboutDesign: "First full lighting plot experience." },
@@ -1113,7 +1132,7 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
-// 標準相簿照片堆疊（用於攝影與燈光設計）
+// 攝影與舞台標準相片牆
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
@@ -1158,6 +1177,67 @@ for (let i = 1; i <= 20; i++) {
 }
 html += '</div>';
 return html;
+}
+
+// Lighting Design Paperwork 專用視圖生成器
+function generatePaperworkView(project) {
+  if (!project.paperwork || project.paperwork.length === 0) {
+    return `
+    <div class="max-w-[1200px] mx-auto text-center py-20 px-4">
+      <div class="outline-card p-12 max-w-lg mx-auto rounded-lg space-y-4">
+        <h3 class="serif-title text-2xl text-white italic">Paperwork In Archive</h3>
+        <p class="text-neutral-400 text-xs leading-relaxed">CAD Plots, Magic Sheets, and Hookups for this production are available upon request or currently being digitized for display.</p>
+      </div>
+    </div>`;
+  }
+
+  let cardsHtml = project.paperwork.map(pw => `
+    <div class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 space-y-4 flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+          <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold">${pw.type}</span>
+          <a href="${pw.pdfUrl}" target="_blank" class="text-[11px] uppercase tracking-widest text-neutral-300 hover:text-white flex items-center gap-1 transition-colors font-mono">
+            View Full PDF ↗
+          </a>
+        </div>
+        <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
+        <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
+      </div>
+      <div class="w-full aspect-[4/3] bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
+        ${smartImageHtml(pw.image, pw.title, "w-full h-full object-contain p-2")}
+      </div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="max-w-[1200px] mx-auto px-4 md:px-12 py-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        ${cardsHtml}
+      </div>
+    </div>
+  `;
+}
+
+// 切換燈光專案內的雙分頁（Photos vs. Paperwork）
+function switchLightingTab(mode) {
+  const btnPhotos = document.getElementById('tab-btn-ld-photos');
+  const btnPaper = document.getElementById('tab-btn-ld-paperwork');
+  const contentPhotos = document.getElementById('ld-tab-content-photos');
+  const contentPaper = document.getElementById('ld-tab-content-paperwork');
+
+  if (!btnPhotos || !btnPaper || !contentPhotos || !contentPaper) return;
+
+  if (mode === 'photos') {
+    btnPhotos.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm";
+    btnPaper.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm";
+    contentPhotos.classList.remove('hidden');
+    contentPaper.classList.add('hidden');
+  } else {
+    btnPaper.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm";
+    btnPhotos.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm";
+    contentPaper.classList.remove('hidden');
+    contentPhotos.classList.add('hidden');
+  }
 }
 
 function renderPhotographyContent() {
@@ -1274,6 +1354,8 @@ const project = lightingProjects.find(p => p.id.toLowerCase() === id);
 if (project) {
 const detailView = document.getElementById('view-lighting-detail');
 const collageHtml = generateResponsivePhotoGrid(project.prefix.replace(/-$/, ''));
+const paperworkHtml = generatePaperworkView(project);
+
 detailView.innerHTML = `
 <div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
 <div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
@@ -1285,7 +1367,8 @@ detailView.innerHTML = `
 <span class="text-xs uppercase tracking-[0.2em] text-yellow-500 font-mono block mb-2">${project.season} — ${project.role}</span>
 <h1 class="serif-title text-4xl md:text-6xl italic text-white mb-3 text-center">${project.title}</h1>
 <p class="text-neutral-300 text-sm md:text-base font-light mb-8 text-center">${project.subtitle}</p>
-<div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/80 border border-neutral-800 p-8 rounded-lg">
+
+<div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/80 border border-neutral-800 p-8 rounded-lg mb-10">
 <div>
 <h3 class="serif-title text-xl italic text-white mb-3">About the Production</h3>
 <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutPlay}</p>
@@ -1295,13 +1378,32 @@ detailView.innerHTML = `
 <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutDesign}</p>
 </div>
 </div>
+
+<!-- 頂部雙分頁切換按鈕：Production Photos vs. Technical Paperwork -->
+<div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
+  <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
+    Production Photos
+  </button>
+  <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
+    Light Plot & Paperwork
+  </button>
+</div>
+
 </div>
 </div>
-<div class="w-full px-4 md:px-12 mt-8">
-<div class="text-center mb-6">
-<h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack</h3>
+
+<div id="ld-tab-content-photos" class="w-full px-4 md:px-12 mt-8">
+  <div class="text-center mb-6">
+    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack</h3>
+  </div>
+  ${collageHtml}
 </div>
-${collageHtml}
+
+<div id="ld-tab-content-paperwork" class="hidden w-full px-4 md:px-12 mt-8">
+  <div class="text-center mb-6">
+    <h3 class="text-xs uppercase tracking-[0.3em] text-yellow-500 font-mono">Technical Drawings, Systems & Plots</h3>
+  </div>
+  ${paperworkHtml}
 </div>
 `;
 detailView.classList.remove('hidden');
@@ -1386,7 +1488,7 @@ window.addEventListener('hashchange', handleRouter);
 window.onload = function() {
 generateExactBackground();
 loadCustomData();
-// 徹底解除雲端舊快取的劫持，每次整理畫面都從頭以最新邏輯渲染所有模組！
+// 確保所有子頁面與最新結構即時渲染
 renderHomeHeroCollage();
 renderPhotographyContent();
 renderLightingContent();
