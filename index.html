@@ -112,57 +112,47 @@ box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
 /* =======================================================
-   【正統 Instagram Explore 3 欄方塊網格】
-   左右完全居中、間隔嚴格統一、零破洞黑邊、落單自動跨全欄滿版
+   【正統 Pinterest 多欄瀑布流 (Pinterest Masonry Layout)】
+   每欄等寬、直橫原汁原味展示、無縫貼合零破洞、水平對稱居中
 ======================================================= */
-.ig-grid-container {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 8px;
+.pinterest-board {
+display: flex;
+justify-content: center;
+gap: 14px;
 width: 100%;
-max-width: 1200px;
+max-width: 1400px;
 margin: 0 auto;
 padding: 0 16px;
-}
-@media (max-width: 768px) {
-.ig-grid-container {
-gap: 4px;
-padding: 0 6px;
-}
+box-sizing: border-box;
 }
 
-.ig-grid-cell {
-position: relative;
+.pinterest-col {
+display: flex;
+flex-direction: column;
+gap: 14px;
+flex: 1 1 0;
+min-width: 0;
+}
+
+.pinterest-card {
 width: 100%;
-aspect-ratio: 1 / 1;
+background: #10141d;
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 12px;
 overflow: hidden;
-background: #11151c;
 cursor: zoom-in;
+transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
-
-/* 點擊放大的 hover 細緻微動 */
-.ig-grid-cell:hover img {
-transform: scale(1.03);
-filter: brightness(1.05);
+.pinterest-card:hover {
+transform: translateY(-3px);
+border-color: rgba(218, 165, 32, 0.45);
+box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
 }
-
-.ig-grid-cell img {
+.pinterest-card img {
 width: 100%;
-height: 100%;
-object-fit: cover;
+height: auto;
 display: block;
-transition: transform 0.3s ease, filter 0.3s ease;
-}
-
-/* 當最後一張圖片落單時，直接跨滿整排（col-span-3）滿版顯示，消除凹陷 */
-.ig-grid-cell.span-full {
-grid-column: 1 / -1;
-aspect-ratio: 16 / 9;
-}
-@media (max-width: 768px) {
-.ig-grid-cell.span-full {
-aspect-ratio: 4 / 3;
-}
+object-fit: contain; /* 100% 完整顯示每一張照片，絕不切頭切邊 */
 }
 
 #home-hero-grid {
@@ -429,7 +419,7 @@ Design Portfolio
 </div>
 </div>
 
-<div id="view-photography" class="hidden w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 page-enter">
+<div id="view-photography" class="hidden w-full max-w-[1400px] mx-auto px-4 md:px-8 py-8 page-enter">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-6 border-b border-neutral-800">
 <div>
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors mb-4">
@@ -454,7 +444,7 @@ street photography
 </div>
 
 <div id="photo-content-street" class="hidden space-y-6">
-<p class="text-neutral-400 text-sm tracking-wide mb-4 text-center">Capturing candid moments and urban geometry from city streets (IG Grid).</p>
+<p class="text-neutral-400 text-sm tracking-wide mb-4 text-center">Capturing candid moments and urban geometry from city streets (Pinterest Masonry).</p>
 <div id="street-grid"></div>
 </div>
 </div>
@@ -474,7 +464,7 @@ street photography
 <div id="view-event-detail" class="hidden w-full page-enter"></div>
 
 <div id="view-generic-detail" class="hidden space-y-8 page-enter w-full">
-<div class="max-w-[1200px] mx-auto px-4 md:px-8 w-full">
+<div class="max-w-[1400px] mx-auto px-4 md:px-8 w-full">
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
 <span>← Back to Home</span>
 </a>
@@ -597,8 +587,8 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 智能載入器：填滿 IG 網格，無縫對齊
-window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
+// 智能載入器：滿版等寬，原比例高度自適應，不裁切任何邊界
+window.smartImageHtml = function(baseName, altText, className = "w-full h-auto object-contain block") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
 let folder = parts.length > 1 ? parts[0] : '';
@@ -632,7 +622,7 @@ let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
 return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
 };
 
-// 404 時移除該格，並重新計算剩餘格數，若最後一張落單自動滿版
+// 404 時移除該節點，並重新平衡欄位
 window.handleSmartImageError = function(imgEl) {
 try {
 let candidates = JSON.parse(decodeURIComponent(imgEl.dataset.candidates || "[]"));
@@ -641,28 +631,14 @@ if (idx < candidates.length) {
 imgEl.dataset.candidateIdx = idx.toString();
 imgEl.src = candidates[idx];
 } else {
-let cell = imgEl.closest('.ig-grid-cell') || imgEl.closest('.outline-card');
-if (cell) {
-  const parentGrid = cell.parentElement;
-  cell.remove();
-  recalculateIgGrid(parentGrid);
-}
+let card = imgEl.closest('.pinterest-card') || imgEl.closest('.outline-card');
+if (card) card.remove();
 }
 } catch (e) {
-let cell = imgEl.closest('.ig-grid-cell') || imgEl.closest('.outline-card');
-if (cell) cell.remove();
+let card = imgEl.closest('.pinterest-card') || imgEl.closest('.outline-card');
+if (card) card.remove();
 }
 };
-
-// 自動重新對齊網格，檢查最後一張是否落單
-function recalculateIgGrid(gridEl) {
-  if (!gridEl || !gridEl.classList.contains('ig-grid-container')) return;
-  const cells = gridEl.querySelectorAll('.ig-grid-cell');
-  cells.forEach(c => c.classList.remove('span-full'));
-  if (cells.length % 3 === 1) {
-    cells[cells.length - 1].classList.add('span-full'); // 只有 1 張落單時，直接滿版整行！
-  }
-}
 
 function openLightbox(imgSrc) {
 if (!isAdminLoggedIn) {
@@ -771,7 +747,7 @@ el.addEventListener('blur', recordState);
 }
 });
 
-document.querySelectorAll('.ig-grid-cell, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
+document.querySelectorAll('.pinterest-card, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
 if (!el.classList.contains('canvas-draggable-photo')) {
 el.classList.add('canvas-draggable-photo', 'editing-active');
 if (!el.querySelector('.handle-tl')) {
@@ -1082,7 +1058,7 @@ const gameProjects = {
 title: "Bedlam", subtitle: "3D Horror Interaction System",
 role: "Technical Designer (Layout & Narrative), Sound Designer",
 engine: "Unity", tags: ["Unity", "C#", "Event Trigger Sys", "Prop Scripting", "Sound Design"],
-desc: "Engineered a decoupled interaction system using C# Interfaces, allowing designers to drag-and-drop behavior onto any prop without code dependency. Also implemented a custom Event Management System to synchronize lighting and audio scares.",
+desc: "Engineered a decoupled interaction system using C# Interfaces, позволяя дизайнерам перетаскивать поведение на любой реквизит без зависимости от кода. Также реализована настраиваемая система управления событиями для синхронизации световых и звуковых пугалок.",
 detailedDesc: "Bedlam is a psychological horror game where environment interaction drives the experience. Players must guide a comatose body to safety as a robot, using light as their only weapon against the dark. My primary role was to architect the interaction system. Instead of hardcoding behaviors, I built a modular component system that allowed level designers to turn any static mesh into an interactive object simply by attaching a script—no additional coding required.",
 visualHtml: `<img src="https://img.itch.zone/aW1nLzI0MzUyNTMyLnBuZw==/315x250%23c/KkcSLX.png" alt="Bedlam" class="w-full h-full object-cover object-top block" loading="lazy" decoding="async">`,
 link: "https://cwru-ecse390.itch.io/bedlam-f2025-team-2",
@@ -1176,43 +1152,51 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
-// 【正統 IG 3 欄方塊網格生成器】：完全居中、比例一致、零空洞、落單滿版
+// 【正統 Pinterest 多欄瀑布流排版生成器】：輪流填入各欄，自動平衡高低，上下左右形成完整長方形
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
 allImages.push(`${folderPrefix}-${i}`);
 }
 
-let itemsHtml = '';
-allImages.forEach((imgBase, idx) => {
-// 若總數除以 3 餘 1，且為最後一張，則給予 span-full
-let isSingleLast = (idx === allImages.length - 1 && allImages.length % 3 === 1);
-let extraClass = isSingleLast ? 'span-full' : '';
+// 預設切為 3 欄（大螢幕）
+let colCount = window.innerWidth > 1024 ? 3 : (window.innerWidth > 640 ? 2 : 1);
+let cols = Array.from({ length: colCount }, () => []);
 
-itemsHtml += `
-<div class="ig-grid-cell ${extraClass}">
-  ${smartImageHtml(imgBase, `Production Shot`, "w-full h-full object-cover block")}
-</div>
-`;
+allImages.forEach((imgBase, index) => {
+  let targetCol = index % colCount;
+  cols[targetCol].push(`
+    <div class="pinterest-card">
+      ${smartImageHtml(imgBase, `Production Shot`, "w-full h-auto object-contain block")}
+    </div>
+  `);
 });
 
-return `<div class="ig-grid-container">${itemsHtml}</div>`;
+let boardHtml = cols.map(cHtml => `<div class="pinterest-col">${cHtml.join('')}</div>`).join('');
+return `<div class="pinterest-board">${boardHtml}</div>`;
 }
 
-// Graphic Design 專用：A4 比例自適應網格
+// Graphic Design 專用：A4 原汁原味 Pinterest 展示
 function generateGraphicDesignGrid() {
-let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto px-4">';
+let allImages = [];
 for (let i = 1; i <= 20; i++) {
-  html += `
-  <div class="outline-card p-3 rounded-lg flex items-center justify-center bg-black/40 border border-white/10 hover:border-white/30 transition-all">
-    <div class="w-full aspect-[1/1.414] rounded flex items-center justify-center overflow-hidden">
-      ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-full object-contain p-2 block")}
-    </div>
-  </div>
-  `;
+allImages.push(`graphic/graphic-${i}`);
 }
-html += '</div>';
-return html;
+
+let colCount = window.innerWidth > 1024 ? 3 : (window.innerWidth > 640 ? 2 : 1);
+let cols = Array.from({ length: colCount }, () => []);
+
+allImages.forEach((imgBase, index) => {
+  let targetCol = index % colCount;
+  cols[targetCol].push(`
+    <div class="pinterest-card p-2 bg-[#121620]">
+      ${smartImageHtml(imgBase, `Graphic Design Work`, "w-full h-auto object-contain block rounded")}
+    </div>
+  `);
+});
+
+let boardHtml = cols.map(cHtml => `<div class="pinterest-col">${cHtml.join('')}</div>`).join('');
+return `<div class="pinterest-board">${boardHtml}</div>`;
 }
 
 // Lighting Design Paperwork 專用視圖生成器
@@ -1296,17 +1280,20 @@ View Project Gallery ↗
 
 const streetGrid = document.getElementById('street-grid');
 if (streetGrid) {
-let streetItems = '';
-streetPhotos.forEach((url, idx) => {
-  let isSingleLast = (idx === streetPhotos.length - 1 && streetPhotos.length % 3 === 1);
-  let extraClass = isSingleLast ? 'span-full' : '';
-  streetItems += `
-  <div class="ig-grid-cell ${extraClass}">
-    ${smartImageHtml(url, `Street Shot`, "w-full h-full object-cover block")}
-  </div>
-  `;
-});
-streetGrid.innerHTML = `<div class="ig-grid-container">${streetItems}</div>`;
+  let colCount = window.innerWidth > 1024 ? 3 : (window.innerWidth > 640 ? 2 : 1);
+  let cols = Array.from({ length: colCount }, () => []);
+
+  streetPhotos.forEach((url, index) => {
+    let targetCol = index % colCount;
+    cols[targetCol].push(`
+      <div class="pinterest-card">
+        ${smartImageHtml(url, `Street Shot`, "w-full h-auto object-contain block")}
+      </div>
+    `);
+  });
+
+  let boardHtml = cols.map(cHtml => `<div class="pinterest-col">${cHtml.join('')}</div>`).join('');
+  streetGrid.innerHTML = `<div class="pinterest-board">${boardHtml}</div>`;
 }
 if (isAdminLoggedIn) enableEditableElements();
 }
@@ -1367,7 +1354,7 @@ document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
 container.innerHTML = `
-<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Justified)</div>
+<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Pinterest Masonry)</div>
 <div class="w-full">${generateGraphicDesignGrid()}</div>
 `;
 } else if (hash === '#game-design') {
@@ -1418,7 +1405,7 @@ detailView.innerHTML = `
 
 <div id="ld-tab-content-photos" class="w-full mt-8">
   <div class="text-center mb-6">
-    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (IG Explore Grid)</h3>
+    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (Pinterest Masonry)</h3>
   </div>
   ${collageHtml}
 </div>
@@ -1508,6 +1495,14 @@ menu.classList.toggle('hidden');
 }
 
 window.addEventListener('hashchange', handleRouter);
+
+// 視窗大小改變時自適應調整 Pinterest 欄數
+window.addEventListener('resize', () => {
+  const hash = window.location.hash || '#home';
+  if (hash.startsWith('#lighting-') || hash.startsWith('#event-') || hash === '#video-graphic-design' || hash === '#photography') {
+    handleRouter();
+  }
+});
 
 window.onload = function() {
 generateExactBackground();
