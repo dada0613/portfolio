@@ -111,42 +111,41 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 完美水平居中、緊密相鄰、不切圖的 IG 流式展廳 */
-.ig-centered-gallery {
-display: flex;
-flex-wrap: wrap;
-justify-content: center;
-gap: 14px;
-max-width: 1440px;
+/* 完美置中、嚴格不切圖的現代相片牆 */
+.uncropped-masonry-container {
+column-count: 3;
+column-gap: 16px;
+width: 100%;
+max-width: 1360px;
 margin: 0 auto;
 padding: 0 16px;
 }
+@media (max-width: 1024px) {
+.uncropped-masonry-container { column-count: 2; column-gap: 12px; }
+}
+@media (max-width: 640px) {
+.uncropped-masonry-container { column-count: 1; column-gap: 8px; padding: 0 10px; }
+}
 
-.ig-photo-box {
-position: relative;
-height: 340px;
-flex-grow: 1;
-flex-shrink: 0;
-max-width: 100%;
+.uncropped-photo-item {
+break-inside: avoid;
+margin-bottom: 16px;
+background: #0e1219;
+border: 1px solid rgba(255, 255, 255, 0.1);
 border-radius: 4px;
 overflow: hidden;
-background: #11151c;
-border: 1px solid rgba(255, 255, 255, 0.08);
 cursor: zoom-in;
 transition: transform 0.25s ease, border-color 0.25s ease;
 }
-@media (max-width: 768px) {
-.ig-photo-box { height: 240px; }
+.uncropped-photo-item:hover {
+transform: translateY(-3px);
+border-color: rgba(218, 165, 32, 0.5);
 }
-.ig-photo-box:hover {
-transform: translateY(-2px);
-border-color: rgba(218, 165, 32, 0.4);
-}
-.ig-photo-box img {
-height: 100%;
+.uncropped-photo-item img {
 width: 100%;
-object-fit: cover;
+height: auto;
 display: block;
+object-fit: contain; /* 100% 完整展示，絕不裁切頭部或邊緣 */
 }
 
 #home-hero-grid {
@@ -254,8 +253,8 @@ display: flex;
 <div class="border-r border-b border-white/30"></div>
 <div class="border-r border-b border-white/30"></div>
 <div class="border-b border-white/30"></div>
-<div class="border-r border-white/30"></div>
-<div class="border-r border-white/30"></div>
+<div class="border-r border-b border-white/30"></div>
+<div class="border-r border-b border-white/30"></div>
 <div></div>
 </div>
 </div>
@@ -390,7 +389,7 @@ Design Portfolio
 </div>
 </section>
 
-<!-- Four Category Cards -->
+<!-- 四大專案類別導覽卡片 -->
 <div class="max-w-[1200px] mx-auto px-6 md:px-12 w-full pb-12">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 w-full">
 <a href="#photography" class="group outline-card rounded-sm p-10 transition-all duration-500 cursor-pointer flex flex-col justify-center items-center h-[280px] md:h-[320px] block">
@@ -413,7 +412,7 @@ Design Portfolio
 </div>
 </div>
 
-<div id="view-photography" class="hidden w-full max-w-[1440px] mx-auto px-4 md:px-8 py-8 page-enter">
+<div id="view-photography" class="hidden w-full max-w-[1360px] mx-auto px-4 md:px-8 py-8 page-enter">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-6 border-b border-neutral-800">
 <div>
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors mb-4">
@@ -438,7 +437,7 @@ street photography
 </div>
 
 <div id="photo-content-street" class="hidden space-y-6">
-<p class="text-neutral-400 text-sm tracking-wide mb-4">Capturing candid moments and urban geometry from city streets (Centered Fluid Gallery).</p>
+<p class="text-neutral-400 text-sm tracking-wide mb-4 text-center">Capturing candid moments and urban geometry from city streets (100% Uncropped View).</p>
 <div id="street-grid"></div>
 </div>
 </div>
@@ -458,7 +457,7 @@ street photography
 <div id="view-event-detail" class="hidden w-full page-enter"></div>
 
 <div id="view-generic-detail" class="hidden space-y-8 page-enter w-full">
-<div class="max-w-[1440px] mx-auto px-4 md:px-8 w-full">
+<div class="max-w-[1360px] mx-auto px-4 md:px-8 w-full">
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
 <span>← Back to Home</span>
 </a>
@@ -581,8 +580,8 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 自適應比例載入函式：加載完成後自動依寬高比換算 flex-grow，確保不裁切且完美置中
-window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
+// 絕對滿版無裁切：完全依照圖片原始長寬比呈現，不裁切頂部與邊緣
+window.smartImageHtml = function(baseName, altText, className = "w-full h-auto object-contain") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
 let folder = parts.length > 1 ? parts[0] : '';
@@ -613,17 +612,7 @@ let isCoverImg = cleanBase.toLowerCase().includes('-0');
 let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
 let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
 
-return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onload="adjustPhotoBoxAspect(this)" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
-};
-
-// 當照片加載完成，自動換算父容器的長寬比，消除破洞並置中填滿
-window.adjustPhotoBoxAspect = function(imgEl) {
-  const box = imgEl.closest('.ig-photo-box');
-  if (box && imgEl.naturalWidth && imgEl.naturalHeight) {
-    const ratio = imgEl.naturalWidth / imgEl.naturalHeight;
-    box.style.flexGrow = ratio.toFixed(3);
-    box.style.width = (340 * ratio).toFixed(0) + 'px';
-  }
+return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
 };
 
 window.handleSmartImageError = function(imgEl) {
@@ -634,11 +623,11 @@ if (idx < candidates.length) {
 imgEl.dataset.candidateIdx = idx.toString();
 imgEl.src = candidates[idx];
 } else {
-let itemContainer = imgEl.closest('.ig-photo-box') || imgEl.closest('.outline-card');
+let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 } catch (e) {
-let itemContainer = imgEl.closest('.ig-photo-box') || imgEl.closest('.outline-card');
+let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 };
@@ -750,7 +739,7 @@ el.addEventListener('blur', recordState);
 }
 });
 
-document.querySelectorAll('.ig-photo-box, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
+document.querySelectorAll('.uncropped-photo-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
 if (!el.classList.contains('canvas-draggable-photo')) {
 el.classList.add('canvas-draggable-photo', 'editing-active');
 if (!el.querySelector('.handle-tl')) {
@@ -1025,6 +1014,7 @@ try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
+// 燈光專案資料清單（已移除封面浮水印標籤）
 const lightingProjects = [
 { 
   id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora/luchadora-", 
@@ -1109,9 +1099,6 @@ grid.innerHTML = lightingProjects.map(p => `
 <a href="#lighting-${p.id}" class="outline-card p-6 rounded-sm group cursor-pointer flex flex-col justify-between block">
 <div class="overflow-hidden aspect-video mb-4 rounded-sm bg-black relative flex justify-center items-center">
 ${smartImageHtml(`${p.prefix}0`, p.title, "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100 object-center")}
-<div class="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 text-[10px] uppercase tracking-widest text-neutral-300 border border-white/10">
-${p.season}
-</div>
 </div>
 <div>
 <h3 class="serif-title text-2xl italic text-neutral-100 mb-1 group-hover:text-yellow-400 transition-colors">${p.title}</h3>
@@ -1157,7 +1144,7 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
-// 【流式相簿】：完全置中、無邊距破洞、不切圖的 IG 展覽牆
+// 【無裁切置中瀑布流】：保留真實解析度與構圖，絕不切頭
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
@@ -1167,22 +1154,22 @@ allImages.push(`${folderPrefix}-${i}`);
 let itemsHtml = '';
 allImages.forEach((imgBase) => {
 itemsHtml += `
-<div class="ig-photo-box">
-  ${smartImageHtml(imgBase, `Production Shot`, "w-full h-full object-cover block")}
+<div class="uncropped-photo-item">
+  ${smartImageHtml(imgBase, `Production Shot`, "w-full h-auto object-contain block")}
 </div>
 `;
 });
 
-return `<div class="w-full flex justify-center"><div class="ig-centered-gallery">${itemsHtml}</div></div>`;
+return `<div class="uncropped-masonry-container">${itemsHtml}</div>`;
 }
 
-// Graphic Design 專用：A4 比例自適應居中展示
+// Graphic Design 專用：A4 完整展示、不裁切比例
 function generateGraphicDesignGrid() {
-let html = '<div class="ig-centered-gallery">';
+let html = '<div class="uncropped-masonry-container">';
 for (let i = 1; i <= 20; i++) {
   html += `
-  <div class="ig-photo-box" style="height: 380px;">
-    ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-full object-contain p-2 block rounded")}
+  <div class="uncropped-photo-item p-2 bg-neutral-900/60 border border-white/10">
+    ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-auto object-contain block rounded")}
   </div>
   `;
 }
@@ -1214,15 +1201,15 @@ function generatePaperworkView(project) {
         <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
         <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
       </div>
-      <div class="w-full aspect-[4/3] bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
-        ${smartImageHtml(pw.image, pw.title, "w-full h-full object-contain p-2")}
+      <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
+        ${smartImageHtml(pw.image, pw.title, "w-full h-auto object-contain p-2")}
       </div>
     </div>
   `).join('');
 
   return `
     <div class="w-full px-4 md:px-8 py-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1440px] mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1360px] mx-auto">
         ${cardsHtml}
       </div>
     </div>
@@ -1258,9 +1245,6 @@ eventsGrid.innerHTML = eventProjects.map(p => `
 <a href="#event-${p.id}" class="outline-card p-6 rounded-sm group cursor-pointer flex flex-col justify-between block">
 <div class="overflow-hidden aspect-video mb-4 rounded-sm bg-black relative flex justify-center items-center">
 ${smartImageHtml(`${p.prefix}0`, p.title, "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100 object-center")}
-<div class="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 text-[10px] uppercase tracking-widest text-neutral-300 border border-white/10">
-${p.date}
-</div>
 </div>
 <div>
 <h3 class="serif-title text-2xl italic text-neutral-100 mb-2 group-hover:text-yellow-400 transition-colors">${p.title}</h3>
@@ -1277,12 +1261,12 @@ if (streetGrid) {
 let streetItems = '';
 streetPhotos.forEach((url) => {
   streetItems += `
-  <div class="ig-photo-box">
-    ${smartImageHtml(url, `Street Shot`, "w-full h-full object-cover block")}
+  <div class="uncropped-photo-item">
+    ${smartImageHtml(url, `Street Shot`, "w-full h-auto object-contain block")}
   </div>
   `;
 });
-streetGrid.innerHTML = `<div class="ig-centered-gallery">${streetItems}</div>`;
+streetGrid.innerHTML = `<div class="uncropped-masonry-container">${streetItems}</div>`;
 }
 if (isAdminLoggedIn) enableEditableElements();
 }
@@ -1343,7 +1327,7 @@ document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
 container.innerHTML = `
-<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Gallery)</div>
+<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Masonry)</div>
 <div class="w-full">${generateGraphicDesignGrid()}</div>
 `;
 } else if (hash === '#game-design') {
@@ -1394,7 +1378,7 @@ detailView.innerHTML = `
 
 <div id="ld-tab-content-photos" class="w-full mt-8">
   <div class="text-center mb-6">
-    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (Centered IG View)</h3>
+    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (100% Uncropped View)</h3>
   </div>
   ${collageHtml}
 </div>
