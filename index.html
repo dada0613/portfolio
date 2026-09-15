@@ -565,7 +565,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 絕對精準對齊：強制把 ttto 資料夾底下的檔案對應成大寫 TTTO-
+// 完美對齊：ttto 夾層 + 大寫 TTTO- 檔名
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
@@ -574,13 +574,13 @@ let fileName = parts.length > 1 ? parts[1] : cleanBase;
 
 let candidates = [];
 if (folder === 'ttto') {
-  // 將檔名中的 ttto- 改為 TTTO-
   let upperFileName = fileName.replace(/ttto-/i, 'TTTO-');
   candidates.push(`${SUPABASE_STORAGE_URL}ttto/${upperFileName}.jpg`);
   candidates.push(`${SUPABASE_STORAGE_URL}ttto/${upperFileName}.JPG`);
 }
 candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
 candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
+candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
 
 candidates = [...new Set(candidates)].filter(url => url && !url.includes('//') && !url.includes('undefined'));
 let initialSrc = candidates.length > 0 ? candidates[0] : '';
@@ -1132,34 +1132,25 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
+// 修改：針對 Graphic 設計作品改用垂直流式完整展示（object-contain，不裁切 A4 比例）
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
 allImages.push(`${folderPrefix}-${i}`);
 }
 
-let rowsHtml = '';
-let targetRowHeight = 280;
-let approxPerRow = 3;
-
-for (let i = 0; i < allImages.length; i += approxPerRow) {
-let rowImages = allImages.slice(i, i + approxPerRow);
-rowsHtml += `<div class="justified-row">`;
-rowImages.forEach((imgBase, rIdx) => {
-let ratios = [1.2, 1.0, 1.1, 0.9, 1.3];
-let ratio = ratios[(i + rIdx) % ratios.length];
-let computedWidth = targetRowHeight * ratio;
-
-rowsHtml += `
-<div class="justified-item" style="width: ${computedWidth}px; height: ${targetRowHeight}px;">
-${smartImageHtml(imgBase, `Photo`, "w-full h-full object-cover")}
+let itemsHtml = '';
+allImages.forEach((imgBase) => {
+itemsHtml += `
+<div class="outline-card rounded-lg overflow-hidden bg-black/40 p-4 flex flex-col items-center justify-center mb-8 shadow-xl">
+<div class="w-full max-w-3xl bg-black/60 rounded flex items-center justify-center overflow-hidden border border-white/10" style="min-height: 600px;">
+${smartImageHtml(imgBase, `Graphic Design Work`, "w-full h-auto object-contain max-h-[85vh]")}
+</div>
 </div>
 `;
 });
-rowsHtml += `</div>`;
-}
 
-return `<div class="max-w-[1200px] mx-auto w-full">${rowsHtml}</div>`;
+return `<div class="max-w-[1000px] mx-auto w-full space-y-8">${itemsHtml}</div>`;
 }
 
 function renderPhotographyContent() {
@@ -1265,7 +1256,7 @@ document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
 let collageHtml = generateResponsivePhotoGrid('graphic/graphic');
 container.innerHTML = `
-<div class="text-neutral-400 text-sm tracking-wide mb-8">Graphic Design & Brand Identity Showcase</div>
+<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View A4 Display)</div>
 <div class="w-full px-4 md:px-12 mt-4">${collageHtml}</div>
 `;
 } else if (hash === '#game-design') {
