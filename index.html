@@ -111,40 +111,41 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 【標準自適應等高對齊相片牆】：零黑邊、零破洞、嚴禁切頭、高度完全平齊 */
-.justified-flow-row {
-display: flex;
-flex-wrap: wrap;
-gap: 10px;
-justify-content: center;
-align-items: center;
+/* 完美置中、嚴格不切圖的現代相片牆 */
+.uncropped-masonry-container {
+column-count: 3;
+column-gap: 16px;
 width: 100%;
-max-width: 1440px;
+max-width: 1360px;
 margin: 0 auto;
-padding: 0 12px;
+padding: 0 16px;
+}
+@media (max-width: 1024px) {
+.uncropped-masonry-container { column-count: 2; column-gap: 12px; }
+}
+@media (max-width: 640px) {
+.uncropped-masonry-container { column-count: 1; column-gap: 8px; padding: 0 10px; }
 }
 
-.justified-flow-item {
-height: 320px;
-flex-shrink: 0;
+.uncropped-photo-item {
+break-inside: avoid;
+margin-bottom: 16px;
+background: #0e1219;
+border: 1px solid rgba(255, 255, 255, 0.1);
 border-radius: 4px;
 overflow: hidden;
 cursor: zoom-in;
-background: transparent;
-transition: transform 0.25s ease, opacity 0.25s ease;
+transition: transform 0.25s ease, border-color 0.25s ease;
 }
-@media (max-width: 768px) {
-.justified-flow-item { height: 220px; }
+.uncropped-photo-item:hover {
+transform: translateY(-3px);
+border-color: rgba(218, 165, 32, 0.5);
 }
-.justified-flow-item:hover {
-transform: scale(1.02);
-z-index: 10;
-}
-.justified-flow-item img {
-height: 100%;
-width: auto;
+.uncropped-photo-item img {
+width: 100%;
+height: auto;
 display: block;
-object-fit: contain; /* 完整保留每張照片，直拍橫拍皆自適應寬度 */
+object-fit: contain; /* 100% 完整展示，絕不裁切頭部或邊緣 */
 }
 
 #home-hero-grid {
@@ -411,7 +412,7 @@ Design Portfolio
 </div>
 </div>
 
-<div id="view-photography" class="hidden w-full max-w-[1440px] mx-auto px-4 md:px-8 py-8 page-enter">
+<div id="view-photography" class="hidden w-full max-w-[1360px] mx-auto px-4 md:px-8 py-8 page-enter">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-6 border-b border-neutral-800">
 <div>
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors mb-4">
@@ -436,7 +437,7 @@ street photography
 </div>
 
 <div id="photo-content-street" class="hidden space-y-6">
-<p class="text-neutral-400 text-sm tracking-wide mb-4 text-center">Capturing candid moments and urban geometry from city streets (Justified Row View).</p>
+<p class="text-neutral-400 text-sm tracking-wide mb-4 text-center">Capturing candid moments and urban geometry from city streets (100% Uncropped View).</p>
 <div id="street-grid"></div>
 </div>
 </div>
@@ -456,7 +457,7 @@ street photography
 <div id="view-event-detail" class="hidden w-full page-enter"></div>
 
 <div id="view-generic-detail" class="hidden space-y-8 page-enter w-full">
-<div class="max-w-[1440px] mx-auto px-4 md:px-8 w-full">
+<div class="max-w-[1360px] mx-auto px-4 md:px-8 w-full">
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
 <span>← Back to Home</span>
 </a>
@@ -579,8 +580,8 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 自適應流式載入：高度固定 100%，寬度由照片自身比例決定，無任何黑邊裁切
-window.smartImageHtml = function(baseName, altText, className = "h-full w-auto object-contain") {
+// 絕對滿版無裁切：完全依照圖片原始長寬比呈現，不裁切頂部與邊緣
+window.smartImageHtml = function(baseName, altText, className = "w-full h-auto object-contain") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
 let folder = parts.length > 1 ? parts[0] : '';
@@ -614,7 +615,6 @@ let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
 return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
 };
 
-// 404 時直接自 DOM 移除容器，徹底消除黑塊破洞
 window.handleSmartImageError = function(imgEl) {
 try {
 let candidates = JSON.parse(decodeURIComponent(imgEl.dataset.candidates || "[]"));
@@ -623,12 +623,12 @@ if (idx < candidates.length) {
 imgEl.dataset.candidateIdx = idx.toString();
 imgEl.src = candidates[idx];
 } else {
-let itemContainer = imgEl.closest('.justified-flow-item') || imgEl.closest('.outline-card');
-if (itemContainer) itemContainer.remove();
+let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card');
+if (itemContainer) itemContainer.style.display = 'none';
 }
 } catch (e) {
-let itemContainer = imgEl.closest('.justified-flow-item') || imgEl.closest('.outline-card');
-if (itemContainer) itemContainer.remove();
+let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card');
+if (itemContainer) itemContainer.style.display = 'none';
 }
 };
 
@@ -739,7 +739,7 @@ el.addEventListener('blur', recordState);
 }
 });
 
-document.querySelectorAll('.justified-flow-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
+document.querySelectorAll('.uncropped-photo-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
 if (!el.classList.contains('canvas-draggable-photo')) {
 el.classList.add('canvas-draggable-photo', 'editing-active');
 if (!el.querySelector('.handle-tl')) {
@@ -1014,12 +1014,12 @@ try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 燈光專案資料清單（無任何浮水印文字覆蓋）
+// 燈光專案資料清單（已移除封面浮水印標籤）
 const lightingProjects = [
 { 
-  id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora/luchadora-",
-  desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.",
-  aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.",
+  id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora/luchadora-", 
+  desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.", 
+  aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", 
   aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season.",
   paperwork: [
     { title: "Vectorworks Light Plot", type: "CAD Plot (1/4\" Scale)", image: "luchadora/plot", pdfUrl: "#", desc: "Full venue lighting layout with rigging points, DMX distribution, and instrument numbering." },
@@ -1028,9 +1028,9 @@ const lightingProjects = [
   ]
 },
 { 
-  id: "beehive", title: "Beehive: The 60s Musical", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "beehive/beehive-",
-  desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization.",
-  aboutPlay: "Beehive is a celebration of powerful female vocalists of the 1960s.",
+  id: "beehive", title: "Beehive: The 60s Musical", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "beehive/beehive-", 
+  desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization.", 
+  aboutPlay: "Beehive is a celebration of powerful female vocalists of the 1960s.", 
   aboutDesign: "PCPA Summer 2026 internship project.",
   paperwork: [
     { title: "Vectorworks Light Plot", type: "CAD Plot", image: "beehive/plot", pdfUrl: "#", desc: "Main stage plot including moving head wash units and cyc backlight systems." },
@@ -1144,7 +1144,7 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
-// 【自適應等高流式相片牆】：每一行高度統一平齊，寬度依照片比例自動延伸，零黑邊、絕不切頭
+// 【無裁切置中瀑布流】：保留真實解析度與構圖，絕不切頭
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
@@ -1154,22 +1154,22 @@ allImages.push(`${folderPrefix}-${i}`);
 let itemsHtml = '';
 allImages.forEach((imgBase) => {
 itemsHtml += `
-<div class="justified-flow-item">
-  ${smartImageHtml(imgBase, `Production Shot`, "h-full w-auto object-contain block")}
+<div class="uncropped-photo-item">
+  ${smartImageHtml(imgBase, `Production Shot`, "w-full h-auto object-contain block")}
 </div>
 `;
 });
 
-return `<div class="justified-flow-row">${itemsHtml}</div>`;
+return `<div class="uncropped-masonry-container">${itemsHtml}</div>`;
 }
 
-// Graphic Design 專用：等高自適應 A4 原汁原味展示
+// Graphic Design 專用：A4 完整展示、不裁切比例
 function generateGraphicDesignGrid() {
-let html = '<div class="justified-flow-row">';
+let html = '<div class="uncropped-masonry-container">';
 for (let i = 1; i <= 20; i++) {
   html += `
-  <div class="justified-flow-item p-1 bg-neutral-900/40 rounded border border-white/10" style="height: 380px;">
-    ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "h-full w-auto object-contain block rounded")}
+  <div class="uncropped-photo-item p-2 bg-neutral-900/60 border border-white/10">
+    ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-auto object-contain block rounded")}
   </div>
   `;
 }
@@ -1201,8 +1201,8 @@ function generatePaperworkView(project) {
         <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
         <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
       </div>
-      <div class="w-full aspect-[4/3] bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
-        ${smartImageHtml(pw.image, pw.title, "w-full h-full object-contain p-2")}
+      <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
+        ${smartImageHtml(pw.image, pw.title, "w-full h-auto object-contain p-2")}
       </div>
     </div>
   `).join('');
@@ -1261,12 +1261,12 @@ if (streetGrid) {
 let streetItems = '';
 streetPhotos.forEach((url) => {
   streetItems += `
-  <div class="justified-flow-item">
-    ${smartImageHtml(url, `Street Shot`, "h-full w-auto object-contain block")}
+  <div class="uncropped-photo-item">
+    ${smartImageHtml(url, `Street Shot`, "w-full h-auto object-contain block")}
   </div>
   `;
 });
-streetGrid.innerHTML = `<div class="justified-flow-row">${streetItems}</div>`;
+streetGrid.innerHTML = `<div class="uncropped-masonry-container">${streetItems}</div>`;
 }
 if (isAdminLoggedIn) enableEditableElements();
 }
@@ -1327,7 +1327,7 @@ document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
 container.innerHTML = `
-<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Justified)</div>
+<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Masonry)</div>
 <div class="w-full">${generateGraphicDesignGrid()}</div>
 `;
 } else if (hash === '#game-design') {
@@ -1378,7 +1378,7 @@ detailView.innerHTML = `
 
 <div id="ld-tab-content-photos" class="w-full mt-8">
   <div class="text-center mb-6">
-    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (Uncropped Justified Flow)</h3>
+    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (100% Uncropped View)</h3>
   </div>
   ${collageHtml}
 </div>
