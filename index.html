@@ -565,7 +565,7 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 完美對齊：ttto 夾層 + 大寫 TTTO- 檔名
+// 完美對齊：ttto 夾層 + 大寫 TTTO- 檔名，並且全面相容各種大小寫與副檔名
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
@@ -704,34 +704,6 @@ alert('Saved to local storage successfully!');
 } else {
 alert('Successfully saved your edits to Supabase Cloud!');
 }
-}
-
-let isCloudLoaded = false;
-
-async function loadCloudLayout() {
-  const { data, error } = await supabaseClient
-    .from('portfolio_settings')
-    .select('layout_html')
-    .eq('id', 1)
-    .single();
-
-  if (error || !data || !data.layout_html) return;
-
-  try {
-    const saved = JSON.parse(data.layout_html);
-    if (saved.mainHtml) {
-      const main = document.querySelector('main');
-      if (main) {
-        main.innerHTML = saved.mainHtml;
-        isCloudLoaded = true;
-        if (isAdminLoggedIn) {
-          enableEditableElements();
-        }
-      }
-    }
-  } catch (err) {
-    console.error('Failed to parse cloud data:', err);
-  }
 }
 
 function enableEditableElements() {
@@ -1132,7 +1104,6 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
-// 修改：針對 Graphic 設計作品改用垂直流式完整展示（object-contain，不裁切 A4 比例）
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
@@ -1249,7 +1220,7 @@ document.getElementById('view-photography').classList.remove('hidden');
 renderPhotographyContent();
 } else if (hash === '#lighting-design') {
 document.getElementById('view-lighting-design').classList.remove('hidden');
-if (!isCloudLoaded) renderLightingContent();
+renderLightingContent();
 } else if (hash === '#video-graphic-design') {
 document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
@@ -1380,10 +1351,11 @@ window.addEventListener('hashchange', handleRouter);
 window.onload = async function() {
 generateExactBackground();
 loadCustomData();
-await loadCloudLayout();
-if (!isCloudLoaded) {
+// 移除雲端快取載入，改為每次直接強制重新渲染所有頁面，確保所有圖片與區塊正常顯示
 renderHomeHeroCollage();
-}
+renderPhotographyContent();
+renderLightingContent();
+renderGameProjectsContent();
 handleRouter();
 };
 </script></body></html>
