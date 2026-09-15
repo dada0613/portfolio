@@ -565,30 +565,39 @@ alert('Action Undone (Ctrl+Z)');
 }
 });
 
-// 完美對齊：ttto 夾層 + 大寫 TTTO- 檔名，並且全面相容各種大小寫與副檔名
+// 絕對精準載入器：支援小寫/大寫資料夾及多種檔名變形，失敗自動切換下一張
 window.smartImageHtml = function(baseName, altText, className = "w-full h-full object-cover") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
-let folder = parts.length > 1 ? parts[0].toLowerCase() : '';
+let folder = parts.length > 1 ? parts[0] : '';
 let fileName = parts.length > 1 ? parts[1] : cleanBase;
 
 let candidates = [];
-if (folder === 'ttto') {
-  let upperFileName = fileName.replace(/ttto-/i, 'TTTO-');
-  candidates.push(`${SUPABASE_STORAGE_URL}ttto/${upperFileName}.jpg`);
-  candidates.push(`${SUPABASE_STORAGE_URL}ttto/${upperFileName}.JPG`);
+
+// 專門針對 ttto 資料夾的精準匹配 (小寫資料夾 + 大寫檔名 TTTO-)
+if (folder.toLowerCase() === 'ttto') {
+  let numMatch = fileName.match(/(\d+)$/);
+  let num = numMatch ? numMatch[1] : '0';
+  candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.jpg`);
+  candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.JPG`);
+  candidates.push(`${SUPABASE_STORAGE_URL}ttto/ttto-${num}.jpg`);
 }
+
 candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
 candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
 candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
+if (folder) {
+  candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
+}
 
-candidates = [...new Set(candidates)].filter(url => url && !url.includes('//') && !url.includes('undefined'));
+candidates = [...new Set(candidates)].filter(url => url && !url.includes('undefined'));
 let initialSrc = candidates.length > 0 ? candidates[0] : '';
 let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 
 let isCoverImg = cleanBase.toLowerCase().includes('-0');
 let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
 let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
+
 return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
 };
 
@@ -1104,24 +1113,51 @@ grid.innerHTML = html;
 if (isAdminLoggedIn) enableEditableElements();
 }
 
+// 標準相簿照片堆疊（用於攝影與燈光設計）
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
 allImages.push(`${folderPrefix}-${i}`);
 }
 
-let itemsHtml = '';
-allImages.forEach((imgBase) => {
-itemsHtml += `
-<div class="outline-card rounded-lg overflow-hidden bg-black/40 p-4 flex flex-col items-center justify-center mb-8 shadow-xl">
-<div class="w-full max-w-3xl bg-black/60 rounded flex items-center justify-center overflow-hidden border border-white/10" style="min-height: 600px;">
-${smartImageHtml(imgBase, `Graphic Design Work`, "w-full h-auto object-contain max-h-[85vh]")}
-</div>
+let rowsHtml = '';
+let targetRowHeight = 280;
+let approxPerRow = 3;
+
+for (let i = 0; i < allImages.length; i += approxPerRow) {
+let rowImages = allImages.slice(i, i + approxPerRow);
+rowsHtml += `<div class="justified-row">`;
+rowImages.forEach((imgBase, rIdx) => {
+let ratios = [1.2, 1.0, 1.1, 0.9, 1.3];
+let ratio = ratios[(i + rIdx) % ratios.length];
+let computedWidth = targetRowHeight * ratio;
+
+rowsHtml += `
+<div class="justified-item" style="width: ${computedWidth}px; height: ${targetRowHeight}px;">
+${smartImageHtml(imgBase, `Photo`, "w-full h-full object-cover")}
 </div>
 `;
 });
+rowsHtml += `</div>`;
+}
 
-return `<div class="max-w-[1000px] mx-auto w-full space-y-8">${itemsHtml}</div>`;
+return `<div class="max-w-[1200px] mx-auto w-full">${rowsHtml}</div>`;
+}
+
+// Graphic Design 專用：A4 完整展示、不裁切比例的清晰網格
+function generateGraphicDesignGrid() {
+let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1200px] mx-auto w-full">';
+for (let i = 1; i <= 20; i++) {
+  html += `
+  <div class="outline-card p-3 rounded-lg flex flex-col items-center justify-center bg-black/40 border border-white/10 hover:border-white/30 transition-all">
+    <div class="w-full aspect-[1/1.414] bg-neutral-950 rounded flex items-center justify-center overflow-hidden">
+      ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-full object-contain p-2")}
+    </div>
+  </div>
+  `;
+}
+html += '</div>';
+return html;
 }
 
 function renderPhotographyContent() {
@@ -1225,10 +1261,9 @@ renderLightingContent();
 document.getElementById('view-generic-detail').classList.remove('hidden');
 document.getElementById('generic-title').textContent = 'Video & Graphic Design';
 const container = document.getElementById('generic-content-area');
-let collageHtml = generateResponsivePhotoGrid('graphic/graphic');
 container.innerHTML = `
-<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View A4 Display)</div>
-<div class="w-full px-4 md:px-12 mt-4">${collageHtml}</div>
+<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full A4 View)</div>
+<div class="w-full px-4 md:px-12 mt-4">${generateGraphicDesignGrid()}</div>
 `;
 } else if (hash === '#game-design') {
 document.getElementById('view-game-design').classList.remove('hidden');
@@ -1348,10 +1383,10 @@ menu.classList.toggle('hidden');
 
 window.addEventListener('hashchange', handleRouter);
 
-window.onload = async function() {
+window.onload = function() {
 generateExactBackground();
 loadCustomData();
-// 移除雲端快取載入，改為每次直接強制重新渲染所有頁面，確保所有圖片與區塊正常顯示
+// 徹底解除雲端舊快取的劫持，每次整理畫面都從頭以最新邏輯渲染所有模組！
 renderHomeHeroCollage();
 renderPhotographyContent();
 renderLightingContent();
