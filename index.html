@@ -164,94 +164,15 @@ padding: 0 24px;
 @media (max-width: 768px) {
 #home-hero-grid { grid-template-columns: repeat(2, 1fr); }
 }
-
-.canvas-draggable-photo {
-position: relative;
-display: inline-block;
-user-select: none;
-touch-action: none;
-}
-.canvas-draggable-photo.editing-active {
-cursor: grab;
-outline: 2px dashed #DAA520;
-outline-offset: 4px;
-}
-.canvas-draggable-photo.editing-active:active {
-cursor: grabbing;
-}
-
-.resize-handle {
-display: none;
-position: absolute;
-background: #DAA520;
-border: 2px solid #fff;
-z-index: 30;
-}
-.canvas-draggable-photo.editing-active .resize-handle {
-display: block;
-}
-.handle-tl { width: 12px; height: 12px; top: -6px; left: -6px; cursor: nwse-resize; border-radius: 50%; }
-.handle-tr { width: 12px; height: 12px; top: -6px; right: -6px; cursor: nesw-resize; border-radius: 50%; }
-.handle-bl { width: 12px; height: 12px; bottom: -6px; left: -6px; cursor: nesw-resize; border-radius: 50%; }
-.handle-br { width: 12px; height: 12px; bottom: -6px; right: -6px; cursor: nwse-resize; border-radius: 50%; }
-.handle-t { height: 8px; top: -4px; left: 12px; right: 12px; cursor: ns-resize; }
-.handle-b { height: 8px; bottom: -4px; left: 12px; right: 12px; cursor: ns-resize; }
-.handle-l { width: 8px; left: -4px; top: 12px; bottom: 12px; cursor: ew-resize; }
-.handle-r { width: 8px; right: -4px; top: 12px; bottom: 12px; cursor: ew-resize; }
-
-.delete-elem-btn {
-display: none;
-position: absolute;
-top: -12px;
-right: -12px;
-width: 26px;
-height: 26px;
-background: #dc2626;
-color: #fff;
-border-radius: 50%;
-border: 2px solid #fff;
-font-size: 14px;
-font-weight: bold;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-z-index: 40;
-box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-.canvas-draggable-photo.editing-active .delete-elem-btn,
-.outline-card.editing-active .delete-elem-btn,
-.gd-card.editing-active .delete-elem-btn {
-display: flex;
-}
 </style></head>
 <body class="min-h-screen relative flex flex-col justify-between selection:bg-neutral-800 selection:text-white">
 
 <div id="bg-canvas" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
 
-<!-- 頂部編輯控制列 -->
-<div id="admin-floating-bar" class="hidden fixed top-4 right-4 z-50 bg-yellow-600/90 text-black px-5 py-2 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-<span>⚡ Cloud Sync Edit Mode</span>
-<button onclick="saveAllChanges()" class="bg-black text-white px-3 py-1 rounded hover:bg-neutral-800 cursor-pointer">Save to Cloud</button>
-<button onclick="openAdminModal()" class="bg-neutral-900 text-white px-3 py-1 rounded hover:bg-black cursor-pointer">Add Project</button>
-<button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 cursor-pointer">Logout</button>
-</div>
-
 <!-- 圖片放大 LightBox 燈箱 Modal -->
 <div id="lightbox-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightbox()">
 <button onclick="closeLightbox()" class="absolute top-6 right-6 text-neutral-400 hover:text-white text-3xl font-light z-50 focus:outline-none">✕</button>
 <img id="lightbox-img" src="" alt="Zoomed Image" class="max-w-[92vw] max-h-[92vh] object-contain rounded shadow-2xl" onclick="event.stopPropagation()">
-</div>
-
-<!-- 秘密解鎖登入彈窗 -->
-<div id="admin-login-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-<div class="glass-panel p-8 rounded-lg max-w-md w-full relative">
-<button onclick="closeAdminLogin()" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
-<h3 class="serif-title text-2xl text-white mb-4 italic">Supabase Admin Login</h3>
-<p class="text-xs text-neutral-400 mb-6 uppercase tracking-widest">Enter your Supabase admin email & password.</p>
-<input type="email" id="admin-email-input" placeholder="Admin Email" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm mb-4 rounded focus:outline-none focus:border-yellow-500">
-<input type="password" id="admin-passcode-input" placeholder="Password" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm mb-4 rounded focus:outline-none focus:border-yellow-500">
-<button onclick="verifySupabaseAdmin()" class="w-full bg-yellow-600 text-black font-bold py-3 uppercase text-xs tracking-widest hover:bg-white transition-colors cursor-pointer">Authenticate Securely</button>
-</div>
 </div>
 
 <header id="global-header" class="relative z-20 w-full px-6 md:px-12 py-8 flex items-center justify-between transition-colors bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800/50">
@@ -357,7 +278,7 @@ street photography
 </a>
 <div class="border-b border-neutral-800 pb-6 mb-12">
 <h1 class="serif-title text-4xl md:text-5xl italic text-neutral-100 mb-2">Lighting Design & Technical Portfolio</h1>
-<p class="text-neutral-400 text-sm tracking-wide">Theatrical Lighting, Light Plots, Magic Sheets, Spot Sheets, Design Process & Production Credits</p>
+<p class="text-neutral-400 text-sm tracking-wide">Theatrical Lighting, Light Plots, Magic Sheets, Visual References, Design Process & Production Credits</p>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="lighting-projects-grid"></div>
 </div>
@@ -403,7 +324,6 @@ Bridging the gap between Engineering & Art.
 
 <div id="view-game-detail" class="hidden gd-body pb-20 max-w-[1200px] mx-auto px-6 md:px-12 w-full page-enter">
 <a href="#game-design" class="mb-8 text-neutral-200 hover:text-white flex items-center gap-2 text-sm uppercase tracking-widest font-bold transition-colors mt-8 inline-flex">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
 Back to Projects
 </a>
 
@@ -454,12 +374,6 @@ Play / Download
 <div class="h-12 w-full"></div>
 
 <script>
-const SUPABASE_URL = 'https://alvboxtaouzggqvkoanz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsdmJveHRhb3V6Z2dxdmtvYW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NzA2MjQsImV4cCI6MjEwNDU0NjYyNH0.oG3E0ngyWqAb2z3ZNgRF8d4faXMRWPtvcpiNTDEwDmU';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-let isAdminLoggedIn = false;
-let undoStack = [];
 const SUPABASE_STORAGE_URL = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
 
 window.smartImageHtml = function(baseName, altText, className = "w-full h-auto object-contain") {
@@ -470,19 +384,22 @@ let fileName = parts.length > 1 ? parts[1] : cleanBase;
 
 let candidates = [];
 
-if (folder.toLowerCase() === 'ttto') {
-  let numMatch = fileName.match(/(\d+)$/);
-  let num = numMatch ? numMatch[1] : '0';
-  candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.jpg`);
-  candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.JPG`);
-  candidates.push(`${SUPABASE_STORAGE_URL}ttto/ttto-${num}.jpg`);
-}
-
-candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
-candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
-candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
-if (folder) {
-  candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
+if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
+  candidates.push(cleanBase);
+} else {
+  if (folder.toLowerCase() === 'ttto') {
+    let numMatch = fileName.match(/(\d+)$/);
+    let num = numMatch ? numMatch[1] : '0';
+    candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.jpg`);
+    candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.JPG`);
+    candidates.push(`${SUPABASE_STORAGE_URL}ttto/ttto-${num}.jpg`);
+  }
+  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
+  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
+  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
+  if (folder) {
+    candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
+  }
 }
 
 candidates = [...new Set(candidates)].filter(url => url && !url.includes('undefined'));
@@ -514,13 +431,11 @@ if (itemContainer) itemContainer.style.display = 'none';
 };
 
 function openLightbox(imgSrc) {
-if (!isAdminLoggedIn) {
 const modal = document.getElementById('lightbox-modal');
 const modalImg = document.getElementById('lightbox-img');
 if (modal && modalImg) {
 modalImg.src = imgSrc;
 modal.classList.remove('hidden');
-}
 }
 }
 
@@ -598,7 +513,7 @@ let eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（整合 Resume 與 Portfolio PDF 資料）
+// 完整 PDF 6大燈光專案資料清單（整合 Resume 與 53 頁 Portfolio PDF 內所有細節）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -606,8 +521,9 @@ const lightingProjects = [
   subtitle: "CWRU Dept. of Theater / Kalberer Theatre", 
   role: "Lighting Designer", 
   year: "2025",
-  venue: "Kalberer Theatre, Cleveland OH",
-  director: "David Vegh & Abigail Gilman",
+  season: "Junior Year at CWRU",
+  prefix: "harvest/harvest-",
+  desc: "Set entirely in an Idaho church basement, lighting enhances the tension between faith, obligation, and personal struggle with grounded realism.",
   credits: [
     { label: "My Role", val: "Lighting Designer (Co-Designer with Jill Daug)" },
     { label: "Institution / Venue", val: "Case Western Reserve University — Kalberer Theatre" },
@@ -616,33 +532,47 @@ const lightingProjects = [
     { label: "Year", val: "Fall 2025" }
   ],
   myContributions: [
-    "Spearheaded lighting design from initial concept, color rendering, and cueing through final execution.",
-    "Drafted complete Vectorworks 1/4\" scale Light Plot, Instrument Schedule, and Focus Areas for 60+ fixtures.",
-    "Engineered realistic environmental light shifts via practical basement windows, staircases, and fluorescent fixtures.",
-    "Programmed multi-layered lightning storm auto-follow cues and blackout moments synchronized with thunder and rain FX on ETC Eos."
+    "Spearheaded complete lighting design concept, drafting, cue structure, and tech execution.",
+    "Drafted 1/4\" Vectorworks Light Plot, Focus Areas, and Instrument Schedule for 60+ conventional and LED fixtures.",
+    "Built realistic environmental light sources using practical basement windows, fluorescent fixtures, and staircase shafts.",
+    "Programmed multi-step thunderstorm autofollow cue stacks with lightning blackouts synchronized with sound effects on ETC Eos."
   ],
-  designProcess: [
+  aboutPlay: "The Harvest by Samuel D. Hunter takes place in a small evangelical church in Idaho, where a group of young missionaries prepare for a trip to the Middle East. As they pray, argue, and reveal their fears, the play explores themes of faith, isolation, and the longing for purpose.",
+  aboutDesign: "Every cue is rooted in realism, appearing to come from practical sources: fluorescent fixtures, LED strips, small basement windows, and staircase lighting that guides movement between emotional and physical space. Subtle transitions reveal texture, sculpt faces, and support the psychological landscape.",
+  references: [
     {
-      title: "Rooted in Grounded Realism",
-      text: "Set entirely in an Idaho church basement, every cue originates from practical fixtures: fluorescent troffers, basement window natural shafts, kitchen pendants, and piano lamps."
-    },
-    {
-      title: "Window Light & Time Shifts",
-      text: "Basement windows act as emotional thermometers. Sterile cold daylight mirrors religious doubt and routine, while rich warm sunset/amber light accents prayer and spiritual breakthrough."
-    },
-    {
-      title: "Psychological Isolation & Staircase Focal Point",
-      text: "Used high-contrast side lighting and shadow sculpting to emphasize emotional divides. The staircase lighting isolates entrances, symbolizing characters entering or escaping tension."
-    },
-    {
-      title: "Thunderstorm & Escalating Lightning FX",
-      text: "Designed three staggered lightning flash intensities with immediate blackout cuts, immersing the audience in sudden vulnerability during the storm."
+      title: "Realism Inspiration: Crowded Kitchen & Practical Light",
+      image: "harvest/harvest-ref",
+      desc: "Reference photo used to study cluttered domestic lighting, overhead practical fixtures, and realistic light bounce in enclosed basement spaces."
     }
   ],
-  prefix: "harvest/harvest-", 
-  desc: "Set entirely in a church basement, the lighting enhances the tension between faith, obligation, and personal struggle with grounded realism.", 
-  aboutPlay: "The Harvest by Samuel D. Hunter takes place in a small evangelical church in Idaho, where young missionaries prepare for a Middle East trip. As they pray and confront their fears, the play explores faith, isolation, and human longing.", 
-  aboutDesign: "Every cue is rooted in realism, appearing to come from practical sources: fluorescents, basement windows, and staircases that bridge physical and psychological spaces.",
+  sceneBreakdowns: [
+    {
+      title: "Michaela's Entrance & Praying in Tongues",
+      image: "harvest/harvest-scene1",
+      desc: "Lighting design for the moment Michaela descends the stairs while Tom and Jason pray in tongues. The staircase lighting emphasizes her entrance and separates her from the cold moonlight coming through the windows."
+    },
+    {
+      title: "Music, Connection & Isolation",
+      image: "harvest/harvest-scene2",
+      desc: "Tom and Jason listen to music together, but their emotions diverge: Jason wants to leave, while Tom wants him to stay. I used cold moonlight from the window to isolate Jason in shadow, and warm piano light to emphasize Tom's desire for connection."
+    },
+    {
+      title: "Rain, Fluorescent & Cold Moon",
+      image: "harvest/harvest-scene3",
+      desc: "Jason is soaked from the rain. The cold moonlight combined with ceiling fluorescent light and warm front light creates deep psychological isolation as characters confront harsh realities."
+    },
+    {
+      title: "Final Scene: Sunrise & Miracle",
+      image: "harvest/harvest-scene4",
+      desc: "In the final scene where characters pray in tongues, the director wanted lighting to evoke hope and sunrise. I designed a warm, rising light from the window that gradually fills the space, suggesting spiritual transformation."
+    },
+    {
+      title: "Thunderstorm & Lightning Effect",
+      image: "harvest/harvest-scene5",
+      desc: "Incorporating thunder FX, three escalating lightning flashes build intensity. At director's request, stage cuts to complete blackout during strikes, letting the audience experience sudden darkness. Window lights flicker with strong winds."
+    }
+  ],
   paperwork: [
     { title: "Vectorworks Light Plot & Focus Area", type: "CAD Plot (1/4\" Scale)", image: "harvest/plot", pdfUrl: "#", desc: "Complete venue rig with fixture numbers, DMX addresses, and focus area layout." },
     { title: "Magic Sheet / Systems Layout", type: "ETC Eos Console Setup", image: "harvest/magic", pdfUrl: "#", desc: "Channel groups including Front, Top, SR/SL Side, Windows, Gobos, and Practicals." },
@@ -651,13 +581,286 @@ const lightingProjects = [
   ]
 },
 { 
+  id: "fun-home", 
+  title: "Fun Home", 
+  subtitle: "Musical / Player's Theater Group", 
+  role: "Co-Lighting Designer", 
+  year: "2023",
+  season: "First Year in College",
+  prefix: "funhome/funhome-",
+  desc: "A musical exploring memory and coming out. Transitioned lighting from cheerful to somber using moving lights, color contrast, and synchronized choreography.",
+  credits: [
+    { label: "My Role", val: "Co-Lighting Designer" },
+    { label: "Theater Group", val: "Player's Theater Group (CWRU)" },
+    { label: "Director", val: "Ryan Malkin" },
+    { label: "Venue", val: "Eldred Theatre, Cleveland OH" },
+    { label: "Year", val: "Fall 2023" }
+  ],
+  myContributions: [
+    "Co-designed full musical lighting plot, color palettes, and mover positions.",
+    "Drafted system magic sheet dividing Movers, Cyc, Gobos, Booms, Front, Top, and Side units.",
+    "Programmed moving lights and color-changing effects synchronized with score and choreography on ETC Eos."
+  ],
+  aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel. It follows Alison at three different ages as she unravels memories of her childhood, her coming out, and her complex relationship with her father, Bruce, a closeted gay man running the family funeral home.",
+  aboutDesign: "The lighting design reflects characters' emotional journeys, transitioning from lighthearted atmosphere to somber, melancholic tones. Utilized moving lights and color-changing effects synchronized with music and choreography to contrast outward appearances with painful inner truths.",
+  sceneBreakdowns: [
+    {
+      title: "\"Welcome to Our House on Maple Avenue\"",
+      image: "funhome/funhome-scene1",
+      desc: "As the Bechdel family frantically cleans the house anticipating a visitor, lighting reflects Bruce's obsession with order and perfection while hinting at underlying household tension."
+    },
+    {
+      title: "Contrasting Rooms: Indigo vs. Magenta",
+      image: "funhome/funhome-scene2",
+      desc: "While Helen plays piano in one room, Bruce is privately engaged in a relationship with his student in another. Contrasting indigo and magenta lighting across spaces exposes deep psychological fractures."
+    },
+    {
+      title: "Ambiguous Pink-Purple Stage Wash",
+      image: "funhome/funhome-scene3",
+      desc: "As hidden relationships surface, an ambiguous pink-purple glow expands across the entire stage, capturing ironic, delicate, and deeply conflicting emotions."
+    },
+    {
+      title: "Reprise & Melancholy Contrast",
+      image: "funhome/funhome-scene4",
+      desc: "When \"Maple Avenue\" is sung again, lighting shifts noticeably cooler and quieter, creating sharp, poignant contrast between cheerful lyrics and creeping sadness."
+    }
+  ],
+  paperwork: [
+    { title: "Magic Sheet / Systems Layout", type: "ETC Eos Setup", image: "funhome/magic", pdfUrl: "#", desc: "Movers, Cyc, Gobos, Booms, Front, Top, and Side channel groupings." }
+  ]
+},
+{ 
+  id: "hurricane-diane", 
+  title: "Hurricane Diane", 
+  subtitle: "Play by Madeleine George", 
+  role: "Lighting Designer", 
+  year: "2024",
+  season: "Lighting Design Class Final",
+  prefix: "diane/diane-",
+  desc: "A suburban kitchen meets Dionysian destruction. Explored tempo acceleration, side lighting, saturated colors, and storm strobes.",
+  credits: [
+    { label: "My Role", val: "Solo Lighting Designer (Class Final Project)" },
+    { label: "Playwright", val: "Madeleine George" },
+    { label: "Faculty Advisor", val: "Jill Davis" },
+    { label: "Plot Scale", val: "Light Lab Plot (1/2\" Scale, 1/27/2024)" }
+  ],
+  myContributions: [
+    "Drafted comprehensive CAD Light Plot, Focus Areas, and Color Swatch Keys for class final showcase.",
+    "Engineered rapid beat-synced cue sequences with escalating color saturation (indigo, green, magenta, red).",
+    "Programmed harsh side light strobes simulating thunderclaps, concluding in an abrupt blackout and quiet pre-dawn ruin."
+  ],
+  aboutPlay: "The story centers on a modern-day version of Greek god Dionysus returning to Earth as a permaculturist named Diane. Her mission: convince four New Jersey housewives to embrace chaotic forces of nature and abandon manicured suburban lawns.",
+  aboutDesign: "My first full lighting plot experience. Starts with warm, steady kitchen light, shifting into cooler tones and accelerating transitions as chaos builds. At climax, aggressive storm lighting shifts abruptly into silence, followed by slow fade into cold, dim plaid gobo light.",
+  references: [
+    {
+      title: "Reference: Geometrical Light & Sacred Climax",
+      image: "diane/diane-ref1",
+      desc: "Visual study on how angular, sharp shafts of white light construct an overwhelming, architectural divine space during destruction."
+    },
+    {
+      title: "Lighting Lab Mannequin Test: Gobo & Side Angle",
+      image: "diane/diane-ref2",
+      desc: "Physical Light Lab experiment testing side light angles, fabric reflection, and window/leaf branch gobo textures on draped silhouettes."
+    }
+  ],
+  paperwork: [
+    { title: "CAD Light Plot & Symbol Key", type: "Vectorworks / CAD Drawing", image: "diane/plot", pdfUrl: "#", desc: "Electrics, Box Booms, FOH positions, instrument types, and stage centerline." },
+    { title: "Focus Areas & Throw Angles", type: "Focus Geometry", image: "diane/focus", pdfUrl: "#", desc: "Overlapping focus pools covering Carol's kitchen island, counter, and patio entrance." },
+    { title: "Light Lab Plot & Gel Color Key", type: "Color Palette & Swatches", image: "diane/colorkey", pdfUrl: "#", desc: "Gel swatch assignments, gobo selections (window/leaves, new world), and ChromaQ Colorforce II cyc setup." },
+    { title: "Fast-Paced Storm Cue List", type: "Cue List Script", image: "diane/cuelist", pdfUrl: "#", desc: "Beat-synced cues 30.1 to 31 with zero-second timing and color transitions leading to blackout." }
+  ]
+},
+{ 
+  id: "midsummer", 
+  title: "A Midsummer Night's Dream", 
+  subtitle: "William Shakespeare / The Lir Academy", 
+  role: "Solo Lighting Designer", 
+  year: "2024",
+  season: "Study Abroad (Dublin, Ireland)",
+  prefix: "midsummer/midsummer-",
+  desc: "Designed at The Lir Academy in Ireland. Explored emotional contrast between mortal lovers and magical woodland spirits.",
+  credits: [
+    { label: "My Role", val: "Solo Lighting Designer" },
+    { label: "Institution", val: "The Lir Academy — Trinity College Dublin" },
+    { label: "Director", val: "Hilary Wood" },
+    { label: "Year", val: "Fall 2024" }
+  ],
+  myContributions: [
+    "Developed comprehensive lighting concepts and color strategies during Dublin study abroad term.",
+    "Crafted warm intimate palettes for Titania's bond with the Changeling Boy vs. icy distance for Oberon.",
+    "Programmed step-based musical cueing for fairy magic and Puck's closing farewell."
+  ],
+  aboutPlay: "Four young lovers and amateur actors get lost in an enchanted forest where fairy king Oberon and Puck stir up chaos with love potions. After comical mix-ups and magical transformations, everything resolves in weddings and Shakespearean comedy.",
+  aboutDesign: "First independent full lighting design. Explored warm and cool tones: warmer lighting for connection and love, cooler tones for distance, mystery, and jealousy. Blended reality and enchantment so the audience felt caught in a dream.",
+  sceneBreakdowns: [
+    {
+      title: "Puck's Farewell Monologue",
+      image: "midsummer/midsummer-scene1",
+      desc: "Puck bids farewell to the audience, telling them to consider the play nothing more than a dream. Isolated in warm, mysterious spotlight amidst surrounding darkness."
+    },
+    {
+      title: "Bottom's Surreal Transformation",
+      image: "midsummer/midsummer-scene2",
+      desc: "After Bottom transforms into a donkey-headed figure, five focused spotlights and deep shadows emphasize comedic horror and supernatural confusion."
+    },
+    {
+      title: "Titania's Enchanted Love Spell",
+      image: "midsummer/midsummer-scene3",
+      desc: "Titania falls under the flower potion. Designed with a step-based lighting effect that shifted in rhythm with music to convey magical enchantment."
+    }
+  ],
+  paperwork: [
+    { title: "Production Concept Archive", type: "Concept Dossier", image: "midsummer/concept", pdfUrl: "#", desc: "Color palettes and atmospheric breakdown for fairy world vs mortal realm." }
+  ]
+},
+{ 
+  id: "into-the-woods", 
+  title: "Into the Woods", 
+  subtitle: "Sondheim Musical Production", 
+  role: "Tech Lighting Leader", 
+  year: "2023",
+  season: "High School Theater Club",
+  prefix: "woods/woods-",
+  desc: "Sondheim's fairy tale epic. Maximized conventional fixtures, color gels, clock gobos, and shadow play within budget limitations.",
+  credits: [
+    { label: "My Role", val: "Tech Lighting Leader" },
+    { label: "School / Venue", val: "UWC-USA — Kluge Auditorium, NM" },
+    { label: "Director", val: "Kate Ribeiro" },
+    { label: "Year", val: "Spring 2023" }
+  ],
+  myContributions: [
+    "Led student lighting crew under strict budget and facility constraints.",
+    "Re-angled fixed conventional lights and manually cut color gels to generate forest depth without moving heads.",
+    "Designed shadow play using backlit fabric scrims for the wolf attack and sudden giant encounters."
+  ],
+  aboutPlay: "Into the Woods blends classic fairy tales with the story of a Baker and his Wife venturing into the woods to lift a curse. While Act One achieves happy endings, Act Two reveals the cost of those wishes as characters confront loss and consequences.",
+  aboutDesign: "With limited facilities and no moving/LED units, I focused on precise fixture angles and gel swatches. Created a magical yet dangerous forest, using shadow play and gobos to heighten tension.",
+  sceneBreakdowns: [
+    {
+      title: "Three Protagonists & Opening Wishes",
+      image: "woods/woods-scene1",
+      desc: "Fairytale protagonists take turns sharing their deepest wishes. Balanced warm individual light pools emphasize reflection, hope, and vulnerability."
+    },
+    {
+      title: "Jack Sells the Cow in the Forest",
+      image: "woods/woods-scene2",
+      desc: "Jack trades Milky White for magic beans. Forest lighting balances whimsical discovery with eerie uncertainty under textured tree branch washes."
+    },
+    {
+      title: "Midnight Urgency & The Clock Gobo",
+      image: "woods/woods-scene3",
+      desc: "As the stepsisters try on the glass slipper, a large clock gobo slowly fades in on the cyc, symbolizing passing time and building midnight tension."
+    },
+    {
+      title: "Shadow Puppetry: Little Red & The Wolf",
+      image: "woods/woods-scene4",
+      desc: "The hunter rescues Little Red from Mr. Wolf using a backlit fabric screen to cast fierce, looming shadows that heighten physical conflict."
+    },
+    {
+      title: "Death of the Baker's Wife",
+      image: "woods/woods-scene5",
+      desc: "The Baker's Wife is crushed by the giant. Lighting shifts abruptly into visceral crimson, a stark reminder of fairy tales unraveling into real tragedy."
+    }
+  ],
+  paperwork: [
+    { title: "Gel Schedule & Cue Paperwork", type: "Conventional Rig Schedule", image: "woods/schedule", pdfUrl: "#", desc: "Gel cut list, instrument focus notes, and manual cue tracking." }
+  ]
+},
+{ 
+  id: "live-performances", 
+  title: "Live Cultural Showcases & Concerts", 
+  subtitle: "Concerts, Cultural Shows & Cafés", 
+  role: "Lighting Team Leader", 
+  year: "2021-2023",
+  season: "UWC-USA Annual Showcases",
+  prefix: "live/live-",
+  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, Central Asia, and live concerts.",
+  credits: [
+    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
+    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
+    { label: "Venue", val: "Kluge Auditorium & Campus Amphitheaters, NM" },
+    { label: "Performers", val: "International Student Body (90+ Countries)" }
+  ],
+  myContributions: [
+    "Designed and executed 10+ distinct lighting plots each year for multicultural dance, music, and spoken word.",
+    "Conducted visual research into regional textiles, historical architecture, and cultural color symbolism.",
+    "Programmed dynamic concert chases, beat-synced flashing, and atmospheric sunset specials."
+  ],
+  aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
+  aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
+  references: [
+    {
+      title: "Visual Research: South Asia Amber-Red & Architecture",
+      image: "live/live-ref-southasia",
+      desc: "Research into South Asian palace architecture, desert sandstone, and flower festival colors inspiring energetic warm amber-red palettes."
+    },
+    {
+      title: "Visual Research: Latin America Textiles & Architecture",
+      image: "live/live-ref-latin",
+      desc: "Research into traditional weaving patterns, colonial architecture, and street colors inspiring the balance of cyan and amber."
+    }
+  ],
+  sceneBreakdowns: [
+    {
+      title: "Love Café: Romantic Singer-Songwriter",
+      image: "live/live-scene1",
+      desc: "Live sound mixing and original songs about love toward family and friends, set under intimate soft purple and pink lighting."
+    },
+    {
+      title: "Michael Jackson Tribute & Concert Vibe",
+      image: "live/live-scene2",
+      desc: "Capturing iconic pop dance style with vibrant purple and cyan backlight inspired by MJ's live concert lighting."
+    },
+    {
+      title: "New Moon Café: High-Energy Dance & Silhouettes",
+      image: "live/live-scene3",
+      desc: "Dynamic beat-synced flashing and quick fades, opening with sharp silhouette backlit poses to build anticipation."
+    },
+    {
+      title: "Cultural Showcase: South Asia",
+      image: "live/live-scene4",
+      desc: "Warm amber-red and gold tones echoing traditional festivals and lively dance choreography."
+    },
+    {
+      title: "Cultural Showcase: East Asia",
+      image: "live/live-scene5",
+      desc: "Blue, violet, and soft amber lighting evoking oceanic tranquility, flowing water, and historical textiles."
+    },
+    {
+      title: "Cultural Showcase: East Turkestan Sunset",
+      image: "live/live-scene6",
+      desc: "A fading sunset spotlight casting warm nostalgic light across the stage, evoking longing for endangered musical traditions."
+    },
+    {
+      title: "Cultural Showcase: Latin America",
+      image: "live/live-scene7",
+      desc: "A vibrant blend of cyan and warm amber balancing celebratory energy with deep cultural history."
+    },
+    {
+      title: "Cultural Showcase: Central Asia",
+      image: "live/live-scene8",
+      desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns."
+    },
+    {
+      title: "Cultural Showcase: Africa & Colonial History",
+      image: "live/live-scene9",
+      desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance."
+    }
+  ],
+  paperwork: [
+    { title: "Showcase Rigging Schedule", type: "Festival Rep Plot", image: "live/plot", pdfUrl: "#", desc: "Rep plot configuration accommodating quick turnaround between 15+ student performances." }
+  ]
+},
+// 保留 PCPA 實習重要經歷以供完整呈現
+{
   id: "luchadora", 
   title: "Luchadora", 
   subtitle: "PCPA Summer 2026 Season", 
   role: "Assistant Lighting Designer", 
   year: "2026",
-  venue: "Pacific Conservatory Theatre (PCPA), Santa Maria / Solvang CA",
-  director: "PCPA Repertory Direction",
+  season: "Summer 2026 Internship at PCPA",
+  prefix: "luchadora/luchadora-", 
+  desc: "Blends coming-of-age drama with theatrical athleticism of Lucha Libre. Assisted in spot sheets, cue synchronization, and moving light presets.", 
   credits: [
     { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
     { label: "Lighting Designer", val: "Kieth W. Rice" },
@@ -665,23 +868,10 @@ const lightingProjects = [
     { label: "Year", val: "Summer 2026" }
   ],
   myContributions: [
-    "Generated and tracked comprehensive lighting paperwork, instrument schedules, and color gel pull lists.",
-    "Engineered followspot pick-up sheets and track sheets with precise frame counts and actor pickup moments.",
+    "Generated followspot pick-up sheets and track sheets with frame counts.",
     "Documented detailed designer notes during multi-week technical rehearsals and production meetings.",
-    "Supported EOS lighting console programming, mover focus presets, channel checks, and pixel-mapping processes."
+    "Supported EOS console programming, mover focus presets, and channel checks."
   ],
-  designProcess: [
-    {
-      title: "Theatrical Wrestling vs. Coming-of-Age",
-      text: "Balanced high-octane arena side lighting for dynamic Lucha Libre choreography with intimate front wash moments for dramatic personal discovery."
-    },
-    {
-      title: "Spot Sheet Precision",
-      text: "Coordinated two high-output followspots to isolate mask reveals and combat maneuvers, ensuring rapid transitions without light spill."
-    }
-  ],
-  prefix: "luchadora/luchadora-", 
-  desc: "Blends coming-of-age drama with the theatrical athleticism of Lucha Libre. Assisted in spot sheets, cue synchronization, and moving light presets.", 
   aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", 
   aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season under designer Kieth W. Rice.",
   paperwork: [
@@ -696,8 +886,9 @@ const lightingProjects = [
   subtitle: "PCPA Summer 2026 Season", 
   role: "Assistant Lighting Designer", 
   year: "2026",
-  venue: "Pacific Conservatory Theatre (PCPA), CA",
-  director: "PCPA Production",
+  season: "Summer 2026 Internship at PCPA",
+  prefix: "beehive/beehive-", 
+  desc: "A celebration of 1960s female vocalists. Managed paperwork, automated fixtures, cue timings, and daily channel checks.", 
   credits: [
     { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
     { label: "Lighting Designer", val: "Kieth W. Rice" },
@@ -706,210 +897,15 @@ const lightingProjects = [
   ],
   myContributions: [
     "Assisted in drafting spot sheets and cue tracking across 30+ high-tempo musical numbers.",
-    "Coordinated Lightwright instrument schedules, channel-to-dimmer assignments, and power load distributions.",
+    "Coordinated Lightwright instrument schedules and power load distributions.",
     "Led daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately."
   ],
-  designProcess: [
-    {
-      title: "Vibrant 1960s Pop Palette",
-      text: "Designed saturated multi-color cyc washes and punchy backlight arrays that shifted with each decade milestone and musical style."
-    }
-  ],
-  prefix: "beehive/beehive-", 
-  desc: "A celebration of 1960s female vocalists. Managed paperwork, automated fixtures, cue timings, and daily channel checks.", 
   aboutPlay: "Beehive is a high-energy celebration of powerful female vocalists of the 1960s.", 
   aboutDesign: "PCPA Summer 2026 internship project under Keith W. Rice, LD.",
   paperwork: [
     { title: "Vectorworks Light Plot", type: "CAD Plot", image: "beehive/plot", pdfUrl: "#", desc: "Main stage plot including moving head wash units and cyc backlight systems." },
     { title: "Hookup & Instrument Schedule", type: "Lightwright Export", image: "beehive/hookup", pdfUrl: "#", desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." }
   ]
-},
-{ 
-  id: "fun-home", 
-  title: "Fun Home", 
-  subtitle: "Musical / Player's Theater Group", 
-  role: "Co-Lighting Designer", 
-  year: "2023",
-  venue: "Eldred Theatre, Cleveland OH",
-  director: "Ryan Malkin",
-  credits: [
-    { label: "My Role", val: "Co-Lighting Designer" },
-    { label: "Theater Group", val: "Player's Theater Group (CWRU)" },
-    { label: "Director", val: "Ryan Malkin" },
-    { label: "Venue", val: "Eldred Theatre" },
-    { label: "Year", val: "Fall 2023" }
-  ],
-  myContributions: [
-    "Created concept drawings, color palettes, and full cue structure for the collegiate musical production.",
-    "Drafted system magic sheet dividing Front, Top, Booms, Cyc, and Moving Lights.",
-    "Programmed time-synced movers and color palette shifts directly aligned with the score and choreography."
-  ],
-  designProcess: [
-    {
-      title: "Duality & Emotional Transitions",
-      text: "Transitioned lighting from bright, crisp tones to somber, melancholic hues as Bruce's inner struggles surface."
-    },
-    {
-      title: "Color Contrast (Indigo vs. Magenta)",
-      text: "During key numbers, contrasting indigo and magenta separate private reality from public facades across different rooms on stage."
-    },
-    {
-      title: "Ambiguous Pink-Purple Glow",
-      text: "Spread soft, complex pink-purple tones across the stage to embody delicate revelations of sexuality and identity."
-    }
-  ],
-  prefix: "funhome/funhome-", 
-  desc: "Explores memory, family, and coming out. Transitioned lighting from cheerful to somber using moving lights and color contrasts.", 
-  aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel, unraveling childhood memories and her father's closeted struggles.", 
-  aboutDesign: "Utilized moving lights, gobos, and saturated cyc washes synchronized with musical choreography to highlight family facades vs. inner truths."
-},
-{ 
-  id: "hurricane-diane", 
-  title: "Hurricane Diane", 
-  subtitle: "Play by Madeleine George", 
-  role: "Lighting Designer", 
-  year: "2024",
-  venue: "Case Western Reserve University Light Lab",
-  director: "Jill Davis (Faculty Advisor)",
-  credits: [
-    { label: "My Role", val: "Solo Lighting Designer (Class Final Project)" },
-    { label: "Playwright", val: "Madeleine George" },
-    { label: "Instructor / Advisor", val: "Jill Davis" },
-    { label: "Scale / Plot", val: "Light Lab Plot (1/2\" Scale, 1/27/2024)" }
-  ],
-  myContributions: [
-    "Drafted first full independent CAD Light Plot with Box Booms, FOH pipes, and electrics.",
-    "Calculated precise beam angles, throw distances, and focus areas across suburban interior vs divine storm space.",
-    "Programmed rapid-fire beat-synced cue sequences accelerating into total theatrical blackout."
-  ],
-  designProcess: [
-    {
-      title: "From Suburbia to Divine Chaos",
-      text: "Started with warm, stable morning light on Carol's kitchen dish towels, slowly disintegrating as Diane's supernatural storm brews."
-    },
-    {
-      title: "Music Beat Strobe & Bold Color Cycles",
-      text: "Synchronized side strobes and color transitions (blue, green, indigo, magenta, red) to hit directly on drum beats during Dionysian climaxes."
-    },
-    {
-      title: "Abrupt Climax to Dim Ruin",
-      text: "Cut all high-intensity strobe bursts into instant silence, followed by a slow 5-second fade into cold, plaid-goboed pre-dawn ruin."
-    }
-  ],
-  prefix: "diane/diane-", 
-  desc: "A suburban kitchen meets Dionysian destruction. Explored dramatic tempo acceleration, side lighting, color shifts, and storm strobes.", 
-  aboutPlay: "Dionysus returns to Earth as Diane, urging women to embrace wild chaotic forces and abandon artificial suburban order.", 
-  aboutDesign: "My first full lighting plot experience. Starts warm and steady, then erupts into bold saturated hues, strobe lighting, and sudden silence."
-},
-{ 
-  id: "midsummer", 
-  title: "A Midsummer Night's Dream", 
-  subtitle: "William Shakespeare / The Lir Academy", 
-  role: "Solo Lighting Designer", 
-  year: "2024",
-  venue: "The Lir Academy, Trinity College Dublin (Ireland)",
-  director: "Hilary Wood",
-  credits: [
-    { label: "My Role", val: "Solo Lighting Designer" },
-    { label: "Institution", val: "The Lir Academy — Trinity College Dublin" },
-    { label: "Director", val: "Hilary Wood" },
-    { label: "Year", val: "Fall 2024" }
-  ],
-  myContributions: [
-    "Developed comprehensive lighting, set, and costume concepts during Dublin study abroad term.",
-    "Designed lighting rig balancing human reality with supernatural enchanted woodland spaces.",
-    "Implemented step-based musical cueing for fairy spells, potions, and Puck's closing farewell."
-  ],
-  designProcess: [
-    {
-      title: "Warm Connection vs. Cool Distance",
-      text: "Used warm palettes for Titania and the Changeling Boy's intimacy, while bathing jealous Oberon in cold, sharp beams."
-    },
-    {
-      title: "Surreal Donkey Transformation",
-      text: "Surrounded Bottom's transformed figure with 5 harsh focused spotlights and deep shadows, emphasizing comedic monstrosity."
-    }
-  ],
-  prefix: "midsummer/midsummer-", 
-  desc: "Designed at The Lir Academy in Ireland. Explored emotional contrast between mortal lovers and magical woodland spirits.", 
-  aboutPlay: "Four young lovers and amateur actors wander an enchanted forest governed by mischievous fairies and magical potions.", 
-  aboutDesign: "Focused on warm and cool tonal shifts to delineate mortal reality from fairy magic, using step-based cues for enchanted encounters."
-},
-{ 
-  id: "into-the-woods", 
-  title: "Into the Woods", 
-  subtitle: "Sondheim Musical Production", 
-  role: "Tech Lighting Leader", 
-  year: "2023",
-  venue: "Kluge Auditorium, UWC-USA (Montezuma, NM)",
-  director: "Kate Ribeiro",
-  credits: [
-    { label: "My Role", val: "Tech Lighting Leader" },
-    { label: "School / Venue", val: "UWC-USA — Kluge Auditorium" },
-    { label: "Director", val: "Kate Ribeiro" },
-    { label: "Year", val: "Spring 2023" }
-  ],
-  myContributions: [
-    "Led high school technical lighting team under strict budget and equipment constraints.",
-    "Re-angled fixed conventional fixtures and manually cut gel packs to craft custom depth in a flat proscenium stage.",
-    "Designed silhouette shadow play using backlit canvas scrims for the wolf attack and giant encounters."
-  ],
-  designProcess: [
-    {
-      title: "Overcoming Static Rigs",
-      text: "With no moving fixtures or LED color-mixing, precisely tailored gel combinations (amber, deep blue, crimson) established forest depth."
-    },
-    {
-      title: "Midnight Urgency (Clock Gobo)",
-      text: "Faded in a prominent clock face gobo as midnight neared, building relentless visual tension during Cinderella's slipper tests."
-    },
-    {
-      title: "Shadow Puppetry & Sudden Tragedy",
-      text: "Used a large backlit fabric screen to magnify the Wolf and Hunter combat, later cutting to harsh bloody red when the Baker's Wife meets her fate."
-    }
-  ],
-  prefix: "woods/woods-", 
-  desc: "Sondheim's fairy tale epic. Maximized conventional fixtures, color gels, clock gobos, and shadow play within budget limitations.", 
-  aboutPlay: "Fairy tale characters pursue wishes into the forest, only to confront catastrophic real-world consequences.", 
-  aboutDesign: "Turned technical limitations into creative strengths through sharp angle sculpting, silhouetted scrims, and color gel atmospheres."
-},
-{ 
-  id: "live-performances", 
-  title: "Live Cultural Showcases & Concerts", 
-  subtitle: "International Festivals & Showcases", 
-  role: "Lighting Team Leader", 
-  year: "2021-2023",
-  venue: "Kluge Auditorium & Campus Amphitheaters",
-  director: "Student Cultural Committees",
-  credits: [
-    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
-    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
-    { label: "Performers", val: "International Student Body (90+ Countries)" },
-    { label: "Years", val: "2021 – 2023" }
-  ],
-  myContributions: [
-    "Designed and executed over 10 distinct lighting plots per year for multicultural music, dance, and poetry showcases.",
-    "Collaborated with international performers to research and honor regional cultural aesthetics through light.",
-    "Programmed fast-paced live cue stacks, silhouette entrances, and rhythmic beat-synced flashing."
-  ],
-  designProcess: [
-    {
-      title: "Cultural Palette Research",
-      text: "Researched authentic architectural, textile, and historical aesthetics: amber-red for South Asia, ocean blues/amber for East Asia, and cyan/amber for Latin America."
-    },
-    {
-      title: "East Turkestan Sunset Nostalgia",
-      text: "Used a focused warm sunset spot fading across the stage to complement traditional music and evoke longing and passing time."
-    },
-    {
-      title: "Africa & Social Commentary",
-      text: "Utilized stark, visceral red lighting to honor narratives on colonial struggle, violence, and resilient identity."
-    }
-  ],
-  prefix: "live/live-", 
-  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, and Central Asia.", 
-  aboutPlay: "Annual celebrations bringing together artists from over 90 countries to share poetry, traditional dance, and live music.", 
-  aboutDesign: "Tailored bespoke color schemes reflecting regional textures, emotional depth, and historical narratives."
 }
 ];
 
@@ -1045,27 +1041,55 @@ html += '</div>';
 return html;
 }
 
-function generatePaperworkView(project) {
-  let processSectionHtml = '';
-  if (project.designProcess && project.designProcess.length > 0) {
-    let processCards = project.designProcess.map(dp => `
-      <div class="bg-[#121620] border border-white/10 p-5 rounded-md space-y-2">
-        <h5 class="text-yellow-400 font-mono text-xs uppercase tracking-widest font-bold">${dp.title}</h5>
-        <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed">${dp.text}</p>
+// 產生完整 Design Process 頁籤：包含 Reference 圖片、關鍵劇照場景分析、以及 CAD 圖紙
+function generateDesignProcessView(project) {
+  let referencesHtml = '';
+  if (project.references && project.references.length > 0) {
+    let refCards = project.references.map(ref => `
+      <div class="bg-[#121620] border border-white/10 p-5 rounded-md space-y-3">
+        <div class="w-full bg-black rounded overflow-hidden">
+          ${smartImageHtml(ref.image, ref.title, "w-full h-auto max-h-[360px] object-contain mx-auto block")}
+        </div>
+        <h5 class="text-yellow-400 font-mono text-xs uppercase tracking-widest font-bold">${ref.title}</h5>
+        <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed">${ref.desc}</p>
       </div>
     `).join('');
 
-    processSectionHtml = `
+    referencesHtml = `
       <div class="max-w-[1360px] mx-auto px-4 md:px-8 mb-12">
-        <h4 class="serif-title text-2xl text-white italic mb-6 border-b border-neutral-800 pb-3">Lighting Design Conceptual Process</h4>
+        <h4 class="serif-title text-2xl text-white italic mb-4 border-b border-neutral-800 pb-3">Visual Research & References</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          ${processCards}
+          ${refCards}
         </div>
       </div>
     `;
   }
 
-  let paperworkCardsHtml = '';
+  let sceneAnalysisHtml = '';
+  if (project.sceneBreakdowns && project.sceneBreakdowns.length > 0) {
+    let sceneCards = project.sceneBreakdowns.map(sc => `
+      <div class="bg-[#121620]/90 border border-white/15 p-5 rounded-lg space-y-4">
+        <div class="w-full bg-black rounded overflow-hidden flex items-center justify-center">
+          ${smartImageHtml(sc.image, sc.title, "w-full h-auto max-h-[420px] object-contain block")}
+        </div>
+        <div class="space-y-1">
+          <h5 class="serif-title text-xl text-yellow-400 italic">${sc.title}</h5>
+          <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed">${sc.desc}</p>
+        </div>
+      </div>
+    `).join('');
+
+    sceneAnalysisHtml = `
+      <div class="max-w-[1360px] mx-auto px-4 md:px-8 mb-12">
+        <h4 class="serif-title text-2xl text-white italic mb-4 border-b border-neutral-800 pb-3">Key Stage Moments & Lighting Breakdown</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          ${sceneCards}
+        </div>
+      </div>
+    `;
+  }
+
+  let paperworkHtml = '';
   if (project.paperwork && project.paperwork.length > 0) {
     let cards = project.paperwork.map(pw => `
       <div class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 space-y-4 flex flex-col justify-between">
@@ -1085,20 +1109,11 @@ function generatePaperworkView(project) {
       </div>
     `).join('');
 
-    paperworkCardsHtml = `
+    paperworkHtml = `
       <div class="max-w-[1360px] mx-auto px-4 md:px-8">
-        <h4 class="serif-title text-2xl text-white italic mb-6 border-b border-neutral-800 pb-3">Drafting, Systems & Paperwork</h4>
+        <h4 class="serif-title text-2xl text-white italic mb-4 border-b border-neutral-800 pb-3">Technical Drawings, Plots & Paperwork</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           ${cards}
-        </div>
-      </div>
-    `;
-  } else {
-    paperworkCardsHtml = `
-      <div class="max-w-[1200px] mx-auto text-center py-10 px-4">
-        <div class="outline-card p-8 max-w-lg mx-auto rounded-lg space-y-2">
-          <h3 class="serif-title text-xl text-white italic">Paperwork Archive</h3>
-          <p class="text-neutral-400 text-xs leading-relaxed">CAD plots, Lightwright paperwork, and cue lists for this production are available upon request.</p>
         </div>
       </div>
     `;
@@ -1106,8 +1121,9 @@ function generatePaperworkView(project) {
 
   return `
     <div class="w-full py-4 space-y-12">
-      ${processSectionHtml}
-      ${paperworkCardsHtml}
+      ${referencesHtml}
+      ${sceneAnalysisHtml}
+      ${paperworkHtml}
     </div>
   `;
 }
@@ -1234,7 +1250,7 @@ const project = lightingProjects.find(p => p.id.toLowerCase() === id);
 if (project) {
 const detailView = document.getElementById('view-lighting-detail');
 const collageHtml = generateResponsivePhotoGrid(project.prefix.replace(/-$/, ''));
-const paperworkHtml = generatePaperworkView(project);
+const designProcessHtml = generateDesignProcessView(project);
 
 let creditsRows = (project.credits || []).map(c => `
   <div class="flex flex-col sm:flex-row sm:justify-between py-1.5 border-b border-white/5 text-xs">
@@ -1273,7 +1289,7 @@ detailView.innerHTML = `
   <div class="space-y-4">
     <h3 class="serif-title text-xl italic text-yellow-400">What I Did on This Show</h3>
     <ul class="space-y-2.5">
-      ${contributionsList || '<li class="text-xs text-neutral-400">Responsible for stage lighting design, cue synchronization, and plot drafting.</li>'}
+      ${contributionsList}
     </ul>
   </div>
 </div>
@@ -1294,7 +1310,7 @@ detailView.innerHTML = `
     Production Photos
   </button>
   <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
-    Design Process & Paperwork
+    Design Process & Technical Drawings
   </button>
 </div>
 
@@ -1309,7 +1325,7 @@ detailView.innerHTML = `
 </div>
 
 <div id="ld-tab-content-paperwork" class="hidden w-full mt-8">
-  ${paperworkHtml}
+  ${designProcessHtml}
 </div>
 `;
 detailView.classList.remove('hidden');
