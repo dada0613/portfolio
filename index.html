@@ -111,22 +111,27 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 瀑布流展示 */
+/* 橫向數過去的 Grid 佈局：Row 1 是 1, 2；Row 2 是 3, 4 */
 .uncropped-masonry-container {
-column-count: 2;
-column-gap: 20px;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 24px;
 width: 100%;
 max-width: 1360px;
 margin: 0 auto;
 padding: 0 16px;
+align-items: start;
 }
 @media (max-width: 768px) {
-.uncropped-masonry-container { column-count: 1; column-gap: 12px; padding: 0 10px; }
+.uncropped-masonry-container {
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 0 10px;
+}
 }
 
 .photo-flow-card {
-break-inside: avoid;
-margin-bottom: 24px;
+width: 100%;
 background: #0e1219;
 border: 1px solid rgba(255, 255, 255, 0.12);
 border-radius: 6px;
@@ -392,6 +397,7 @@ if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
   }
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
+  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
   if (folder) {
     candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
@@ -509,7 +515,7 @@ let eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（整合劇照註解，避免重複）
+// 完整燈光專案資料清單
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -535,12 +541,12 @@ const lightingProjects = [
   ],
   aboutPlay: "The Harvest by Samuel D. Hunter takes place in a small evangelical church in Idaho, where a group of young missionaries prepare for a trip to the Middle East. As they pray, argue, and reveal their fears, the play explores themes of faith, isolation, and the longing for purpose.",
   aboutDesign: "Every cue is rooted in realism, appearing to come from practical sources: fluorescent fixtures, LED strips, small basement windows, and staircase lighting that guides movement between emotional and physical space. Subtle transitions reveal texture, sculpt faces, and support the psychological landscape.",
-  // 有文字說明的照片直接標註，其餘照片自動順著展示，不重複跑兩次
   photoCaptions: {
     1: { title: "Music, Connection & Isolation", desc: "Tom and Jason listen to music together, but their emotions diverge: Jason wants to leave, while Tom wants him to stay. I used cold moonlight from the window to isolate Jason in shadow, and warm piano light to emphasize Tom's desire for connection." },
     2: { title: "Michaela's Entrance & Praying in Tongues", desc: "Lighting design for the moment Michaela descends the stairs while Tom and Jason pray in tongues. The staircase lighting emphasizes her entrance and separates her from the cold moonlight coming through the windows." },
-    5: { title: "Rain, Fluorescent & Cold Moon", desc: "Jason is soaked from the rain. The cold moonlight combined with ceiling fluorescent light and warm front light creates deep psychological isolation as characters confront harsh realities." },
+    3: { title: "Rain, Fluorescent & Cold Moon", desc: "Jason is soaked from the rain. The cold moonlight combined with ceiling fluorescent light and warm front light creates deep psychological isolation as characters confront harsh realities." },
     4: { title: "Final Scene: Sunrise & Miracle", desc: "In the final scene where characters pray in tongues, the director wanted lighting to evoke hope and sunrise. I designed a warm, rising light from the window that gradually fills the space, suggesting spiritual transformation." },
+    5: { title: "Thunderstorm & Lightning Effect", desc: "Incorporating thunder FX, three escalating lightning flashes build intensity. At director's request, stage cuts to complete blackout during strikes, letting the audience experience sudden darkness. Window lights flicker with strong winds." }
   },
   paperwork: [
     { 
@@ -560,7 +566,6 @@ const lightingProjects = [
     { 
       title: "Cue List & Sequence Script", 
       type: "Stage Cue Track", 
-      // 完整四頁 Cue List 全部加入
       images: ["harvest/cue-1", "harvest/cue-2", "harvest/cue-3", "harvest/cue-4"], 
       pdfUrl: "#", 
       desc: "Detailed cue calls with fade times, autofollow storm sequences, and lighting state descriptions." 
@@ -898,7 +903,7 @@ View Details ↗
 grid.innerHTML = html;
 }
 
-// 核心改進：單一劇照牆，有文字就放文字，沒文字就單純放圖，絕不重複！
+// 依橫向順序由左至右 (1, 2 在第一排，3, 4 在第二排) 填滿照片
 function generateUnifiedProductionPhotoGrid(project) {
   let folderPrefix = project.prefix.replace(/-$/, '');
   let captions = project.photoCaptions || {};
@@ -1177,7 +1182,7 @@ detailView.innerHTML = `
 
 <div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
   <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
-    Production Photos
+    Production Photos & Moments
   </button>
   <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
     Technical Drawings & Paperwork
@@ -1187,12 +1192,12 @@ detailView.innerHTML = `
 </div>
 </div>
 
-<!-- 劇照頁面：統一展示，有文字顯示文字卡片，無文字純圖，絕不重複 -->
+<!-- 劇照頁面：橫向 1, 2, 3... 由左至右排列，文字卡片與純圖無縫整合 -->
 <div id="ld-tab-content-photos" class="w-full mt-12">
   ${unifiedPhotosHtml}
 </div>
 
-<!-- 圖紙頁面：每個技術圖紙 section 獨立一整排 -->
+<!-- 圖紙頁面：獨立一整排寬版展示 -->
 <div id="ld-tab-content-paperwork" class="hidden w-full mt-12">
   ${paperworkHtml}
 </div>
