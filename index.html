@@ -419,11 +419,11 @@ if (idx < candidates.length) {
 imgEl.dataset.candidateIdx = idx.toString();
 imgEl.src = candidates[idx];
 } else {
-let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card') || imgEl.closest('.scene-breakdown-card');
+let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card') || imgEl.closest('.stage-moment-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 } catch (e) {
-let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card') || imgEl.closest('.scene-breakdown-card');
+let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card') || imgEl.closest('.stage-moment-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 };
@@ -511,7 +511,7 @@ let eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（直接使用 Storage 現有的 harvest-1, harvest-2, magic-1, plot-1... 檔名）
+// 完整燈光專案資料清單（劇照與場景分析置於 stageMoments，圖紙置於 paperwork）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -537,7 +537,7 @@ const lightingProjects = [
   ],
   aboutPlay: "The Harvest by Samuel D. Hunter takes place in a small evangelical church in Idaho, where a group of young missionaries prepare for a trip to the Middle East. As they pray, argue, and reveal their fears, the play explores themes of faith, isolation, and the longing for purpose.",
   aboutDesign: "Every cue is rooted in realism, appearing to come from practical sources: fluorescent fixtures, LED strips, small basement windows, and staircase lighting that guides movement between emotional and physical space. Subtle transitions reveal texture, sculpt faces, and support the psychological landscape.",
-  sceneBreakdowns: [
+  stageMoments: [
     {
       title: "Music, Connection & Isolation",
       image: "harvest/harvest-1",
@@ -618,7 +618,7 @@ const lightingProjects = [
   ],
   aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel. It follows Alison at three different ages as she unravels memories of her childhood, her coming out, and her complex relationship with her father, Bruce, a closeted gay man running the family funeral home.",
   aboutDesign: "The lighting design reflects characters' emotional journeys, transitioning from lighthearted atmosphere to somber, melancholic tones. Utilized moving lights and color-changing effects synchronized with music and choreography to contrast outward appearances with painful inner truths.",
-  sceneBreakdowns: [
+  stageMoments: [
     {
       title: "\"Welcome to Our House on Maple Avenue\"",
       image: "funhome/funhome-1",
@@ -695,7 +695,7 @@ const lightingProjects = [
   ],
   aboutPlay: "Four young lovers and amateur actors get lost in an enchanted forest where fairy king Oberon and Puck stir up chaos with love potions. After comical mix-ups and magical transformations, everything resolves in weddings and Shakespearean comedy.",
   aboutDesign: "First independent full lighting design. Explored warm and cool tones: warmer lighting for connection and love, cooler tones for distance, mystery, and jealousy. Blended reality and enchantment so the audience felt caught in a dream.",
-  sceneBreakdowns: [
+  stageMoments: [
     {
       title: "Puck's Farewell Monologue",
       image: "midsummer/midsummer-1",
@@ -738,7 +738,7 @@ const lightingProjects = [
   ],
   aboutPlay: "Into the Woods blends classic fairy tales with the story of a Baker and his Wife venturing into the woods to lift a curse. While Act One achieves happy endings, Act Two reveals the cost of those wishes as characters confront loss and consequences.",
   aboutDesign: "With limited facilities and no moving/LED units, I focused on precise fixture angles and gel swatches. Created a magical yet dangerous forest, using shadow play and gobos to heighten tension.",
-  sceneBreakdowns: [
+  stageMoments: [
     {
       title: "Three Protagonists & Opening Wishes",
       image: "woods/woods-1",
@@ -791,7 +791,7 @@ const lightingProjects = [
   ],
   aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
   aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
-  sceneBreakdowns: [
+  stageMoments: [
     {
       title: "Love Café: Romantic Singer-Songwriter",
       image: "live/live-1",
@@ -963,7 +963,7 @@ ${smartImageHtml(`${p.prefix}0`, p.title, "w-full h-full object-cover group-hove
 <p class="text-xs text-neutral-400 uppercase tracking-widest font-mono mb-3">${p.subtitle}</p>
 <p class="text-neutral-300 text-xs leading-relaxed mb-4 font-light">${p.desc}</p>
 <span class="text-[10px] uppercase tracking-[0.2em] text-neutral-300 font-medium group-hover:text-white flex items-center gap-1">
-View Process & Credits ↗
+View Project Details ↗
 </span>
 </div>
 </a>
@@ -1031,98 +1031,87 @@ html += '</div>';
 return html;
 }
 
-// 支援多張圖紙與單張圖紙渲染，無 reference 時自動略過
-function generateDesignProcessView(project) {
-  let referencesHtml = '';
-  if (project.references && project.references.length > 0) {
-    let refCards = project.references.map(ref => `
-      <div class="bg-[#121620] border border-white/10 p-5 rounded-md space-y-3">
-        <div class="w-full bg-black rounded overflow-hidden">
-          ${smartImageHtml(ref.image, ref.title, "w-full h-auto max-h-[360px] object-contain mx-auto block")}
-        </div>
-        <h5 class="text-yellow-400 font-mono text-xs uppercase tracking-widest font-bold">${ref.title}</h5>
-        <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed">${ref.desc}</p>
+// 產生劇照頁面中的「重點場景拆解（Key Stage Moments）」HTML
+function generateStageMomentsHtml(moments) {
+  if (!moments || moments.length === 0) return '';
+  
+  let cards = moments.map(m => `
+    <div class="stage-moment-card outline-card rounded-lg overflow-hidden bg-[#10141d]/90 border border-white/15 p-6 space-y-4">
+      <div class="w-full bg-black rounded overflow-hidden flex items-center justify-center cursor-zoom-in">
+        ${smartImageHtml(m.image, m.title, "w-full h-auto max-h-[460px] object-contain block")}
       </div>
-    `).join('');
-
-    referencesHtml = `
-      <div class="max-w-[1360px] mx-auto px-4 md:px-8 mb-12">
-        <h4 class="serif-title text-2xl text-white italic mb-4 border-b border-neutral-800 pb-3">Visual Research & References</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          ${refCards}
-        </div>
+      <div class="space-y-1.5 pt-2">
+        <h4 class="serif-title text-xl text-yellow-400 italic">${m.title}</h4>
+        <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed">${m.desc}</p>
       </div>
-    `;
-  }
-
-  let sceneAnalysisHtml = '';
-  if (project.sceneBreakdowns && project.sceneBreakdowns.length > 0) {
-    let sceneCards = project.sceneBreakdowns.map(sc => `
-      <div class="scene-breakdown-card bg-[#121620]/90 border border-white/15 p-5 rounded-lg space-y-4">
-        <div class="w-full bg-black rounded overflow-hidden flex items-center justify-center">
-          ${smartImageHtml(sc.image, sc.title, "w-full h-auto max-h-[420px] object-contain block")}
-        </div>
-        <div class="space-y-1">
-          <h5 class="serif-title text-xl text-yellow-400 italic">${sc.title}</h5>
-          <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed">${sc.desc}</p>
-        </div>
-      </div>
-    `).join('');
-
-    sceneAnalysisHtml = `
-      <div class="max-w-[1360px] mx-auto px-4 md:px-8 mb-12">
-        <h4 class="serif-title text-2xl text-white italic mb-4 border-b border-neutral-800 pb-3">Key Stage Moments & Lighting Breakdown</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          ${sceneCards}
-        </div>
-      </div>
-    `;
-  }
-
-  let paperworkHtml = '';
-  if (project.paperwork && project.paperwork.length > 0) {
-    let cards = project.paperwork.map(pw => {
-      let imgList = pw.images || (pw.image ? [pw.image] : []);
-      let imagesHtml = imgList.map((imgName, idx) => `
-        <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
-          ${smartImageHtml(imgName, `${pw.title} (Page${idx + 1})`, "w-full h-auto object-contain p-2")}
-        </div>
-      `).join('');
-
-      return `
-        <div class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 space-y-4 flex flex-col justify-between">
-          <div class="space-y-2">
-            <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
-              <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold">${pw.type}</span>
-              <a href="${pw.pdfUrl}" target="_blank" class="text-[11px] uppercase tracking-widest text-neutral-300 hover:text-white flex items-center gap-1 transition-colors font-mono">
-                View Full PDF ↗
-              </a>
-            </div>
-            <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
-            <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
-          </div>
-          <div class="space-y-4">
-            ${imagesHtml}
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    paperworkHtml = `
-      <div class="max-w-[1360px] mx-auto px-4 md:px-8">
-        <h4 class="serif-title text-2xl text-white italic mb-4 border-b border-neutral-800 pb-3">Technical Drawings, Plots & Paperwork</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          ${cards}
-        </div>
-      </div>
-    `;
-  }
+    </div>
+  `).join('');
 
   return `
-    <div class="w-full py-4 space-y-12">
-      ${referencesHtml}
-      ${sceneAnalysisHtml}
-      ${paperworkHtml}
+    <div class="max-w-[1360px] mx-auto px-4 md:px-8 mb-16">
+      <div class="border-b border-neutral-800 pb-3 mb-8">
+        <h3 class="serif-title text-2xl text-white italic">Key Stage Moments & Lighting Breakdown</h3>
+        <p class="text-neutral-400 text-xs tracking-wide mt-1">Highlighted dramatic scenes, color motivations, and technical executions</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        ${cards}
+      </div>
+    </div>
+  `;
+}
+
+// 產生技術圖紙（Technical Drawings, Plots & Paperwork）HTML：每個項目佔滿一整橫排（Full Width）
+function generatePaperworkView(paperworkList) {
+  if (!paperworkList || paperworkList.length === 0) {
+    return `
+      <div class="max-w-[1200px] mx-auto text-center py-16 px-4">
+        <div class="outline-card p-10 max-w-lg mx-auto rounded-lg space-y-2">
+          <h3 class="serif-title text-xl text-white italic">Paperwork Archive</h3>
+          <p class="text-neutral-400 text-xs leading-relaxed">CAD plots, Lightwright paperwork, and cue lists for this production are available upon request.</p>
+        </div>
+      </div>
+    `;
+  }
+
+  let sectionsHtml = paperworkList.map((pw, index) => {
+    let imgList = pw.images || (pw.image ? [pw.image] : []);
+    
+    // 多張圖紙並列排版
+    let imagesGridClass = imgList.length > 1 ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "w-full";
+    let imagesHtml = imgList.map((imgName, idx) => `
+      <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in p-2">
+        ${smartImageHtml(imgName, `${pw.title} (Part${idx + 1})`, "w-full h-auto object-contain block")}
+      </div>
+    `).join('');
+
+    return `
+      <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-4 gap-2">
+          <div>
+            <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
+            <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
+          </div>
+          <a href="${pw.pdfUrl}" target="_blank" class="self-start md:self-auto text-xs uppercase tracking-widest text-neutral-300 hover:text-white flex items-center gap-1 transition-colors font-mono bg-neutral-900 border border-neutral-700 px-4 py-2 rounded">
+            View Full PDF ↗
+          </a>
+        </div>
+        <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl">${pw.desc}</p>
+        <div class="${imagesGridClass}">
+          ${imagesHtml}
+        </div>
+      </section>
+    `;
+  }).join('');
+
+  return `
+    <div class="max-w-[1360px] mx-auto px-4 md:px-8 space-y-12 pb-16">
+      <div class="border-b border-neutral-800 pb-4">
+        <h3 class="serif-title text-3xl text-white italic">Technical Drawings, Plots & Paperwork</h3>
+        <p class="text-neutral-400 text-xs tracking-wide mt-1">Light Plots, Focus Areas, Magic Sheets, Cue Trackers & Instrument Schedules</p>
+      </div>
+      <div class="space-y-10 w-full">
+        ${sectionsHtml}
+      </div>
     </div>
   `;
 }
@@ -1249,7 +1238,8 @@ const project = lightingProjects.find(p => p.id.toLowerCase() === id);
 if (project) {
 const detailView = document.getElementById('view-lighting-detail');
 const collageHtml = generateResponsivePhotoGrid(project.prefix.replace(/-$/, ''));
-const designProcessHtml = generateDesignProcessView(project);
+const stageMomentsHtml = generateStageMomentsHtml(project.stageMoments);
+const paperworkHtml = generatePaperworkView(project.paperwork);
 
 let creditsRows = (project.credits || []).map(c => `
   <div class="flex flex-col sm:flex-row sm:justify-between py-1.5 border-b border-white/5 text-xs">
@@ -1277,6 +1267,7 @@ detailView.innerHTML = `
 <h1 class="serif-title text-4xl md:text-6xl italic text-white mb-2 text-center">${project.title}</h1>
 <p class="text-neutral-300 text-sm md:text-base font-light mb-8 text-center">${project.subtitle}</p>
 
+<!-- 專案製作 Credits 與個人職責清單（保持完整） -->
 <div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/90 border border-neutral-800 p-8 rounded-lg mb-10">
   <div class="space-y-4">
     <h3 class="serif-title text-xl italic text-yellow-400">Production Credits</h3>
@@ -1305,25 +1296,31 @@ detailView.innerHTML = `
 
 <div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
   <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
-    Production Photos
+    Production Photos & Moments
   </button>
   <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
-    Design Process & Technical Drawings
+    Technical Drawings & Paperwork
   </button>
 </div>
 
 </div>
 </div>
 
-<div id="ld-tab-content-photos" class="w-full mt-8">
-  <div class="text-center mb-6">
-    <h3 class="text-xs uppercase tracking-[0.3em] text-neutral-400 font-mono">Production Photo Stack (100% Uncropped View)</h3>
+<!-- 劇照頁面：包含重點場景圖文分析 + 完整劇照牆 -->
+<div id="ld-tab-content-photos" class="w-full mt-12 space-y-12">
+  ${stageMomentsHtml}
+  <div class="max-w-[1360px] mx-auto px-4 md:px-8">
+    <div class="border-b border-neutral-800 pb-3 mb-8">
+      <h3 class="serif-title text-2xl text-white italic">Full Production Photo Stack</h3>
+      <p class="text-neutral-400 text-xs tracking-wide mt-1">Complete visual gallery (100% Uncropped View)</p>
+    </div>
   </div>
   ${collageHtml}
 </div>
 
-<div id="ld-tab-content-paperwork" class="hidden w-full mt-8">
-  ${designProcessHtml}
+<!-- 圖紙頁面：每個技術圖紙 section 獨立一整排 -->
+<div id="ld-tab-content-paperwork" class="hidden w-full mt-12">
+  ${paperworkHtml}
 </div>
 `;
 detailView.classList.remove('hidden');
