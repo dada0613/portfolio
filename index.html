@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en" class="dark"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AMANDA HSU — Portfolio</title>
+<title>AMANDA HSU — Creative Portfolio</title>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -145,7 +145,7 @@ border-color: rgba(218, 165, 32, 0.5);
 width: 100%;
 height: auto;
 display: block;
-object-fit: contain; /* 100% 完整展示，絕不裁切頭部或邊緣 */
+object-fit: contain;
 }
 
 #home-hero-grid {
@@ -236,45 +236,6 @@ display: flex;
 <button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 cursor-pointer">Logout</button>
 </div>
 
-<!-- 圖片裁減九宮格 Modal -->
-<div id="crop-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-<div class="glass-panel p-6 rounded-lg max-w-lg w-full relative space-y-4">
-<div class="flex justify-between items-center border-b border-neutral-800 pb-3">
-<h3 class="serif-title text-xl text-white italic">Photo Crop Studio (Rule of Thirds)</h3>
-<button onclick="closeCropModal()" class="text-neutral-400 hover:text-white text-lg">✕</button>
-</div>
-<p class="text-xs text-neutral-400">Drag sliders below or preview framing using the 3x3 grid overlay.</p>
-<div id="crop-preview-container" class="w-full h-64 bg-black relative overflow-hidden rounded border border-neutral-700 flex items-center justify-center">
-<img id="crop-preview-img" src="" alt="Crop Target" class="w-full h-full object-cover transition-all">
-<div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none">
-<div class="border-r border-b border-white/30"></div>
-<div class="border-r border-b border-white/30"></div>
-<div class="border-b border-white/30"></div>
-<div class="border-r border-b border-white/30"></div>
-<div class="border-r border-b border-white/30"></div>
-<div class="border-b border-white/30"></div>
-<div class="border-r border-b border-white/30"></div>
-<div class="border-r border-b border-white/30"></div>
-<div></div>
-</div>
-</div>
-<div class="space-y-3">
-<div>
-<label class="block text-[10px] text-neutral-400 uppercase tracking-widest mb-1">Zoom / Scale</label>
-<input type="range" id="crop-zoom-range" min="1" max="2" step="0.05" value="1" oninput="updateCropZoom(this.value)" class="w-full accent-yellow-600">
-</div>
-<div>
-<label class="block text-[10px] text-neutral-400 uppercase tracking-widest mb-1">Object Fit Mode</label>
-<div class="flex gap-2">
-<button onclick="setCropFit('cover')" class="flex-1 bg-neutral-800 hover:bg-neutral-700 text-xs py-2 rounded text-white">Cover (Fill)</button>
-<button onclick="setCropFit('contain')" class="flex-1 bg-neutral-800 hover:bg-neutral-700 text-xs py-2 rounded text-white">Contain (Fit)</button>
-</div>
-</div>
-</div>
-<button onclick="applyCropChanges()" class="w-full bg-yellow-600 text-black font-bold py-3 uppercase text-xs tracking-widest hover:bg-white transition-colors">Apply & Save Crop</button>
-</div>
-</div>
-
 <!-- 圖片放大 LightBox 燈箱 Modal -->
 <div id="lightbox-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out" onclick="closeLightbox()">
 <button onclick="closeLightbox()" class="absolute top-6 right-6 text-neutral-400 hover:text-white text-3xl font-light z-50 focus:outline-none">✕</button>
@@ -290,58 +251,6 @@ display: flex;
 <input type="email" id="admin-email-input" placeholder="Admin Email" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm mb-4 rounded focus:outline-none focus:border-yellow-500">
 <input type="password" id="admin-passcode-input" placeholder="Password" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm mb-4 rounded focus:outline-none focus:border-yellow-500">
 <button onclick="verifySupabaseAdmin()" class="w-full bg-yellow-600 text-black font-bold py-3 uppercase text-xs tracking-widest hover:bg-white transition-colors cursor-pointer">Authenticate Securely</button>
-</div>
-</div>
-
-<!-- 新增專案彈窗面板 -->
-<div id="admin-modal" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col p-6 md:p-12 overflow-y-auto">
-<div class="max-w-4xl mx-auto w-full space-y-12">
-<div class="flex justify-between items-center border-b border-neutral-800 pb-6">
-<h2 class="serif-title text-3xl text-white italic">Add New Project</h2>
-<button onclick="closeAdminModal()" class="bg-neutral-800 text-white px-4 py-2 text-xs uppercase tracking-widest hover:bg-neutral-700">Close</button>
-</div>
-
-<div class="glass-panel p-8 rounded-lg space-y-6">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div>
-<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Select Category</label>
-<select id="new-proj-category" onchange="toggleCategoryFields()" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
-<option value="photography-event">Photography (Event)</option>
-<option value="photography-street">Photography (Street)</option>
-<option value="lighting">Lighting Design</option>
-<option value="video-graphic">Video & Graphic Design</option>
-<option value="game">Game Design</option>
-</select>
-</div>
-<div>
-<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Project Title</label>
-<input type="text" id="new-proj-title" placeholder="e.g. Spring Showcase 2026" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="meta-fields-container">
-<div>
-<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Date / Season / Role</label>
-<input type="text" id="new-proj-date" placeholder="e.g. Spring 2026" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
-</div>
-<div>
-<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Subtitle / Engine</label>
-<input type="text" id="new-proj-subtitle" placeholder="e.g. Unity / C#" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
-</div>
-</div>
-<div>
-<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Description / Details</label>
-<textarea id="new-proj-desc" placeholder="Brief description..." class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded h-24"></textarea>
-</div>
-<div>
-<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Upload Cover Image</label>
-<input type="file" id="new-proj-cover" accept="image/*" class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
-</div>
-<div id="gallery-upload-container">
-<label class="block text-xs text-neutral-400 uppercase tracking-widest mb-2">Upload Gallery Photos (Multiple)</label>
-<input type="file" id="new-proj-images" accept="image/*" multiple class="w-full bg-neutral-900 border border-neutral-700 p-3 text-white text-sm rounded">
-</div>
-<button onclick="saveNewProject()" class="w-full bg-yellow-600 text-black font-bold py-4 uppercase text-xs tracking-widest hover:bg-white transition-colors">Publish Project</button>
-</div>
 </div>
 </div>
 
@@ -384,7 +293,7 @@ AMANDA HSU
 Amanda Hsu
 </h1>
 <p class="text-xs md:text-sm tracking-[0.5em] uppercase text-neutral-200 font-mono font-medium" style="text-shadow: 0 2px 20px rgba(0,0,0,0.95);">
-Design Portfolio
+Creative Portfolio
 </p>
 </div>
 </section>
@@ -448,7 +357,7 @@ street photography
 </a>
 <div class="border-b border-neutral-800 pb-6 mb-12">
 <h1 class="serif-title text-4xl md:text-5xl italic text-neutral-100 mb-2">Lighting Design & Technical Portfolio</h1>
-<p class="text-neutral-400 text-sm tracking-wide">Theatrical Lighting, Light Plots, Magic Sheets, Spot Sheets, and Professional Internships</p>
+<p class="text-neutral-400 text-sm tracking-wide">Theatrical Lighting, Light Plots, Magic Sheets, Spot Sheets, Design Process & Production Credits</p>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="lighting-projects-grid"></div>
 </div>
@@ -482,13 +391,6 @@ Technical <br class="hidden md:block" />
 <p class="text-xl md:text-2xl text-neutral-200 max-w-3xl mx-auto leading-relaxed mb-10 font-light tracking-wide">
 Bridging the gap between Engineering & Art.
 </p>
-<div class="flex justify-start md:justify-center flex-wrap gap-6 text-neutral-300 text-xs font-bold tracking-[0.2em] uppercase font-hero opacity-80">
-<span>C# / C++ / Python</span>
-<span>Unity & Unreal Engine</span>
-<span>Systems Architecture</span>
-<span>Gameplay Scripting</span>
-<span>Tools Programming</span>
-</div>
 </div>
 
 <div class="mb-16 border-b border-white/10 pb-6">
@@ -558,29 +460,8 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let isAdminLoggedIn = false;
 let undoStack = [];
-let currentCropImg = null;
-
 const SUPABASE_STORAGE_URL = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
 
-function recordState() {
-const state = document.querySelector('main').innerHTML;
-undoStack.push(state);
-if (undoStack.length > 30) undoStack.shift();
-}
-
-window.addEventListener('keydown', function(e) {
-if (isAdminLoggedIn && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-e.preventDefault();
-if (undoStack.length > 0) {
-const prevState = undoStack.pop();
-document.querySelector('main').innerHTML = prevState;
-enableEditableElements();
-alert('Action Undone (Ctrl+Z)');
-}
-}
-});
-
-// 絕對滿版無裁切：完全依照圖片原始長寬比呈現，不裁切頂部與邊緣
 window.smartImageHtml = function(baseName, altText, className = "w-full h-auto object-contain") {
 let cleanBase = (baseName || "").trim();
 let parts = cleanBase.split('/');
@@ -648,298 +529,16 @@ const modal = document.getElementById('lightbox-modal');
 if (modal) modal.classList.add('hidden');
 }
 
-let keySequence = [];
-window.addEventListener('keydown', function(e) {
-keySequence.push(e.key);
-if (keySequence.length > 10) keySequence.shift();
-let seqStr = keySequence.join('');
-if (seqStr.includes('111Enter')) {
-keySequence = [];
-document.getElementById('admin-login-modal').classList.remove('hidden');
-document.getElementById('admin-email-input').focus();
-}
-});
-
-function closeAdminLogin() {
-document.getElementById('admin-login-modal').classList.add('hidden');
-}
-
-async function verifySupabaseAdmin() {
-const email = document.getElementById('admin-email-input').value.trim();
-const password = document.getElementById('admin-passcode-input').value;
-
-if (!email || !password) {
-alert('Please enter both email and password.');
-return;
-}
-
-const { data, error } = await supabaseClient.auth.signInWithPassword({
-email: email,
-password: password,
-});
-
-if (error) {
-console.warn('Supabase auth warning:', error.message);
-}
-
-isAdminLoggedIn = true;
-closeAdminLogin();
-document.getElementById('admin-floating-bar').classList.remove('hidden');
-enableEditableElements();
-alert('Unlocked Edit Mode Successfully!');
-}
-
-function logoutAdmin() {
-supabaseClient.auth.signOut();
-isAdminLoggedIn = false;
-document.getElementById('admin-floating-bar').classList.add('hidden');
-disableEditableElements();
-alert('Logged out.');
-location.reload();
-}
-
-function openAdminModal() {
-document.getElementById('admin-modal').classList.remove('hidden');
-}
-
-function closeAdminModal() {
-document.getElementById('admin-modal').classList.add('hidden');
-}
-
-async function saveAllChanges() {
-recordState();
-disableEditableElements();
-
-const payload = {
-mainHtml: document.querySelector('main').innerHTML,
-timestamp: new Date().toISOString()
-};
-
-enableEditableElements();
-
-const { error } = await supabaseClient
-.from('portfolio_settings')
-.upsert({ id: 1, layout_html: JSON.stringify(payload), updated_at: new Date() });
-
-if (error) {
-localStorage.setItem('portfolio_layout_snapshot', JSON.stringify(payload));
-alert('Saved to local storage successfully!');
-} else {
-alert('Successfully saved your edits to Supabase Cloud!');
-}
-}
-
-function enableEditableElements() {
-if (!isAdminLoggedIn) return;
-document.querySelectorAll('.serif-title, p, h3').forEach(el => {
-if (!el.closest('#admin-modal')) {
-el.setAttribute('contenteditable', 'true');
-el.classList.add('editable-active');
-el.addEventListener('blur', recordState);
-}
-});
-
-document.querySelectorAll('.uncropped-photo-item, .outline-card, .gd-card, #home-hero-grid img').forEach(el => {
-if (!el.classList.contains('canvas-draggable-photo')) {
-el.classList.add('canvas-draggable-photo', 'editing-active');
-if (!el.querySelector('.handle-tl')) {
-el.insertAdjacentHTML('beforeend', `
-<div class="resize-handle handle-tl" data-handle="tl"></div>
-<div class="resize-handle handle-tr" data-handle="tr"></div>
-<div class="resize-handle handle-bl" data-handle="bl"></div>
-<div class="resize-handle handle-br" data-handle="br"></div>
-<div class="resize-handle handle-t" data-handle="t"></div>
-<div class="resize-handle handle-b" data-handle="b"></div>
-<div class="resize-handle handle-l" data-handle="l"></div>
-<div class="resize-handle handle-r" data-handle="r"></div>
-<button class="delete-elem-btn" onclick="deleteElement(this)" title="Delete Item">✕</button>
-`);
-}
-attachCanvasInteraction(el);
-}
-});
-}
-
-function disableEditableElements() {
-document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-el.removeAttribute('contenteditable');
-el.classList.remove('editable-active');
-});
-document.querySelectorAll('.canvas-draggable-photo').forEach(el => {
-el.classList.remove('editing-active', 'canvas-draggable-photo');
-el.querySelectorAll('.resize-handle, .delete-elem-btn').forEach(h => h.remove());
-});
-}
-
-function deleteElement(btn) {
-if (!isAdminLoggedIn) return;
-recordState();
-const card = btn.closest('.canvas-draggable-photo') || btn.closest('.outline-card') || btn.closest('.gd-card');
-if (card) {
-card.style.transition = 'all 0.3s ease';
-card.style.transform = 'scale(0)';
-card.style.opacity = '0';
-setTimeout(() => card.remove(), 300);
-}
-}
-
-function attachCanvasInteraction(elem) {
-let isDragging = false;
-let isResizing = false;
-let currentHandle = null;
-let startX, startY, startWidth, startHeight, startLeft, startTop;
-
-elem.addEventListener('dblclick', function(e) {
-if (!isAdminLoggedIn) return;
-const img = elem.querySelector('img');
-if (img) {
-currentCropImg = img;
-document.getElementById('crop-preview-img').src = img.src;
-document.getElementById('crop-zoom-range').value = 1;
-document.getElementById('crop-preview-img').style.transform = 'scale(1)';
-document.getElementById('crop-modal').classList.remove('hidden');
-e.stopPropagation();
-}
-});
-
-elem.addEventListener('mousedown', function(e) {
-if (!isAdminLoggedIn) return;
-if (e.target.classList.contains('delete-elem-btn')) return;
-recordState();
-
-const rect = elem.getBoundingClientRect();
-const parentRect = elem.offsetParent ? elem.offsetParent.getBoundingClientRect() : document.body.getBoundingClientRect();
-
-if (getComputedStyle(elem).position !== 'absolute') {
-elem.style.position = 'absolute';
-elem.style.width = `${rect.width}px`;
-elem.style.height = `${rect.height}px`;
-elem.style.left = `${rect.left - parentRect.left}px`;
-elem.style.top = `${rect.top - parentRect.top}px`;
-elem.style.transform = 'none';
-}
-
-startX = e.clientX;
-startY = e.clientY;
-startWidth = elem.offsetWidth;
-startHeight = elem.offsetHeight;
-startLeft = parseFloat(elem.style.left) || 0;
-startTop = parseFloat(elem.style.top) || 0;
-
-if (e.target.classList.contains('resize-handle')) {
-isResizing = true;
-currentHandle = e.target.dataset.handle;
-} else {
-isDragging = true;
-}
-
-e.stopPropagation();
-e.preventDefault();
-});
-
-window.addEventListener('mousemove', function(e) {
-if (!isAdminLoggedIn) return;
-const dx = e.clientX - startX;
-const dy = e.clientY - startY;
-
-if (isDragging) {
-elem.style.left = `${startLeft + dx}px`;
-elem.style.top = `${startTop + dy}px`;
-} else if (isResizing) {
-if (currentHandle === 'br') {
-elem.style.width = `${Math.max(60, startWidth + dx)}px`;
-elem.style.height = `${Math.max(60, startHeight + dy)}px`;
-} else if (currentHandle === 'bl') {
-elem.style.width = `${Math.max(60, startWidth - dx)}px`;
-elem.style.left = `${startLeft + dx}px`;
-elem.style.height = `${Math.max(60, startHeight + dy)}px`;
-} else if (currentHandle === 'tr') {
-elem.style.width = `${Math.max(60, startWidth + dx)}px`;
-elem.style.height = `${Math.max(60, startHeight - dy)}px`;
-elem.style.top = `${startTop + dy}px`;
-} else if (currentHandle === 'tl') {
-elem.style.width = `${Math.max(60, startWidth - dx)}px`;
-elem.style.left = `${startLeft + dx}px`;
-elem.style.height = `${Math.max(60, startHeight - dy)}px`;
-elem.style.top = `${startTop + dy}px`;
-} else if (currentHandle === 'r') {
-elem.style.width = `${Math.max(60, startWidth + dx)}px`;
-} else if (currentHandle === 'l') {
-elem.style.width = `${Math.max(60, startWidth - dx)}px`;
-elem.style.left = `${startLeft + dx}px`;
-} else if (currentHandle === 'b') {
-elem.style.height = `${Math.max(60, startHeight + dy)}px`;
-} else if (currentHandle === 't') {
-elem.style.height = `${Math.max(60, startHeight - dy)}px`;
-elem.style.top = `${startTop + dy}px`;
-}
-}
-});
-
-window.addEventListener('mouseup', function() {
-if (isDragging || isResizing) {
-isDragging = false;
-isResizing = false;
-currentHandle = null;
-}
-});
-}
-
-function closeCropModal() {
-document.getElementById('crop-modal').classList.add('hidden');
-currentCropImg = null;
-}
-
-function updateCropZoom(val) {
-const previewImg = document.getElementById('crop-preview-img');
-if (previewImg) previewImg.style.transform = `scale(${val})`;
-}
-
-function setCropFit(mode) {
-const previewImg = document.getElementById('crop-preview-img');
-if (previewImg) previewImg.style.objectFit = mode;
-}
-
-function applyCropChanges() {
-if (!isAdminLoggedIn) return;
-if (currentCropImg) {
-const previewImg = document.getElementById('crop-preview-img');
-currentCropImg.style.objectFit = previewImg.style.objectFit || 'cover';
-currentCropImg.style.transform = previewImg.style.transform || 'scale(1)';
-recordState();
-alert('Photo crop & framing updated successfully!');
-}
-closeCropModal();
-}
-
-function toggleCategoryFields() {
-const cat = document.getElementById('new-proj-category').value;
-const meta = document.getElementById('meta-fields-container');
-const gallery = document.getElementById('gallery-upload-container');
-if (cat === 'video-graphic') {
-meta.style.display = 'none';
-gallery.style.display = 'none';
-} else if (cat === 'game') {
-meta.style.display = 'grid';
-gallery.style.display = 'none';
-} else {
-meta.style.display = 'grid';
-gallery.style.display = 'block';
-}
-}
-
 function generateExactBackground() {
 const container = document.getElementById('bg-canvas');
 if (!container) return;
 container.innerHTML = '';
-
 const colors = ['#7dd3fc', '#93c5fd', '#fdba74', '#86efac', '#d8b4fe', '#fde047', '#ffffff'];
 const totalDots = 120;
 
 for (let i = 0; i < totalDots; i++) {
 const el = document.createElement('div');
 el.className = 'particle';
-
 const rand = Math.random();
 let size, opacity, blur;
 
@@ -997,52 +596,321 @@ let eventProjects = [
 { id: 9, title: "Student Club Expo", date: "Autumn 2025", prefix: "student/Student-", desc: "Showcasing student organizations, interactive booths, and campus engagement." }
 ];
 
-function loadCustomData() {
-let savedEvents = localStorage.getItem('custom_event_projects');
-if (savedEvents) {
-try { JSON.parse(savedEvents).forEach(p => { if (!eventProjects.some(e => e.id === p.id)) eventProjects.push(p); }); } catch(e){}
-}
-let savedLighting = localStorage.getItem('custom_lighting_projects');
-if (savedLighting) {
-try { JSON.parse(savedLighting).forEach(p => { if (!lightingProjects.some(l => l.id === p.id)) lightingProjects.push(p); }); } catch(e){}
-}
-let savedGames = localStorage.getItem('custom_game_projects');
-if (savedGames) {
-try { Object.assign(gameProjects, JSON.parse(savedGames)); } catch(e){}
-}
-}
-
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 燈光專案資料清單（已移除封面浮水印標籤）
+// 完整燈光專案資料清單（整合 Resume 與 Portfolio PDF 資料）
 const lightingProjects = [
 { 
-  id: "luchadora", title: "Luchadora", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "luchadora/luchadora-", 
-  desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization for moving lights and specials during technical rehearsals.", 
-  aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", 
-  aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season.",
+  id: "the-harvest", 
+  title: "The Harvest", 
+  subtitle: "CWRU Dept. of Theater / Kalberer Theatre", 
+  role: "Lighting Designer", 
+  year: "2025",
+  venue: "Kalberer Theatre, Cleveland OH",
+  director: "David Vegh & Abigail Gilman",
+  credits: [
+    { label: "My Role", val: "Lighting Designer (Co-Designer with Jill Daug)" },
+    { label: "Institution / Venue", val: "Case Western Reserve University — Kalberer Theatre" },
+    { label: "Directors", val: "David Vegh & Abigail Gilman" },
+    { label: "Technical Director", val: "Homer Farr" },
+    { label: "Year", val: "Fall 2025" }
+  ],
+  myContributions: [
+    "Spearheaded lighting design from initial concept, color rendering, and cueing through final execution.",
+    "Drafted complete Vectorworks 1/4\" scale Light Plot, Instrument Schedule, and Focus Areas for 60+ fixtures.",
+    "Engineered realistic environmental light shifts via practical basement windows, staircases, and fluorescent fixtures.",
+    "Programmed multi-layered lightning storm auto-follow cues and blackout moments synchronized with thunder and rain FX on ETC Eos."
+  ],
+  designProcess: [
+    {
+      title: "Rooted in Grounded Realism",
+      text: "Set entirely in an Idaho church basement, every cue originates from practical fixtures: fluorescent troffers, basement window natural shafts, kitchen pendants, and piano lamps."
+    },
+    {
+      title: "Window Light & Time Shifts",
+      text: "Basement windows act as emotional thermometers. Sterile cold daylight mirrors religious doubt and routine, while rich warm sunset/amber light accents prayer and spiritual breakthrough."
+    },
+    {
+      title: "Psychological Isolation & Staircase Focal Point",
+      text: "Used high-contrast side lighting and shadow sculpting to emphasize emotional divides. The staircase lighting isolates entrances, symbolizing characters entering or escaping tension."
+    },
+    {
+      title: "Thunderstorm & Escalating Lightning FX",
+      text: "Designed three staggered lightning flash intensities with immediate blackout cuts, immersing the audience in sudden vulnerability during the storm."
+    }
+  ],
+  prefix: "harvest/harvest-", 
+  desc: "Set entirely in a church basement, the lighting enhances the tension between faith, obligation, and personal struggle with grounded realism.", 
+  aboutPlay: "The Harvest by Samuel D. Hunter takes place in a small evangelical church in Idaho, where young missionaries prepare for a Middle East trip. As they pray and confront their fears, the play explores faith, isolation, and human longing.", 
+  aboutDesign: "Every cue is rooted in realism, appearing to come from practical sources: fluorescents, basement windows, and staircases that bridge physical and psychological spaces.",
   paperwork: [
-    { title: "Vectorworks Light Plot", type: "CAD Plot (1/4\" Scale)", image: "luchadora/plot", pdfUrl: "#", desc: "Full venue lighting layout with rigging points, DMX distribution, and instrument numbering." },
-    { title: "Magic Sheet / Systems Layout", type: "Focus & Systems", image: "luchadora/magic", pdfUrl: "#", desc: "Color system matrix, moving head beam angles, and area system breakdown." },
+    { title: "Vectorworks Light Plot & Focus Area", type: "CAD Plot (1/4\" Scale)", image: "harvest/plot", pdfUrl: "#", desc: "Complete venue rig with fixture numbers, DMX addresses, and focus area layout." },
+    { title: "Magic Sheet / Systems Layout", type: "ETC Eos Console Setup", image: "harvest/magic", pdfUrl: "#", desc: "Channel groups including Front, Top, SR/SL Side, Windows, Gobos, and Practicals." },
+    { title: "Cue List & Sequence Script", type: "Stage Cue Track", image: "harvest/cue", pdfUrl: "#", desc: "Detailed cue calls with fade times, autofollow storm sequences, and lighting state descriptions." },
+    { title: "Instrument Schedule", type: "Lightwright Export", image: "harvest/schedule", pdfUrl: "#", desc: "Complete channel-to-dimmer assignments, unit types (ETC ColorSource, S4), and gels." }
+  ]
+},
+{ 
+  id: "luchadora", 
+  title: "Luchadora", 
+  subtitle: "PCPA Summer 2026 Season", 
+  role: "Assistant Lighting Designer", 
+  year: "2026",
+  venue: "Pacific Conservatory Theatre (PCPA), Santa Maria / Solvang CA",
+  director: "PCPA Repertory Direction",
+  credits: [
+    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
+    { label: "Lighting Designer", val: "Kieth W. Rice" },
+    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
+    { label: "Year", val: "Summer 2026" }
+  ],
+  myContributions: [
+    "Generated and tracked comprehensive lighting paperwork, instrument schedules, and color gel pull lists.",
+    "Engineered followspot pick-up sheets and track sheets with precise frame counts and actor pickup moments.",
+    "Documented detailed designer notes during multi-week technical rehearsals and production meetings.",
+    "Supported EOS lighting console programming, mover focus presets, channel checks, and pixel-mapping processes."
+  ],
+  designProcess: [
+    {
+      title: "Theatrical Wrestling vs. Coming-of-Age",
+      text: "Balanced high-octane arena side lighting for dynamic Lucha Libre choreography with intimate front wash moments for dramatic personal discovery."
+    },
+    {
+      title: "Spot Sheet Precision",
+      text: "Coordinated two high-output followspots to isolate mask reveals and combat maneuvers, ensuring rapid transitions without light spill."
+    }
+  ],
+  prefix: "luchadora/luchadora-", 
+  desc: "Blends coming-of-age drama with the theatrical athleticism of Lucha Libre. Assisted in spot sheets, cue synchronization, and moving light presets.", 
+  aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", 
+  aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season under designer Kieth W. Rice.",
+  paperwork: [
+    { title: "Vectorworks Light Plot", type: "CAD Plot (1/4\" Scale)", image: "luchadora/plot", pdfUrl: "#", desc: "Rigging points, DMX distribution, and automated fixture positions." },
+    { title: "Magic Sheet / Systems Layout", type: "Focus & Systems", image: "luchadora/magic", pdfUrl: "#", desc: "Color system matrix, moving head beam angles, and area breakdown." },
     { title: "Spot Sheets & Cue Tracker", type: "ALD Production Paperwork", image: "luchadora/spot", pdfUrl: "#", desc: "Followspot pick-up sheets with frame counts and scene transition cues." }
   ]
 },
 { 
-  id: "beehive", title: "Beehive: The 60s Musical", subtitle: "PCPA Summer 2026 Season", role: "Assistant Lighting Designer", season: "Summer 2026 Internship at PCPA", prefix: "beehive/beehive-", 
-  desc: "Assisted in designing spot sheets, paperwork management, channel checks, focus notes, and cue timing synchronization.", 
-  aboutPlay: "Beehive is a celebration of powerful female vocalists of the 1960s.", 
-  aboutDesign: "PCPA Summer 2026 internship project.",
+  id: "beehive", 
+  title: "Beehive: The 60s Musical", 
+  subtitle: "PCPA Summer 2026 Season", 
+  role: "Assistant Lighting Designer", 
+  year: "2026",
+  venue: "Pacific Conservatory Theatre (PCPA), CA",
+  director: "PCPA Production",
+  credits: [
+    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
+    { label: "Lighting Designer", val: "Kieth W. Rice" },
+    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
+    { label: "Year", val: "Summer 2026" }
+  ],
+  myContributions: [
+    "Assisted in drafting spot sheets and cue tracking across 30+ high-tempo musical numbers.",
+    "Coordinated Lightwright instrument schedules, channel-to-dimmer assignments, and power load distributions.",
+    "Led daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately."
+  ],
+  designProcess: [
+    {
+      title: "Vibrant 1960s Pop Palette",
+      text: "Designed saturated multi-color cyc washes and punchy backlight arrays that shifted with each decade milestone and musical style."
+    }
+  ],
+  prefix: "beehive/beehive-", 
+  desc: "A celebration of 1960s female vocalists. Managed paperwork, automated fixtures, cue timings, and daily channel checks.", 
+  aboutPlay: "Beehive is a high-energy celebration of powerful female vocalists of the 1960s.", 
+  aboutDesign: "PCPA Summer 2026 internship project under Keith W. Rice, LD.",
   paperwork: [
     { title: "Vectorworks Light Plot", type: "CAD Plot", image: "beehive/plot", pdfUrl: "#", desc: "Main stage plot including moving head wash units and cyc backlight systems." },
     { title: "Hookup & Instrument Schedule", type: "Lightwright Export", image: "beehive/hookup", pdfUrl: "#", desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." }
   ]
 },
-{ id: "the-harvest", title: "The Harvest", subtitle: "Samuel D. Hunter / Kalberer Theatre", role: "Lighting Designer", season: "Junior Year at CWRU", prefix: "harvest/harvest-", desc: "Set entirely in a church basement, lighting enhances the tension between faith, obligation, and personal struggle.", aboutPlay: "The Harvest takes place in a small evangelical church in Idaho.", aboutDesign: "Every cue is rooted in realism." },
-{ id: "fun-home", title: "Fun Home", subtitle: "Musical / Player's Theater Group", role: "Co-Lighting Designer", season: "First Year in College", prefix: "funhome/funhome-", desc: "Reflects the emotional journey of the characters, transitioning from lighthearted to somber.", aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel.", aboutDesign: "Utilized moving lights and color-changing effects." },
-{ id: "hurricane-diane", title: "Hurricane Diane", subtitle: "Play by Madeleine George", role: "Lighting Designer (Final Project)", season: "Lighting Design Class", prefix: "diane/diane-", desc: "Starts with warm steady lighting, shifting into cooler tones and faster transitions as chaos builds.", aboutPlay: "A modern-day version of Dionysus returns as Diane.", aboutDesign: "First full lighting plot experience." },
-{ id: "midsummer", title: "A Midsummer Night's Dream", subtitle: "William Shakespeare", role: "Solo Lighting Designer", season: "Theatrical Showcase", prefix: "midsummer/midsummer-", desc: "Explores love, magic, and the connection between human and fairy worlds.", aboutPlay: "Four young lovers and amateur actors get lost in an enchanted forest.", aboutDesign: "First independent full lighting design." },
-{ id: "into-the-woods", title: "Into the Woods", subtitle: "High School Musical Production", role: "Tech Lighting Leader", season: "High School Theater Club", prefix: "woods/woods-", desc: "Overcame limited facilities and budget by adjusting light angles and utilizing color gels.", aboutPlay: "Fairy tale characters cross paths with a Baker and his Wife.", aboutDesign: "Relied heavily on precise angle adjustments." },
-{ id: "live-performances", title: "Live Performances & Cultural Showcases", subtitle: "Concerts, Cultural Shows & Cafés", role: "Lighting Team Leader", season: "Annual Showcases", prefix: "live/live-", desc: "Designed lighting for over ten different showcases each year spanning diverse cultures.", aboutPlay: "Diverse annual student showcases celebrating culture and art.", aboutDesign: "Tailored color palettes to cultural origins." }
+{ 
+  id: "fun-home", 
+  title: "Fun Home", 
+  subtitle: "Musical / Player's Theater Group", 
+  role: "Co-Lighting Designer", 
+  year: "2023",
+  venue: "Eldred Theatre, Cleveland OH",
+  director: "Ryan Malkin",
+  credits: [
+    { label: "My Role", val: "Co-Lighting Designer" },
+    { label: "Theater Group", val: "Player's Theater Group (CWRU)" },
+    { label: "Director", val: "Ryan Malkin" },
+    { label: "Venue", val: "Eldred Theatre" },
+    { label: "Year", val: "Fall 2023" }
+  ],
+  myContributions: [
+    "Created concept drawings, color palettes, and full cue structure for the collegiate musical production.",
+    "Drafted system magic sheet dividing Front, Top, Booms, Cyc, and Moving Lights.",
+    "Programmed time-synced movers and color palette shifts directly aligned with the score and choreography."
+  ],
+  designProcess: [
+    {
+      title: "Duality & Emotional Transitions",
+      text: "Transitioned lighting from bright, crisp tones to somber, melancholic hues as Bruce's inner struggles surface."
+    },
+    {
+      title: "Color Contrast (Indigo vs. Magenta)",
+      text: "During key numbers, contrasting indigo and magenta separate private reality from public facades across different rooms on stage."
+    },
+    {
+      title: "Ambiguous Pink-Purple Glow",
+      text: "Spread soft, complex pink-purple tones across the stage to embody delicate revelations of sexuality and identity."
+    }
+  ],
+  prefix: "funhome/funhome-", 
+  desc: "Explores memory, family, and coming out. Transitioned lighting from cheerful to somber using moving lights and color contrasts.", 
+  aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel, unraveling childhood memories and her father's closeted struggles.", 
+  aboutDesign: "Utilized moving lights, gobos, and saturated cyc washes synchronized with musical choreography to highlight family facades vs. inner truths."
+},
+{ 
+  id: "hurricane-diane", 
+  title: "Hurricane Diane", 
+  subtitle: "Play by Madeleine George", 
+  role: "Lighting Designer", 
+  year: "2024",
+  venue: "Case Western Reserve University Light Lab",
+  director: "Jill Davis (Faculty Advisor)",
+  credits: [
+    { label: "My Role", val: "Solo Lighting Designer (Class Final Project)" },
+    { label: "Playwright", val: "Madeleine George" },
+    { label: "Instructor / Advisor", val: "Jill Davis" },
+    { label: "Scale / Plot", val: "Light Lab Plot (1/2\" Scale, 1/27/2024)" }
+  ],
+  myContributions: [
+    "Drafted first full independent CAD Light Plot with Box Booms, FOH pipes, and electrics.",
+    "Calculated precise beam angles, throw distances, and focus areas across suburban interior vs divine storm space.",
+    "Programmed rapid-fire beat-synced cue sequences accelerating into total theatrical blackout."
+  ],
+  designProcess: [
+    {
+      title: "From Suburbia to Divine Chaos",
+      text: "Started with warm, stable morning light on Carol's kitchen dish towels, slowly disintegrating as Diane's supernatural storm brews."
+    },
+    {
+      title: "Music Beat Strobe & Bold Color Cycles",
+      text: "Synchronized side strobes and color transitions (blue, green, indigo, magenta, red) to hit directly on drum beats during Dionysian climaxes."
+    },
+    {
+      title: "Abrupt Climax to Dim Ruin",
+      text: "Cut all high-intensity strobe bursts into instant silence, followed by a slow 5-second fade into cold, plaid-goboed pre-dawn ruin."
+    }
+  ],
+  prefix: "diane/diane-", 
+  desc: "A suburban kitchen meets Dionysian destruction. Explored dramatic tempo acceleration, side lighting, color shifts, and storm strobes.", 
+  aboutPlay: "Dionysus returns to Earth as Diane, urging women to embrace wild chaotic forces and abandon artificial suburban order.", 
+  aboutDesign: "My first full lighting plot experience. Starts warm and steady, then erupts into bold saturated hues, strobe lighting, and sudden silence."
+},
+{ 
+  id: "midsummer", 
+  title: "A Midsummer Night's Dream", 
+  subtitle: "William Shakespeare / The Lir Academy", 
+  role: "Solo Lighting Designer", 
+  year: "2024",
+  venue: "The Lir Academy, Trinity College Dublin (Ireland)",
+  director: "Hilary Wood",
+  credits: [
+    { label: "My Role", val: "Solo Lighting Designer" },
+    { label: "Institution", val: "The Lir Academy — Trinity College Dublin" },
+    { label: "Director", val: "Hilary Wood" },
+    { label: "Year", val: "Fall 2024" }
+  ],
+  myContributions: [
+    "Developed comprehensive lighting, set, and costume concepts during Dublin study abroad term.",
+    "Designed lighting rig balancing human reality with supernatural enchanted woodland spaces.",
+    "Implemented step-based musical cueing for fairy spells, potions, and Puck's closing farewell."
+  ],
+  designProcess: [
+    {
+      title: "Warm Connection vs. Cool Distance",
+      text: "Used warm palettes for Titania and the Changeling Boy's intimacy, while bathing jealous Oberon in cold, sharp beams."
+    },
+    {
+      title: "Surreal Donkey Transformation",
+      text: "Surrounded Bottom's transformed figure with 5 harsh focused spotlights and deep shadows, emphasizing comedic monstrosity."
+    }
+  ],
+  prefix: "midsummer/midsummer-", 
+  desc: "Designed at The Lir Academy in Ireland. Explored emotional contrast between mortal lovers and magical woodland spirits.", 
+  aboutPlay: "Four young lovers and amateur actors wander an enchanted forest governed by mischievous fairies and magical potions.", 
+  aboutDesign: "Focused on warm and cool tonal shifts to delineate mortal reality from fairy magic, using step-based cues for enchanted encounters."
+},
+{ 
+  id: "into-the-woods", 
+  title: "Into the Woods", 
+  subtitle: "Sondheim Musical Production", 
+  role: "Tech Lighting Leader", 
+  year: "2023",
+  venue: "Kluge Auditorium, UWC-USA (Montezuma, NM)",
+  director: "Kate Ribeiro",
+  credits: [
+    { label: "My Role", val: "Tech Lighting Leader" },
+    { label: "School / Venue", val: "UWC-USA — Kluge Auditorium" },
+    { label: "Director", val: "Kate Ribeiro" },
+    { label: "Year", val: "Spring 2023" }
+  ],
+  myContributions: [
+    "Led high school technical lighting team under strict budget and equipment constraints.",
+    "Re-angled fixed conventional fixtures and manually cut gel packs to craft custom depth in a flat proscenium stage.",
+    "Designed silhouette shadow play using backlit canvas scrims for the wolf attack and giant encounters."
+  ],
+  designProcess: [
+    {
+      title: "Overcoming Static Rigs",
+      text: "With no moving fixtures or LED color-mixing, precisely tailored gel combinations (amber, deep blue, crimson) established forest depth."
+    },
+    {
+      title: "Midnight Urgency (Clock Gobo)",
+      text: "Faded in a prominent clock face gobo as midnight neared, building relentless visual tension during Cinderella's slipper tests."
+    },
+    {
+      title: "Shadow Puppetry & Sudden Tragedy",
+      text: "Used a large backlit fabric screen to magnify the Wolf and Hunter combat, later cutting to harsh bloody red when the Baker's Wife meets her fate."
+    }
+  ],
+  prefix: "woods/woods-", 
+  desc: "Sondheim's fairy tale epic. Maximized conventional fixtures, color gels, clock gobos, and shadow play within budget limitations.", 
+  aboutPlay: "Fairy tale characters pursue wishes into the forest, only to confront catastrophic real-world consequences.", 
+  aboutDesign: "Turned technical limitations into creative strengths through sharp angle sculpting, silhouetted scrims, and color gel atmospheres."
+},
+{ 
+  id: "live-performances", 
+  title: "Live Cultural Showcases & Concerts", 
+  subtitle: "International Festivals & Showcases", 
+  role: "Lighting Team Leader", 
+  year: "2021-2023",
+  venue: "Kluge Auditorium & Campus Amphitheaters",
+  director: "Student Cultural Committees",
+  credits: [
+    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
+    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
+    { label: "Performers", val: "International Student Body (90+ Countries)" },
+    { label: "Years", val: "2021 – 2023" }
+  ],
+  myContributions: [
+    "Designed and executed over 10 distinct lighting plots per year for multicultural music, dance, and poetry showcases.",
+    "Collaborated with international performers to research and honor regional cultural aesthetics through light.",
+    "Programmed fast-paced live cue stacks, silhouette entrances, and rhythmic beat-synced flashing."
+  ],
+  designProcess: [
+    {
+      title: "Cultural Palette Research",
+      text: "Researched authentic architectural, textile, and historical aesthetics: amber-red for South Asia, ocean blues/amber for East Asia, and cyan/amber for Latin America."
+    },
+    {
+      title: "East Turkestan Sunset Nostalgia",
+      text: "Used a focused warm sunset spot fading across the stage to complement traditional music and evoke longing and passing time."
+    },
+    {
+      title: "Africa & Social Commentary",
+      text: "Utilized stark, visceral red lighting to honor narratives on colonial struggle, violence, and resilient identity."
+    }
+  ],
+  prefix: "live/live-", 
+  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, and Central Asia.", 
+  aboutPlay: "Annual celebrations bringing together artists from over 90 countries to share poetry, traditional dance, and live music.", 
+  aboutDesign: "Tailored bespoke color schemes reflecting regional textures, emotional depth, and historical narratives."
+}
 ];
 
 const gameProjects = {
@@ -1101,16 +969,19 @@ grid.innerHTML = lightingProjects.map(p => `
 ${smartImageHtml(`${p.prefix}0`, p.title, "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100 object-center")}
 </div>
 <div>
+<div class="flex items-center justify-between text-xs text-yellow-500 font-mono mb-2">
+  <span>${p.role}</span>
+  <span>${p.year}</span>
+</div>
 <h3 class="serif-title text-2xl italic text-neutral-100 mb-1 group-hover:text-yellow-400 transition-colors">${p.title}</h3>
-<p class="text-xs text-yellow-500 uppercase tracking-widest font-mono mb-3">${p.subtitle}</p>
-<p class="text-neutral-400 text-xs leading-relaxed mb-4 font-light">${p.desc}</p>
+<p class="text-xs text-neutral-400 uppercase tracking-widest font-mono mb-3">${p.subtitle}</p>
+<p class="text-neutral-300 text-xs leading-relaxed mb-4 font-light">${p.desc}</p>
 <span class="text-[10px] uppercase tracking-[0.2em] text-neutral-300 font-medium group-hover:text-white flex items-center gap-1">
-View Design Portfolio ↗
+View Process & Credits ↗
 </span>
 </div>
 </a>
 `).join('');
-if (isAdminLoggedIn) enableEditableElements();
 }
 
 function renderGameProjectsContent() {
@@ -1141,10 +1012,8 @@ View Details ↗
 `;
 }
 grid.innerHTML = html;
-if (isAdminLoggedIn) enableEditableElements();
 }
 
-// 【無裁切置中瀑布流】：保留真實解析度與構圖，絕不切頭
 function generateResponsivePhotoGrid(folderPrefix) {
 let allImages = [];
 for (let i = 1; i <= 25; i++) {
@@ -1163,7 +1032,6 @@ itemsHtml += `
 return `<div class="uncropped-masonry-container">${itemsHtml}</div>`;
 }
 
-// Graphic Design 專用：A4 完整展示、不裁切比例
 function generateGraphicDesignGrid() {
 let html = '<div class="uncropped-masonry-container">';
 for (let i = 1; i <= 20; i++) {
@@ -1177,41 +1045,69 @@ html += '</div>';
 return html;
 }
 
-// Lighting Design Paperwork 專用視圖生成器
 function generatePaperworkView(project) {
-  if (!project.paperwork || project.paperwork.length === 0) {
-    return `
-    <div class="max-w-[1200px] mx-auto text-center py-20 px-4">
-      <div class="outline-card p-12 max-w-lg mx-auto rounded-lg space-y-4">
-        <h3 class="serif-title text-2xl text-white italic">Paperwork In Archive</h3>
-        <p class="text-neutral-400 text-xs leading-relaxed">CAD Plots, Magic Sheets, and Hookups for this production are available upon request or currently being digitized for display.</p>
+  let processSectionHtml = '';
+  if (project.designProcess && project.designProcess.length > 0) {
+    let processCards = project.designProcess.map(dp => `
+      <div class="bg-[#121620] border border-white/10 p-5 rounded-md space-y-2">
+        <h5 class="text-yellow-400 font-mono text-xs uppercase tracking-widest font-bold">${dp.title}</h5>
+        <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed">${dp.text}</p>
       </div>
-    </div>`;
+    `).join('');
+
+    processSectionHtml = `
+      <div class="max-w-[1360px] mx-auto px-4 md:px-8 mb-12">
+        <h4 class="serif-title text-2xl text-white italic mb-6 border-b border-neutral-800 pb-3">Lighting Design Conceptual Process</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          ${processCards}
+        </div>
+      </div>
+    `;
   }
 
-  let cardsHtml = project.paperwork.map(pw => `
-    <div class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 space-y-4 flex flex-col justify-between">
-      <div class="space-y-2">
-        <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
-          <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold">${pw.type}</span>
-          <a href="${pw.pdfUrl}" target="_blank" class="text-[11px] uppercase tracking-widest text-neutral-300 hover:text-white flex items-center gap-1 transition-colors font-mono">
-            View Full PDF ↗
-          </a>
+  let paperworkCardsHtml = '';
+  if (project.paperwork && project.paperwork.length > 0) {
+    let cards = project.paperwork.map(pw => `
+      <div class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 space-y-4 flex flex-col justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+            <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold">${pw.type}</span>
+            <a href="${pw.pdfUrl}" target="_blank" class="text-[11px] uppercase tracking-widest text-neutral-300 hover:text-white flex items-center gap-1 transition-colors font-mono">
+              View Full PDF ↗
+            </a>
+          </div>
+          <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
+          <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
         </div>
-        <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
-        <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
+        <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
+          ${smartImageHtml(pw.image, pw.title, "w-full h-auto object-contain p-2")}
+        </div>
       </div>
-      <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
-        ${smartImageHtml(pw.image, pw.title, "w-full h-auto object-contain p-2")}
+    `).join('');
+
+    paperworkCardsHtml = `
+      <div class="max-w-[1360px] mx-auto px-4 md:px-8">
+        <h4 class="serif-title text-2xl text-white italic mb-6 border-b border-neutral-800 pb-3">Drafting, Systems & Paperwork</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          ${cards}
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  } else {
+    paperworkCardsHtml = `
+      <div class="max-w-[1200px] mx-auto text-center py-10 px-4">
+        <div class="outline-card p-8 max-w-lg mx-auto rounded-lg space-y-2">
+          <h3 class="serif-title text-xl text-white italic">Paperwork Archive</h3>
+          <p class="text-neutral-400 text-xs leading-relaxed">CAD plots, Lightwright paperwork, and cue lists for this production are available upon request.</p>
+        </div>
+      </div>
+    `;
+  }
 
   return `
-    <div class="w-full px-4 md:px-8 py-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1360px] mx-auto">
-        ${cardsHtml}
-      </div>
+    <div class="w-full py-4 space-y-12">
+      ${processSectionHtml}
+      ${paperworkCardsHtml}
     </div>
   `;
 }
@@ -1268,7 +1164,6 @@ streetPhotos.forEach((url) => {
 });
 streetGrid.innerHTML = `<div class="uncropped-masonry-container">${streetItems}</div>`;
 }
-if (isAdminLoggedIn) enableEditableElements();
 }
 
 function switchPhotoTab(tab) {
@@ -1341,25 +1236,55 @@ const detailView = document.getElementById('view-lighting-detail');
 const collageHtml = generateResponsivePhotoGrid(project.prefix.replace(/-$/, ''));
 const paperworkHtml = generatePaperworkView(project);
 
+let creditsRows = (project.credits || []).map(c => `
+  <div class="flex flex-col sm:flex-row sm:justify-between py-1.5 border-b border-white/5 text-xs">
+    <span class="text-neutral-400 uppercase tracking-widest font-mono">${c.label}</span>
+    <span class="text-neutral-100 font-medium">${c.val}</span>
+  </div>
+`).join('');
+
+let contributionsList = (project.myContributions || []).map(cb => `
+  <li class="text-xs md:text-sm text-neutral-300 font-light flex items-start gap-2">
+    <span class="text-yellow-500 mt-1">•</span>
+    <span>${cb}</span>
+  </li>
+`).join('');
+
 detailView.innerHTML = `
-<div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
+<div class="w-full px-6 md:px-16 py-14 relative flex flex-col items-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
 <div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
 <div class="w-full flex justify-start mb-6">
 <a href="#lighting-design" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
 <span>← Back to Lighting Design</span>
 </a>
 </div>
-<span class="text-xs uppercase tracking-[0.2em] text-yellow-500 font-mono block mb-2">${project.season} — ${project.role}</span>
-<h1 class="serif-title text-4xl md:text-6xl italic text-white mb-3 text-center">${project.title}</h1>
+<span class="text-xs uppercase tracking-[0.2em] text-yellow-500 font-mono block mb-2">${project.year} — ${project.role}</span>
+<h1 class="serif-title text-4xl md:text-6xl italic text-white mb-2 text-center">${project.title}</h1>
 <p class="text-neutral-300 text-sm md:text-base font-light mb-8 text-center">${project.subtitle}</p>
 
-<div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/80 border border-neutral-800 p-8 rounded-lg mb-10">
+<!-- 專案製作 Credits 與個人職責清單 -->
+<div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/90 border border-neutral-800 p-8 rounded-lg mb-10">
+  <div class="space-y-4">
+    <h3 class="serif-title text-xl italic text-yellow-400">Production Credits</h3>
+    <div class="space-y-1">
+      ${creditsRows}
+    </div>
+  </div>
+  <div class="space-y-4">
+    <h3 class="serif-title text-xl italic text-yellow-400">What I Did on This Show</h3>
+    <ul class="space-y-2.5">
+      ${contributionsList || '<li class="text-xs text-neutral-400">Responsible for stage lighting design, cue synchronization, and plot drafting.</li>'}
+    </ul>
+  </div>
+</div>
+
+<div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/50 border border-neutral-800/80 p-8 rounded-lg mb-10">
 <div>
 <h3 class="serif-title text-xl italic text-white mb-3">About the Production</h3>
 <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutPlay}</p>
 </div>
 <div>
-<h3 class="serif-title text-xl italic text-white mb-3">Lighting Design & Responsibilities</h3>
+<h3 class="serif-title text-xl italic text-white mb-3">Design Concept</h3>
 <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutDesign}</p>
 </div>
 </div>
@@ -1369,7 +1294,7 @@ detailView.innerHTML = `
     Production Photos
   </button>
   <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
-    Light Plot & Paperwork
+    Design Process & Paperwork
   </button>
 </div>
 
@@ -1384,9 +1309,6 @@ detailView.innerHTML = `
 </div>
 
 <div id="ld-tab-content-paperwork" class="hidden w-full mt-8">
-  <div class="text-center mb-6">
-    <h3 class="text-xs uppercase tracking-[0.3em] text-yellow-500 font-mono">Technical Drawings, Systems & Plots</h3>
-  </div>
   ${paperworkHtml}
 </div>
 `;
@@ -1458,7 +1380,6 @@ document.getElementById('view-game-detail').classList.remove('hidden');
 }
 }
 window.scrollTo({ top: 0, behavior: 'smooth' });
-if (isAdminLoggedIn) enableEditableElements();
 }
 
 function toggleMobileMenu() {
@@ -1471,7 +1392,6 @@ window.addEventListener('hashchange', handleRouter);
 
 window.onload = function() {
 generateExactBackground();
-loadCustomData();
 renderHomeHeroCollage();
 renderPhotographyContent();
 renderLightingContent();
