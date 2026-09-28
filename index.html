@@ -111,7 +111,6 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 完美置中、嚴格不切圖的現代相片牆 */
 .uncropped-masonry-container {
 column-count: 3;
 column-gap: 16px;
@@ -219,7 +218,6 @@ Creative Portfolio
 </div>
 </section>
 
-<!-- 四大專案類別導覽卡片 -->
 <div class="max-w-[1200px] mx-auto px-6 md:px-12 w-full pb-12">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 w-full">
 <a href="#photography" class="group outline-card rounded-sm p-10 transition-all duration-500 cursor-pointer flex flex-col justify-center items-center h-[280px] md:h-[320px] block">
@@ -421,11 +419,11 @@ if (idx < candidates.length) {
 imgEl.dataset.candidateIdx = idx.toString();
 imgEl.src = candidates[idx];
 } else {
-let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card');
+let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card') || imgEl.closest('.scene-breakdown-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 } catch (e) {
-let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card');
+let itemContainer = imgEl.closest('.uncropped-photo-item') || imgEl.closest('.outline-card') || imgEl.closest('.scene-breakdown-card');
 if (itemContainer) itemContainer.style.display = 'none';
 }
 };
@@ -513,7 +511,7 @@ let eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整 PDF 6大燈光專案資料清單（整合 Resume 與 53 頁 Portfolio PDF 內所有細節）
+// 完整燈光專案資料清單（直接使用 Storage 現有的 harvest-1, harvest-2, magic-1, plot-1... 檔名）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -539,45 +537,62 @@ const lightingProjects = [
   ],
   aboutPlay: "The Harvest by Samuel D. Hunter takes place in a small evangelical church in Idaho, where a group of young missionaries prepare for a trip to the Middle East. As they pray, argue, and reveal their fears, the play explores themes of faith, isolation, and the longing for purpose.",
   aboutDesign: "Every cue is rooted in realism, appearing to come from practical sources: fluorescent fixtures, LED strips, small basement windows, and staircase lighting that guides movement between emotional and physical space. Subtle transitions reveal texture, sculpt faces, and support the psychological landscape.",
-  references: [
-    {
-      title: "Realism Inspiration: Crowded Kitchen & Practical Light",
-      image: "harvest/harvest-ref",
-      desc: "Reference photo used to study cluttered domestic lighting, overhead practical fixtures, and realistic light bounce in enclosed basement spaces."
-    }
-  ],
   sceneBreakdowns: [
     {
-      title: "Michaela's Entrance & Praying in Tongues",
-      image: "harvest/harvest-scene1",
-      desc: "Lighting design for the moment Michaela descends the stairs while Tom and Jason pray in tongues. The staircase lighting emphasizes her entrance and separates her from the cold moonlight coming through the windows."
-    },
-    {
       title: "Music, Connection & Isolation",
-      image: "harvest/harvest-scene2",
+      image: "harvest/harvest-1",
       desc: "Tom and Jason listen to music together, but their emotions diverge: Jason wants to leave, while Tom wants him to stay. I used cold moonlight from the window to isolate Jason in shadow, and warm piano light to emphasize Tom's desire for connection."
     },
     {
+      title: "Michaela's Entrance & Praying in Tongues",
+      image: "harvest/harvest-2",
+      desc: "Lighting design for the moment Michaela descends the stairs while Tom and Jason pray in tongues. The staircase lighting emphasizes her entrance and separates her from the cold moonlight coming through the windows."
+    },
+    {
       title: "Rain, Fluorescent & Cold Moon",
-      image: "harvest/harvest-scene3",
+      image: "harvest/harvest-3",
       desc: "Jason is soaked from the rain. The cold moonlight combined with ceiling fluorescent light and warm front light creates deep psychological isolation as characters confront harsh realities."
     },
     {
       title: "Final Scene: Sunrise & Miracle",
-      image: "harvest/harvest-scene4",
+      image: "harvest/harvest-4",
       desc: "In the final scene where characters pray in tongues, the director wanted lighting to evoke hope and sunrise. I designed a warm, rising light from the window that gradually fills the space, suggesting spiritual transformation."
     },
     {
       title: "Thunderstorm & Lightning Effect",
-      image: "harvest/harvest-scene5",
+      image: "harvest/harvest-5",
       desc: "Incorporating thunder FX, three escalating lightning flashes build intensity. At director's request, stage cuts to complete blackout during strikes, letting the audience experience sudden darkness. Window lights flicker with strong winds."
     }
   ],
   paperwork: [
-    { title: "Vectorworks Light Plot & Focus Area", type: "CAD Plot (1/4\" Scale)", image: "harvest/plot", pdfUrl: "#", desc: "Complete venue rig with fixture numbers, DMX addresses, and focus area layout." },
-    { title: "Magic Sheet / Systems Layout", type: "ETC Eos Console Setup", image: "harvest/magic", pdfUrl: "#", desc: "Channel groups including Front, Top, SR/SL Side, Windows, Gobos, and Practicals." },
-    { title: "Cue List & Sequence Script", type: "Stage Cue Track", image: "harvest/cue", pdfUrl: "#", desc: "Detailed cue calls with fade times, autofollow storm sequences, and lighting state descriptions." },
-    { title: "Instrument Schedule", type: "Lightwright Export", image: "harvest/schedule", pdfUrl: "#", desc: "Complete channel-to-dimmer assignments, unit types (ETC ColorSource, S4), and gels." }
+    { 
+      title: "Vectorworks Light Plot & Focus Area", 
+      type: "CAD Plot (1/4\" Scale)", 
+      images: ["harvest/plot-1", "harvest/plot-2"], 
+      pdfUrl: "#", 
+      desc: "Complete venue rig with fixture numbers, DMX addresses, and focus area layout." 
+    },
+    { 
+      title: "Magic Sheet / Systems Layout", 
+      type: "ETC Eos Console Setup", 
+      images: ["harvest/magic-1"], 
+      pdfUrl: "#", 
+      desc: "Channel groups including Front, Top, SR/SL Side, Windows, Gobos, and Practicals." 
+    },
+    { 
+      title: "Cue List & Sequence Script", 
+      type: "Stage Cue Track", 
+      images: ["harvest/cue-3", "harvest/cue-4"], 
+      pdfUrl: "#", 
+      desc: "Detailed cue calls with fade times, autofollow storm sequences, and lighting state descriptions." 
+    },
+    { 
+      title: "Instrument Schedule", 
+      type: "Lightwright Export", 
+      images: ["harvest/schedule-1", "harvest/schedule-2"], 
+      pdfUrl: "#", 
+      desc: "Complete channel-to-dimmer assignments, unit types (ETC ColorSource, S4), and gels." 
+    }
   ]
 },
 { 
@@ -606,27 +621,27 @@ const lightingProjects = [
   sceneBreakdowns: [
     {
       title: "\"Welcome to Our House on Maple Avenue\"",
-      image: "funhome/funhome-scene1",
+      image: "funhome/funhome-1",
       desc: "As the Bechdel family frantically cleans the house anticipating a visitor, lighting reflects Bruce's obsession with order and perfection while hinting at underlying household tension."
     },
     {
       title: "Contrasting Rooms: Indigo vs. Magenta",
-      image: "funhome/funhome-scene2",
+      image: "funhome/funhome-2",
       desc: "While Helen plays piano in one room, Bruce is privately engaged in a relationship with his student in another. Contrasting indigo and magenta lighting across spaces exposes deep psychological fractures."
     },
     {
       title: "Ambiguous Pink-Purple Stage Wash",
-      image: "funhome/funhome-scene3",
+      image: "funhome/funhome-3",
       desc: "As hidden relationships surface, an ambiguous pink-purple glow expands across the entire stage, capturing ironic, delicate, and deeply conflicting emotions."
     },
     {
       title: "Reprise & Melancholy Contrast",
-      image: "funhome/funhome-scene4",
+      image: "funhome/funhome-4",
       desc: "When \"Maple Avenue\" is sung again, lighting shifts noticeably cooler and quieter, creating sharp, poignant contrast between cheerful lyrics and creeping sadness."
     }
   ],
   paperwork: [
-    { title: "Magic Sheet / Systems Layout", type: "ETC Eos Setup", image: "funhome/magic", pdfUrl: "#", desc: "Movers, Cyc, Gobos, Booms, Front, Top, and Side channel groupings." }
+    { title: "Magic Sheet / Systems Layout", type: "ETC Eos Setup", images: ["funhome/magic-1", "funhome/magic"], pdfUrl: "#", desc: "Movers, Cyc, Gobos, Booms, Front, Top, and Side channel groupings." }
   ]
 },
 { 
@@ -651,23 +666,11 @@ const lightingProjects = [
   ],
   aboutPlay: "The story centers on a modern-day version of Greek god Dionysus returning to Earth as a permaculturist named Diane. Her mission: convince four New Jersey housewives to embrace chaotic forces of nature and abandon manicured suburban lawns.",
   aboutDesign: "My first full lighting plot experience. Starts with warm, steady kitchen light, shifting into cooler tones and accelerating transitions as chaos builds. At climax, aggressive storm lighting shifts abruptly into silence, followed by slow fade into cold, dim plaid gobo light.",
-  references: [
-    {
-      title: "Reference: Geometrical Light & Sacred Climax",
-      image: "diane/diane-ref1",
-      desc: "Visual study on how angular, sharp shafts of white light construct an overwhelming, architectural divine space during destruction."
-    },
-    {
-      title: "Lighting Lab Mannequin Test: Gobo & Side Angle",
-      image: "diane/diane-ref2",
-      desc: "Physical Light Lab experiment testing side light angles, fabric reflection, and window/leaf branch gobo textures on draped silhouettes."
-    }
-  ],
   paperwork: [
-    { title: "CAD Light Plot & Symbol Key", type: "Vectorworks / CAD Drawing", image: "diane/plot", pdfUrl: "#", desc: "Electrics, Box Booms, FOH positions, instrument types, and stage centerline." },
-    { title: "Focus Areas & Throw Angles", type: "Focus Geometry", image: "diane/focus", pdfUrl: "#", desc: "Overlapping focus pools covering Carol's kitchen island, counter, and patio entrance." },
-    { title: "Light Lab Plot & Gel Color Key", type: "Color Palette & Swatches", image: "diane/colorkey", pdfUrl: "#", desc: "Gel swatch assignments, gobo selections (window/leaves, new world), and ChromaQ Colorforce II cyc setup." },
-    { title: "Fast-Paced Storm Cue List", type: "Cue List Script", image: "diane/cuelist", pdfUrl: "#", desc: "Beat-synced cues 30.1 to 31 with zero-second timing and color transitions leading to blackout." }
+    { title: "CAD Light Plot & Symbol Key", type: "Vectorworks / CAD Drawing", images: ["diane/plot-1", "diane/plot"], pdfUrl: "#", desc: "Electrics, Box Booms, FOH positions, instrument types, and stage centerline." },
+    { title: "Focus Areas & Throw Angles", type: "Focus Geometry", images: ["diane/focus-1", "diane/focus"], pdfUrl: "#", desc: "Overlapping focus pools covering Carol's kitchen island, counter, and patio entrance." },
+    { title: "Light Lab Plot & Gel Color Key", type: "Color Palette & Swatches", images: ["diane/colorkey-1", "diane/colorkey"], pdfUrl: "#", desc: "Gel swatch assignments, gobo selections (window/leaves, new world), and ChromaQ Colorforce II cyc setup." },
+    { title: "Fast-Paced Storm Cue List", type: "Cue List Script", images: ["diane/cuelist-1", "diane/cuelist"], pdfUrl: "#", desc: "Beat-synced cues 30.1 to 31 with zero-second timing and color transitions leading to blackout." }
   ]
 },
 { 
@@ -695,22 +698,22 @@ const lightingProjects = [
   sceneBreakdowns: [
     {
       title: "Puck's Farewell Monologue",
-      image: "midsummer/midsummer-scene1",
+      image: "midsummer/midsummer-1",
       desc: "Puck bids farewell to the audience, telling them to consider the play nothing more than a dream. Isolated in warm, mysterious spotlight amidst surrounding darkness."
     },
     {
       title: "Bottom's Surreal Transformation",
-      image: "midsummer/midsummer-scene2",
+      image: "midsummer/midsummer-2",
       desc: "After Bottom transforms into a donkey-headed figure, five focused spotlights and deep shadows emphasize comedic horror and supernatural confusion."
     },
     {
       title: "Titania's Enchanted Love Spell",
-      image: "midsummer/midsummer-scene3",
+      image: "midsummer/midsummer-3",
       desc: "Titania falls under the flower potion. Designed with a step-based lighting effect that shifted in rhythm with music to convey magical enchantment."
     }
   ],
   paperwork: [
-    { title: "Production Concept Archive", type: "Concept Dossier", image: "midsummer/concept", pdfUrl: "#", desc: "Color palettes and atmospheric breakdown for fairy world vs mortal realm." }
+    { title: "Production Concept Archive", type: "Concept Dossier", images: ["midsummer/concept-1", "midsummer/concept"], pdfUrl: "#", desc: "Color palettes and atmospheric breakdown for fairy world vs mortal realm." }
   ]
 },
 { 
@@ -738,32 +741,32 @@ const lightingProjects = [
   sceneBreakdowns: [
     {
       title: "Three Protagonists & Opening Wishes",
-      image: "woods/woods-scene1",
+      image: "woods/woods-1",
       desc: "Fairytale protagonists take turns sharing their deepest wishes. Balanced warm individual light pools emphasize reflection, hope, and vulnerability."
     },
     {
       title: "Jack Sells the Cow in the Forest",
-      image: "woods/woods-scene2",
+      image: "woods/woods-2",
       desc: "Jack trades Milky White for magic beans. Forest lighting balances whimsical discovery with eerie uncertainty under textured tree branch washes."
     },
     {
       title: "Midnight Urgency & The Clock Gobo",
-      image: "woods/woods-scene3",
+      image: "woods/woods-3",
       desc: "As the stepsisters try on the glass slipper, a large clock gobo slowly fades in on the cyc, symbolizing passing time and building midnight tension."
     },
     {
       title: "Shadow Puppetry: Little Red & The Wolf",
-      image: "woods/woods-scene4",
+      image: "woods/woods-4",
       desc: "The hunter rescues Little Red from Mr. Wolf using a backlit fabric screen to cast fierce, looming shadows that heighten physical conflict."
     },
     {
       title: "Death of the Baker's Wife",
-      image: "woods/woods-scene5",
+      image: "woods/woods-5",
       desc: "The Baker's Wife is crushed by the giant. Lighting shifts abruptly into visceral crimson, a stark reminder of fairy tales unraveling into real tragedy."
     }
   ],
   paperwork: [
-    { title: "Gel Schedule & Cue Paperwork", type: "Conventional Rig Schedule", image: "woods/schedule", pdfUrl: "#", desc: "Gel cut list, instrument focus notes, and manual cue tracking." }
+    { title: "Gel Schedule & Conventional Plot", type: "Conventional Rig Schedule", images: ["woods/schedule-1", "woods/schedule"], pdfUrl: "#", desc: "Gel cut list, instrument focus notes, and manual cue tracking." }
   ]
 },
 { 
@@ -788,70 +791,57 @@ const lightingProjects = [
   ],
   aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
   aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
-  references: [
-    {
-      title: "Visual Research: South Asia Amber-Red & Architecture",
-      image: "live/live-ref-southasia",
-      desc: "Research into South Asian palace architecture, desert sandstone, and flower festival colors inspiring energetic warm amber-red palettes."
-    },
-    {
-      title: "Visual Research: Latin America Textiles & Architecture",
-      image: "live/live-ref-latin",
-      desc: "Research into traditional weaving patterns, colonial architecture, and street colors inspiring the balance of cyan and amber."
-    }
-  ],
   sceneBreakdowns: [
     {
       title: "Love Café: Romantic Singer-Songwriter",
-      image: "live/live-scene1",
+      image: "live/live-1",
       desc: "Live sound mixing and original songs about love toward family and friends, set under intimate soft purple and pink lighting."
     },
     {
       title: "Michael Jackson Tribute & Concert Vibe",
-      image: "live/live-scene2",
+      image: "live/live-2",
       desc: "Capturing iconic pop dance style with vibrant purple and cyan backlight inspired by MJ's live concert lighting."
     },
     {
       title: "New Moon Café: High-Energy Dance & Silhouettes",
-      image: "live/live-scene3",
+      image: "live/live-3",
       desc: "Dynamic beat-synced flashing and quick fades, opening with sharp silhouette backlit poses to build anticipation."
     },
     {
       title: "Cultural Showcase: South Asia",
-      image: "live/live-scene4",
+      image: "live/live-4",
       desc: "Warm amber-red and gold tones echoing traditional festivals and lively dance choreography."
     },
     {
       title: "Cultural Showcase: East Asia",
-      image: "live/live-scene5",
+      image: "live/live-5",
       desc: "Blue, violet, and soft amber lighting evoking oceanic tranquility, flowing water, and historical textiles."
     },
     {
       title: "Cultural Showcase: East Turkestan Sunset",
-      image: "live/live-scene6",
+      image: "live/live-6",
       desc: "A fading sunset spotlight casting warm nostalgic light across the stage, evoking longing for endangered musical traditions."
     },
     {
       title: "Cultural Showcase: Latin America",
-      image: "live/live-scene7",
+      image: "live/live-7",
       desc: "A vibrant blend of cyan and warm amber balancing celebratory energy with deep cultural history."
     },
     {
       title: "Cultural Showcase: Central Asia",
-      image: "live/live-scene8",
+      image: "live/live-8",
       desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns."
     },
     {
       title: "Cultural Showcase: Africa & Colonial History",
-      image: "live/live-scene9",
+      image: "live/live-9",
       desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance."
     }
   ],
   paperwork: [
-    { title: "Showcase Rigging Schedule", type: "Festival Rep Plot", image: "live/plot", pdfUrl: "#", desc: "Rep plot configuration accommodating quick turnaround between 15+ student performances." }
+    { title: "Showcase Rigging Schedule", type: "Festival Rep Plot", images: ["live/plot-1", "live/plot"], pdfUrl: "#", desc: "Rep plot configuration accommodating quick turnaround between 15+ student performances." }
   ]
 },
-// 保留 PCPA 實習重要經歷以供完整呈現
 {
   id: "luchadora", 
   title: "Luchadora", 
@@ -875,9 +865,9 @@ const lightingProjects = [
   aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", 
   aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season under designer Kieth W. Rice.",
   paperwork: [
-    { title: "Vectorworks Light Plot", type: "CAD Plot (1/4\" Scale)", image: "luchadora/plot", pdfUrl: "#", desc: "Rigging points, DMX distribution, and automated fixture positions." },
-    { title: "Magic Sheet / Systems Layout", type: "Focus & Systems", image: "luchadora/magic", pdfUrl: "#", desc: "Color system matrix, moving head beam angles, and area breakdown." },
-    { title: "Spot Sheets & Cue Tracker", type: "ALD Production Paperwork", image: "luchadora/spot", pdfUrl: "#", desc: "Followspot pick-up sheets with frame counts and scene transition cues." }
+    { title: "Vectorworks Light Plot", type: "CAD Plot (1/4\" Scale)", images: ["luchadora/plot-1", "luchadora/plot"], pdfUrl: "#", desc: "Rigging points, DMX distribution, and automated fixture positions." },
+    { title: "Magic Sheet / Systems Layout", type: "Focus & Systems", images: ["luchadora/magic-1", "luchadora/magic"], pdfUrl: "#", desc: "Color system matrix, moving head beam angles, and area breakdown." },
+    { title: "Spot Sheets & Cue Tracker", type: "ALD Production Paperwork", images: ["luchadora/spot-1", "luchadora/spot"], pdfUrl: "#", desc: "Followspot pick-up sheets with frame counts and scene transition cues." }
   ]
 },
 { 
@@ -903,8 +893,8 @@ const lightingProjects = [
   aboutPlay: "Beehive is a high-energy celebration of powerful female vocalists of the 1960s.", 
   aboutDesign: "PCPA Summer 2026 internship project under Keith W. Rice, LD.",
   paperwork: [
-    { title: "Vectorworks Light Plot", type: "CAD Plot", image: "beehive/plot", pdfUrl: "#", desc: "Main stage plot including moving head wash units and cyc backlight systems." },
-    { title: "Hookup & Instrument Schedule", type: "Lightwright Export", image: "beehive/hookup", pdfUrl: "#", desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." }
+    { title: "Vectorworks Light Plot", type: "CAD Plot", images: ["beehive/plot-1", "beehive/plot"], pdfUrl: "#", desc: "Main stage plot including moving head wash units and cyc backlight systems." },
+    { title: "Hookup & Instrument Schedule", type: "Lightwright Export", images: ["beehive/hookup-1", "beehive/hookup"], pdfUrl: "#", desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." }
   ]
 }
 ];
@@ -1041,7 +1031,7 @@ html += '</div>';
 return html;
 }
 
-// 產生完整 Design Process 頁籤：包含 Reference 圖片、關鍵劇照場景分析、以及 CAD 圖紙
+// 支援多張圖紙與單張圖紙渲染，無 reference 時自動略過
 function generateDesignProcessView(project) {
   let referencesHtml = '';
   if (project.references && project.references.length > 0) {
@@ -1068,7 +1058,7 @@ function generateDesignProcessView(project) {
   let sceneAnalysisHtml = '';
   if (project.sceneBreakdowns && project.sceneBreakdowns.length > 0) {
     let sceneCards = project.sceneBreakdowns.map(sc => `
-      <div class="bg-[#121620]/90 border border-white/15 p-5 rounded-lg space-y-4">
+      <div class="scene-breakdown-card bg-[#121620]/90 border border-white/15 p-5 rounded-lg space-y-4">
         <div class="w-full bg-black rounded overflow-hidden flex items-center justify-center">
           ${smartImageHtml(sc.image, sc.title, "w-full h-auto max-h-[420px] object-contain block")}
         </div>
@@ -1091,23 +1081,32 @@ function generateDesignProcessView(project) {
 
   let paperworkHtml = '';
   if (project.paperwork && project.paperwork.length > 0) {
-    let cards = project.paperwork.map(pw => `
-      <div class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 space-y-4 flex flex-col justify-between">
-        <div class="space-y-2">
-          <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
-            <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold">${pw.type}</span>
-            <a href="${pw.pdfUrl}" target="_blank" class="text-[11px] uppercase tracking-widest text-neutral-300 hover:text-white flex items-center gap-1 transition-colors font-mono">
-              View Full PDF ↗
-            </a>
-          </div>
-          <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
-          <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
-        </div>
+    let cards = project.paperwork.map(pw => {
+      let imgList = pw.images || (pw.image ? [pw.image] : []);
+      let imagesHtml = imgList.map((imgName, idx) => `
         <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in">
-          ${smartImageHtml(pw.image, pw.title, "w-full h-auto object-contain p-2")}
+          ${smartImageHtml(imgName, `${pw.title} (Page${idx + 1})`, "w-full h-auto object-contain p-2")}
         </div>
-      </div>
-    `).join('');
+      `).join('');
+
+      return `
+        <div class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 space-y-4 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+              <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold">${pw.type}</span>
+              <a href="${pw.pdfUrl}" target="_blank" class="text-[11px] uppercase tracking-widest text-neutral-300 hover:text-white flex items-center gap-1 transition-colors font-mono">
+                View Full PDF ↗
+              </a>
+            </div>
+            <h4 class="serif-title text-xl text-white italic">${pw.title}</h4>
+            <p class="text-xs text-neutral-400 font-light leading-relaxed">${pw.desc}</p>
+          </div>
+          <div class="space-y-4">
+            ${imagesHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
 
     paperworkHtml = `
       <div class="max-w-[1360px] mx-auto px-4 md:px-8">
@@ -1278,7 +1277,6 @@ detailView.innerHTML = `
 <h1 class="serif-title text-4xl md:text-6xl italic text-white mb-2 text-center">${project.title}</h1>
 <p class="text-neutral-300 text-sm md:text-base font-light mb-8 text-center">${project.subtitle}</p>
 
-<!-- 專案製作 Credits 與個人職責清單 -->
 <div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/90 border border-neutral-800 p-8 rounded-lg mb-10">
   <div class="space-y-4">
     <h3 class="serif-title text-xl italic text-yellow-400">Production Credits</h3>
