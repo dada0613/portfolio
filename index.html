@@ -111,7 +111,7 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 橫向數過去的 Grid 佈局：Row 1 是 1, 2；Row 2 是 3, 4 */
+/* 橫向順序 Grid：Row 1 是 1, 2；Row 2 是 3, 4 */
 .uncropped-masonry-container {
 display: grid;
 grid-template-columns: repeat(2, 1fr);
@@ -534,7 +534,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單
+// 完整燈光專案資料清單（已包含 The Trail To Oregon!）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -591,6 +591,38 @@ const lightingProjects = [
       type: "Lightwright Export", 
       images: ["harvest/schedule-1", "harvest/schedule-2"], 
       desc: "Complete channel-to-dimmer assignments, unit types (ETC ColorSource, S4), and gels." 
+    }
+  ]
+},
+{ 
+  id: "ttto", 
+  title: "The Trail To Oregon!", 
+  subtitle: "Musical / Eldred Theatre", 
+  role: "Lighting Designer", 
+  year: "2023",
+  season: "Sophomore Year at CWRU",
+  prefix: "ttto/TTTO-",
+  desc: "An adventurous, comedic musical journey along the Oregon Trail featuring high-energy numbers, dynamic color contrasts, and interactive staging.",
+  credits: [
+    { label: "My Role", val: "Lighting Designer" },
+    { label: "Director", val: "Claire Carducci" },
+    { label: "Venue", val: "Eldred Theatre, Cleveland OH" },
+    { label: "Year", val: "Spring 2023" }
+  ],
+  myContributions: [
+    "Conceived and executed complete musical lighting design, cue synchronization, and color washes for fast-moving musical numbers.",
+    "Drafted light plot and instrument paperwork accommodating multi-location travel across rivers, deserts, and campsites.",
+    "Programmed saturated color chases and comedic followspot effects synchronized with choreography on ETC Eos console."
+  ],
+  aboutPlay: "The Trail To Oregon! is an interactive musical comedy produced by StarKid Productions parodying the retro video game Oregon Trail. The story follows an eccentric pioneer family traversing 19th-century America from Missouri to Oregon, facing bandits, dysentery, snake bites, and river crossings with audience-chosen names and fates.",
+  aboutDesign: "Lighting balanced cartoonish comedy with theatrical adventure. Saturated, punchy cyc colors established time and varied landscapes across the trail—from scorching desert yellows to perilous river blues and ominous sunset ambers. Fast tempo transitions supported the dynamic ensemble and live audience interactions.",
+  photoCaptions: {},
+  paperwork: [
+    { 
+      title: "Paperwork & Production Dossier", 
+      type: "Eldred Theatre Rig Schedule", 
+      images: ["ttto/plot-1", "ttto/plot"], 
+      desc: "Production lighting plot, gel schedule, and cue paperwork for the musical showcase." 
     }
   ]
 },
@@ -1019,7 +1051,7 @@ html += '</div>';
 return html;
 }
 
-// 全域掛載 Beehive 專屬雙劇場切換
+// Beehive 專屬雙劇場切換
 window.switchBeehiveVenue = function(venueId) {
   const btnMarian = document.getElementById('btn-venue-marian');
   const btnSolvang = document.getElementById('btn-venue-solvang');
@@ -1055,7 +1087,7 @@ function generatePaperworkView(paperworkList) {
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
-    // Beehive 雙劇場切換
+    // 專門處理 Beehive 雙劇場切換（Marian vs Solvang），圖紙滿版呈現 + 詳細 Viewport 按鈕
     if (pw.isDualVenuePlot) {
       let marian = pw.venues[0];
       let solvang = pw.venues[1];
