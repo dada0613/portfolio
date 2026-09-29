@@ -526,7 +526,7 @@ let eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（統一採用 資料夾/plot-1, plot-2 規則）
+// 完整燈光專案資料清單（Luchadora & Beehive Plot 與 Cue Sheet 均採用 PDF 格式）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -614,7 +614,6 @@ const lightingProjects = [
     { 
       title: "Vectorworks Light Plot (Full Venue & Amphitheatre)", 
       type: "Vector CAD Plot", 
-      // 依你的要求：放在 luchadora/plot-1.pdf
       pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/plot-1.pdf",
       fileName: "luchadora/plot-1.pdf",
       desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. View below in the interactive viewer or open the full vector PDF to inspect all instrument markings." 
@@ -627,9 +626,10 @@ const lightingProjects = [
     },
     { 
       title: "Spot Sheets & Cue Tracker", 
-      type: "ALD Production Paperwork", 
-      images: ["luchadora/spot-1", "luchadora/spot"], 
-      desc: "Followspot pick-up sheets with frame counts and scene transition cues." 
+      type: "ALD Production Paperwork (PDF)", 
+      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/cue-1.pdf",
+      fileName: "luchadora/cue-1.pdf",
+      desc: "Followspot pick-up sheets with frame counts and scene transition cues across technical runs. Inspect the complete tracking document in vector PDF." 
     }
   ]
 },
@@ -668,7 +668,6 @@ const lightingProjects = [
           id: "marian",
           name: "Indoor Theater (Marian Theatre)",
           sub: "Proscenium Layout & Electrics",
-          // 依你的要求：放在 beehive/plot-1.pdf
           pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/plot-1.pdf",
           fileName: "beehive/plot-1.pdf"
         },
@@ -676,11 +675,17 @@ const lightingProjects = [
           id: "solvang",
           name: "Outdoor Theater (Solvang Festival Theater)",
           sub: "Open-Air Thrust Rig & Catwalks",
-          // 依你的要求：放在 beehive/plot-2.pdf
           pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/plot-2.pdf",
           fileName: "beehive/plot-2.pdf"
         }
       ]
+    },
+    { 
+      title: "Cue Sheet & Musical Track Document", 
+      type: "ALD Production Paperwork (PDF)", 
+      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/cue-1.pdf",
+      fileName: "beehive/cue-1.pdf",
+      desc: "Detailed cue tracker and song-by-song transition paperwork for over 30 musical numbers across tech rehearsals." 
     },
     { 
       title: "Hookup & Instrument Schedule", 
@@ -1029,7 +1034,7 @@ function switchBeehiveVenue(venueId) {
   }
 }
 
-// 圖紙區塊：支援大型 PDF 互動閱讀器 + Beehive 雙劇場切換小 Tab
+// 圖紙區塊：支援大型 PDF 互動閱讀器 + Beehive 雙劇場切換小 Tab + Cue Sheet PDF
 function generatePaperworkView(paperworkList) {
   if (!paperworkList || paperworkList.length === 0) {
     return `
@@ -1089,7 +1094,7 @@ function generatePaperworkView(paperworkList) {
       `;
     }
 
-    // 一般單一 PDF 預覽（如 Luchadora）
+    // 單一 PDF 預覽（如 Luchadora Plot 與 Luchadora/Beehive 的 Cue Sheet）
     if (pw.pdfUrl) {
       return `
         <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
@@ -1100,7 +1105,7 @@ function generatePaperworkView(paperworkList) {
             </div>
             <a href="${pw.pdfUrl}" target="_blank" class="self-start md:self-auto text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-              Open Vector PDF in New Tab ↗
+              Open ${pw.fileName || 'Vector PDF'} in New Tab ↗
             </a>
           </div>
           <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl">${pw.desc}</p>
