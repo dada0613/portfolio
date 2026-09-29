@@ -111,19 +111,27 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
+/* 橫向順序 Grid：Row 1 是 1, 2；Row 2 是 3, 4 */
 .uncropped-masonry-container {
-column-count: 2;
-column-gap: 20px;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 24px;
 width: 100%;
 max-width: 1360px;
 margin: 0 auto;
 padding: 0 16px;
+align-items: start;
 }
 @media (max-width: 768px) {
-.uncropped-masonry-container { column-count: 1; column-gap: 12px; padding: 0 10px; }
+.uncropped-masonry-container {
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 0 10px;
+}
 }
 
 .photo-flow-card {
+width: 100%;
 background: #0e1219;
 border: 1px solid rgba(255, 255, 255, 0.12);
 border-radius: 6px;
@@ -179,6 +187,7 @@ AMANDA HSU
 <a href="#lighting-design" class="transition-colors hover:text-white">Lighting Design</a>
 <a href="#video-graphic-design" class="transition-colors hover:text-white">Video & Graphic Design</a>
 <a href="#game-design" class="transition-colors hover:text-yellow-500">Game Design</a>
+<a href="#resume" class="transition-all text-yellow-500 hover:text-black hover:bg-yellow-500 border border-yellow-500/50 px-3.5 py-1.5 rounded-sm font-bold tracking-widest">Resume</a>
 </nav>
 <button onclick="toggleMobileMenu()" class="lg:hidden text-neutral-300 focus:outline-none p-2 hover:text-white transition-colors">
 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,13 +196,14 @@ AMANDA HSU
 </button>
 </header>
 
-<div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-[#0b0f15]/95 backdrop-blur-xl flex flex-col justify-center items-center space-y-8 text-sm uppercase tracking-[0.255em]">
+<div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-[#0b0f15]/95 backdrop-blur-xl flex flex-col justify-center items-center space-y-7 text-sm uppercase tracking-[0.255em]">
 <button onclick="toggleMobileMenu()" class="absolute top-8 right-8 text-neutral-400 hover:text-white text-xl">✕ Close</button>
 <a href="#home" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-white">Home</a>
 <a href="#photography" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-white">Photography</a>
 <a href="#lighting-design" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-white">Lighting Design</a>
 <a href="#video-graphic-design" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-white">Video & Graphic Design</a>
-<a href="#game-design" onclick="toggleMobileMenu()" class="text-yellow-500">Game Design</a>
+<a href="#game-design" onclick="toggleMobileMenu()" class="text-neutral-200 hover:text-yellow-500">Game Design</a>
+<a href="#resume" onclick="toggleMobileMenu()" class="text-yellow-500 font-bold border-b border-yellow-500 pb-1">Resume</a>
 </div>
 
 <main class="relative z-10 flex-grow w-full flex flex-col justify-center">
@@ -234,6 +244,186 @@ Creative Portfolio
 </a>
 </div>
 </div>
+</div>
+
+<!-- VIEW: RESUME (含雙領域 TAB) -->
+<div id="view-resume" class="hidden w-full max-w-[1200px] mx-auto px-6 md:px-12 py-10 page-enter">
+  <div class="border-b border-neutral-800 pb-8 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div>
+      <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors mb-4">
+        <span>← Back to Home</span>
+      </a>
+      <h1 class="serif-title text-4xl md:text-5xl italic text-neutral-100 mb-2">Curriculum Vitae</h1>
+      <p class="text-neutral-400 text-sm tracking-wide">Dual Specialization in Theatrical Production & Technical Game Development</p>
+    </div>
+
+    <!-- 領域切換按鈕 -->
+    <div class="flex items-center bg-neutral-900 border border-neutral-800 p-1.5 rounded-sm self-start md:self-auto">
+      <button id="resume-tab-theater" onclick="switchResumeTab('theater')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer font-mono">
+        Theater & Lighting
+      </button>
+      <button id="resume-tab-game" onclick="switchResumeTab('game')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer font-mono">
+        Game Design & Tech
+      </button>
+    </div>
+  </div>
+
+  <!-- THEATER RESUME CONTENT -->
+  <div id="resume-content-theater" class="space-y-12">
+    <div class="flex justify-end">
+      <a href="https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/theater-resume.pdf" target="_blank" class="inline-flex items-center gap-3 bg-yellow-500 hover:bg-yellow-400 text-neutral-950 px-6 py-3 rounded text-xs uppercase tracking-widest font-bold font-mono transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <span>Download Theater Resume (PDF) ↗</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="space-y-8">
+        <div class="outline-card p-6 rounded-lg space-y-3">
+          <h3 class="serif-title text-xl text-yellow-400 italic">Education</h3>
+          <p class="text-sm font-bold text-white">Case Western Reserve University</p>
+          <p class="text-xs text-neutral-300">BA in Theater Arts (Design/Technical) & Computer Science (2023–2027) | GPA: 3.937</p>
+          <p class="text-xs text-neutral-400 mt-2">Study Abroad: The Lir Academy, Trinity College Dublin (Fall 2024)</p>
+        </div>
+
+        <div class="outline-card p-6 rounded-lg space-y-3">
+          <h3 class="serif-title text-xl text-yellow-400 italic">Skills & Tools</h3>
+          <ul class="text-xs text-neutral-300 space-y-1.5 leading-relaxed font-light">
+            <li>• <strong>Console:</strong> ETC EOS Family Board Programming</li>
+            <li>• <strong>Drafting:</strong> Vectorworks, AutoCAD, Lightwright</li>
+            <li>• <strong>Hardware:</strong> DMX Patching, LED tapes, Soldering, Pixel Mapping</li>
+            <li>• <strong>Shop Skills:</strong> Rigging, Cable Management, Scenic Carpentry</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 space-y-6">
+        <div class="outline-card p-6 md:p-8 rounded-lg space-y-6">
+          <h3 class="serif-title text-2xl text-white italic border-b border-neutral-800 pb-3">Theatrical Design & ALD Credits</h3>
+          
+          <div class="space-y-4 text-xs md:text-sm">
+            <div class="border-b border-white/5 pb-3">
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>The Harvest — Kalberer Theatre (CWRU)</span>
+                <span class="text-yellow-500 font-mono">2025</span>
+              </div>
+              <p class="text-neutral-400">Solo Lighting Designer | Dir. David Vegh & Abigail Gilman</p>
+            </div>
+
+            <div class="border-b border-white/5 pb-3">
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>Luchadora! — PCPA Summer Season</span>
+                <span class="text-yellow-500 font-mono">2026</span>
+              </div>
+              <p class="text-neutral-400">Assistant Lighting Designer | LD. Kieth W. Rice</p>
+            </div>
+
+            <div class="border-b border-white/5 pb-3">
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>Beehive: The '60s Musical — PCPA Summer Season</span>
+                <span class="text-yellow-500 font-mono">2026</span>
+              </div>
+              <p class="text-neutral-400">Assistant Lighting Designer | LD. Kieth W. Rice</p>
+            </div>
+
+            <div class="border-b border-white/5 pb-3">
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>The Trail To Oregon! — Eldred Theatre</span>
+                <span class="text-yellow-500 font-mono">2023</span>
+              </div>
+              <p class="text-neutral-400">Lighting Designer | Dir. Claire Carducci</p>
+            </div>
+
+            <div class="border-b border-white/5 pb-3">
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>Fun Home — Eldred Theatre</span>
+                <span class="text-yellow-500 font-mono">2023</span>
+              </div>
+              <p class="text-neutral-400">Co-Lighting Designer | Dir. Ryan Malkin</p>
+            </div>
+
+            <div class="border-b border-white/5 pb-3">
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>A Midsummer Night's Dream — The Lir Academy (Dublin)</span>
+                <span class="text-yellow-500 font-mono">2024</span>
+              </div>
+              <p class="text-neutral-400">Lighting Designer | Dir. Hilary Wood</p>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>Into the Woods — Kluge Auditorium</span>
+                <span class="text-yellow-500 font-mono">2023</span>
+              </div>
+              <p class="text-neutral-400">Tech Lighting Leader & Designer | Dir. Kate Ribeiro</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME DESIGN RESUME CONTENT -->
+  <div id="resume-content-game" class="hidden space-y-12">
+    <div class="flex justify-end">
+      <a href="https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/game-resume.pdf" target="_blank" class="inline-flex items-center gap-3 bg-yellow-500 hover:bg-yellow-400 text-neutral-950 px-6 py-3 rounded text-xs uppercase tracking-widest font-bold font-mono transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <span>Download Game Design Resume (PDF) ↗</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="space-y-8">
+        <div class="outline-card p-6 rounded-lg space-y-3">
+          <h3 class="serif-title text-xl text-yellow-400 italic">Technical Skills</h3>
+          <ul class="text-xs text-neutral-300 space-y-1.5 leading-relaxed font-light">
+            <li>• <strong>Languages:</strong> C#, C++, Python, JavaScript (ES6+), GLSL</li>
+            <li>• <strong>Engines & Tools:</strong> Unity 6, Unreal Engine, Git, Three.js</li>
+            <li>• <strong>Architecture:</strong> State Machines, Decoupled Systems, ScriptableObjects</li>
+            <li>• <strong>Audio & Tools:</strong> FMOD, Tone.js, DAW Audio Scares Sync</li>
+          </ul>
+        </div>
+
+        <div class="outline-card p-6 rounded-lg space-y-3">
+          <h3 class="serif-title text-xl text-yellow-400 italic">Academic Excellence</h3>
+          <p class="text-sm font-bold text-white">Dean's High Honors</p>
+          <p class="text-xs text-neutral-400">Case Western Reserve University (3 Consecutive Years: 2023–2026)</p>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 space-y-6">
+        <div class="outline-card p-6 md:p-8 rounded-lg space-y-6">
+          <h3 class="serif-title text-2xl text-white italic border-b border-neutral-800 pb-3">Technical Game Design Projects</h3>
+          
+          <div class="space-y-5 text-xs md:text-sm">
+            <div class="border-b border-white/5 pb-4">
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>Bedlam — 3D Psychological Horror System (Unity / C#)</span>
+                <span class="text-yellow-500 font-mono">Fall 2025</span>
+              </div>
+              <p class="text-neutral-300 font-light mt-1">Engineered decoupled interaction interface allowing designers to attach dynamic behavior to static meshes without script dependency. Built event manager synchronizing lighting cues and procedural audio scares.</p>
+            </div>
+
+            <div class="border-b border-white/5 pb-4">
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>Claw Patrol — AI State Machine & Combat Balancing (Unity / C#)</span>
+                <span class="text-yellow-500 font-mono">2024</span>
+              </div>
+              <p class="text-neutral-300 font-light mt-1">Scripted 4 modular enemy AI states and tower defense loops. Leveraged quantitative playtest metrics to tune enemy patrol velocities and damage parameters.</p>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-bold text-white mb-1">
+                <span>Jade & Co — Dynamic State Narrative Engine (Web Logic)</span>
+                <span class="text-yellow-500 font-mono">2024</span>
+              </div>
+              <p class="text-neutral-300 font-light mt-1">Designed non-linear state graph and puzzle dependency system ensuring player inventory and choice cascades persist across open-ended narrative paths.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- VIEW: PHOTOGRAPHY -->
@@ -526,7 +716,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（包含 Into the Woods 與 Live Performances）
+// 完整燈光專案資料清單（Live Performances 包含文化分區與靈感圖配置）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -538,7 +728,7 @@ const lightingProjects = [
   prefix: "harvest/harvest-",
   desc: "Set entirely in an Idaho church basement, lighting enhances the tension between faith, obligation, and personal struggle with grounded realism.",
   credits: [
-    { label: "My Role", val: "Lighting Designer (Co-Designer with Jill Daug)" },
+    { label: "My Role", val: "Lighting Designer (Solo Lighting Design)" },
     { label: "Institution / Venue", val: "Case Western Reserve University — Kalberer Theatre" },
     { label: "Directors", val: "David Vegh & Abigail Gilman" },
     { label: "Technical Director", val: "Homer Farr" },
@@ -619,6 +809,117 @@ const lightingProjects = [
   ]
 },
 { 
+  id: "live-performances", 
+  title: "Live Cultural Showcases & Concerts", 
+  subtitle: "Concerts, Cultural Shows & Cafés", 
+  role: "Lighting Team Leader", 
+  year: "2021-2023",
+  season: "UWC-USA Annual Showcases",
+  prefix: "live/live-",
+  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, Central Asia, and live concerts.",
+  credits: [
+    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
+    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
+    { label: "Venue", val: "Kluge Auditorium & Campus Amphitheaters, NM" },
+    { label: "Performers", val: "International Student Body (90+ Countries)" }
+  ],
+  myContributions: [
+    "Designed and executed 10+ distinct lighting plots each year for multicultural dance, music, and spoken word.",
+    "Conducted visual research into regional textiles, historical architecture, and cultural color symbolism.",
+    "Programmed dynamic concert chases, beat-synced flashing, and atmospheric sunset specials."
+  ],
+  aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
+  aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
+  // 專屬文化分區架構
+  isRegionalShowcase: true,
+  regions: [
+    {
+      id: "southasia",
+      name: "South Asia",
+      tag: "Amber-Red & Energetic Vibrancy",
+      about: "After researching South Asian architectural color palettes and festival hues, I selected warm amber-red and gold tones to capture the energetic dance choreography and rich cultural heritage.",
+      refImages: ["live/ref-southasia", "live/ref-southasia-1"],
+      refDesc: "Visual research: Sandstone palace architecture, Marigold flower festivals, and traditional embroidered garments.",
+      showImages: ["live/live-4", "live/show-southasia-1"],
+      showDesc: "Stage production: Warm saturated amber-red side lighting sculpting traditional dancers on stage."
+    },
+    {
+      id: "eastasia",
+      name: "East Asia",
+      tag: "Oceanic Blue & Tranquility",
+      about: "Used a palette of oceanic blue, violet, and soft amber to create a dreamy, water-like flow. The ocean historically connects East Asian trade and art, symbolizing adaptability, grace, and tranquility.",
+      refImages: ["live/ref-eastasia", "live/ref-eastasia-1"],
+      refDesc: "Visual research: Flowing calligraphy silk scrolls, historical indigo dye techniques, and water aesthetics.",
+      showImages: ["live/live-5", "live/show-eastasia-1"],
+      showDesc: "Stage production: Cool cyan and violet backdrop washes with soft amber frontal highlights."
+    },
+    {
+      id: "eastturkestan",
+      name: "East Turkestan",
+      tag: "Sunset Nostalgia & Time",
+      about: "Performers used traditional instruments to express concern for their endangered musical heritage. I designed a fading sunset effect with a focused warm spotlight, casting a solitary glow across the stage.",
+      refImages: ["live/ref-eastturkestan", "live/ref-eastturkestan-1"],
+      refDesc: "Visual research: Desert dunes at dusk, Silk Road caravans, and traditional stringed instrument textures.",
+      showImages: ["live/live-6", "live/show-eastturkestan-1"],
+      showDesc: "Stage production: Isolating sunset beam creating shadows and emphasizing longing for cultural preservation."
+    },
+    {
+      id: "latin",
+      name: "Latin America",
+      tag: "Cyan & Amber Balance",
+      about: "Inspired by Latin American colonial architecture, vibrant street murals, and traditional textile weaving, I blended bright cyan with warm amber to balance celebratory energy with profound cultural roots.",
+      refImages: ["live/ref-latin", "live/ref-latin-1"],
+      refDesc: "Visual research: Colorful woven serapes, sun-drenched stucco courtyards, and festive street markets.",
+      showImages: ["live/live-7", "live/show-latin-1", "live/show-latin-2"],
+      showDesc: "Stage production: Dynamic cross-lighting contrasting warm gold dancers with cool cyan backdrop depth."
+    },
+    {
+      id: "centralasia",
+      name: "Central Asia",
+      tag: "Violet-Purple Allure",
+      about: "Chose deep violet-purple lighting to reflect the mystical allure and historical nobility of the ancient Silk Road, complementing the intricate textile embroidery and dynamic nomadic music.",
+      refImages: ["live/ref-centralasia", "live/ref-centralasia-1"],
+      refDesc: "Visual research: Ornate yurt tapestries, lapis lazuli mosaics, and ancient Silk Road trading cities.",
+      showImages: ["live/live-8", "live/show-centralasia-1"],
+      showDesc: "Stage production: Deep violet cyc illumination emphasizing the intricate costumes and graceful formations."
+    },
+    {
+      id: "africa",
+      name: "Africa",
+      tag: "Visceral Crimson & Resilience",
+      about: "Representing historical struggles against colonization and ongoing modern resilience, I employed stark crimson lighting. The red signifies passion, resistance, and the intense emotional narrative of the piece.",
+      refImages: ["live/ref-africa", "live/ref-africa-1"],
+      refDesc: "Visual research: Ochre earth pigments, historic liberation imagery, and traditional clay textile hues.",
+      showImages: ["live/live-9", "live/show-africa-1"],
+      showDesc: "Stage production: High-contrast red wash casting sharp silhouettes during the poignant historical narrative."
+    },
+    {
+      id: "cafes",
+      name: "Music Cafés & Live Sets",
+      tag: "Concerts, Cafés & Pop",
+      about: "From soft purple and romantic tones for 'Love Café' to high-energy dance flashes at 'New Moon Café' and iconic cyan/purple concert lighting for a Michael Jackson tribute set.",
+      refImages: ["live/ref-concert", "live/ref-mj"],
+      refDesc: "Visual research: Intimate acoustic coffeehouse stages and 1980s pop concert stadium backlights.",
+      showImages: ["live/live-1", "live/live-2", "live/live-3"],
+      showDesc: "Stage production: Dynamic live concert chases, silhouette entrances, and beat-synced flashing."
+    }
+  ],
+  paperwork: [
+    { 
+      title: "Multicultural Festival Rep Plot", 
+      type: "Festival Rep Plot", 
+      images: ["live/plot-1", "live/plot"], 
+      desc: "Rep plot configuration accommodating rapid turnarounds between 15+ student cultural performances." 
+    },
+    { 
+      title: "Cultural Color Research & Palette Matrix", 
+      type: "Visual Research & Swatches", 
+      images: ["live/colorkey-1", "live/colorkey"], 
+      desc: "Color swatch matrix derived from regional architecture and historic textiles across South Asia, East Asia, and Latin America." 
+    }
+  ]
+},
+{ 
   id: "into-the-woods", 
   title: "Into the Woods", 
   subtitle: "Sondheim Musical Production", 
@@ -659,54 +960,6 @@ const lightingProjects = [
       type: "Conventional Rig Schedule", 
       images: ["woods/schedule-1", "woods/schedule"], 
       desc: "Manual gel cut list, instrument focus notes, and cue execution tracking across Acts I & II." 
-    }
-  ]
-},
-{ 
-  id: "live-performances", 
-  title: "Live Cultural Showcases & Concerts", 
-  subtitle: "Concerts, Cultural Shows & Cafés", 
-  role: "Lighting Team Leader", 
-  year: "2021-2023",
-  season: "UWC-USA Annual Showcases",
-  prefix: "live/live-",
-  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, Central Asia, and live concerts.",
-  credits: [
-    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
-    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
-    { label: "Venue", val: "Kluge Auditorium & Campus Amphitheaters, NM" },
-    { label: "Performers", val: "International Student Body (90+ Countries)" }
-  ],
-  myContributions: [
-    "Designed and executed 10+ distinct lighting plots each year for multicultural dance, music, and spoken word.",
-    "Conducted visual research into regional textiles, historical architecture, and cultural color symbolism.",
-    "Programmed dynamic concert chases, beat-synced flashing, and atmospheric sunset specials."
-  ],
-  aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
-  aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
-  photoCaptions: {
-    1: { title: "Love Café: Romantic Singer-Songwriter", desc: "Live sound mixing and original songs about love toward family and friends, set under intimate soft purple and pink lighting." },
-    2: { title: "Michael Jackson Tribute & Concert Vibe", desc: "Capturing iconic pop dance style with vibrant purple and cyan backlight inspired by MJ's live concert lighting." },
-    3: { title: "New Moon Café: High-Energy Dance & Silhouettes", desc: "Dynamic beat-synced flashing and quick fades, opening with sharp silhouette backlit poses to build anticipation." },
-    4: { title: "Cultural Showcase: South Asia", desc: "Warm amber-red and gold tones echoing traditional festivals and lively dance choreography." },
-    5: { title: "Cultural Showcase: East Asia", desc: "Blue, violet, and soft amber lighting evoking oceanic tranquility, flowing water, and historical textiles." },
-    6: { title: "Cultural Showcase: East Turkestan Sunset", desc: "A fading sunset spotlight casting warm nostalgic light across the stage, evoking longing for endangered musical traditions." },
-    7: { title: "Cultural Showcase: Latin America", desc: "A vibrant blend of cyan and warm amber balancing celebratory energy with deep cultural history." },
-    8: { title: "Cultural Showcase: Central Asia", desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns." },
-    9: { title: "Cultural Showcase: Africa & Colonial History", desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance." }
-  },
-  paperwork: [
-    { 
-      title: "Multicultural Festival Rep Plot", 
-      type: "Festival Rep Plot", 
-      images: ["live/plot-1", "live/plot"], 
-      desc: "Rep plot configuration accommodating rapid turnarounds between 15+ student cultural performances." 
-    },
-    { 
-      title: "Cultural Color Research & Color Palette Key", 
-      type: "Visual Research & Swatches", 
-      images: ["live/colorkey-1", "live/colorkey"], 
-      desc: "Color swatch matrix derived from regional architecture and historic textiles across South Asia, East Asia, and Latin America." 
     }
   ]
 },
@@ -1030,8 +1283,96 @@ View Details ↗
 grid.innerHTML = html;
 }
 
-// 雙欄交錯瀑布流：橫向閱讀順序 (左1、右2、左3、右4)，緊密貼合、無縫展示
+// Live 專用：分區切換函式
+window.switchLiveRegion = function(regionId) {
+  document.querySelectorAll('.live-region-btn').forEach(btn => {
+    btn.className = "live-region-btn px-5 py-2 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer";
+  });
+  document.querySelectorAll('.live-region-panel').forEach(panel => {
+    panel.classList.add('hidden');
+  });
+
+  const activeBtn = document.getElementById(`btn-region-${regionId}`);
+  const activePanel = document.getElementById(`panel-region-${regionId}`);
+
+  if (activeBtn) {
+    activeBtn.className = "live-region-btn px-5 py-2 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer";
+  }
+  if (activePanel) {
+    activePanel.classList.remove('hidden');
+  }
+};
+
+// 雙欄交錯瀑布流：支援 Live Cultural Showcase 分區自適應渲染
 function generateUnifiedProductionPhotoGrid(project) {
+  // 如果是 Live Showcase，套用專屬的「區域切換器 + 靈感與劇照分區卡片」
+  if (project.isRegionalShowcase && project.regions) {
+    let tabsHtml = project.regions.map((reg, idx) => `
+      <button id="btn-region-${reg.id}" onclick="switchLiveRegion('${reg.id}')" class="live-region-btn px-5 py-2 text-xs uppercase tracking-widest font-mono ${idx === 0 ? 'font-bold bg-yellow-500 text-neutral-950 shadow' : 'font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700'} rounded transition-all cursor-pointer">
+        ${reg.name}
+      </button>
+    `).join('');
+
+    let panelsHtml = project.regions.map((reg, idx) => {
+      let refImgsHtml = reg.refImages.map(img => `
+        <div class="photo-flow-card">
+          ${smartImageHtml(img, `${reg.name} Research`, "w-full h-auto object-contain block")}
+        </div>
+      `).join('');
+
+      let showImgsHtml = reg.showImages.map(img => `
+        <div class="photo-flow-card">
+          ${smartImageHtml(img, `${reg.name} Show Photo`, "w-full h-auto object-contain block")}
+        </div>
+      `).join('');
+
+      return `
+        <div id="panel-region-${reg.id}" class="live-region-panel ${idx === 0 ? '' : 'hidden'} space-y-10">
+          <div class="outline-card p-6 md:p-8 rounded-lg space-y-3">
+            <span class="text-xs uppercase tracking-[0.2em] text-yellow-500 font-mono font-bold">${reg.tag}</span>
+            <h3 class="serif-title text-3xl text-white italic">${reg.name} Cultural Showcase</h3>
+            <p class="text-neutral-300 text-sm md:text-base font-light leading-relaxed max-w-4xl">${reg.about}</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <!-- 左欄：Visual Research / Mood Board -->
+            <div class="space-y-4">
+              <div class="border-b border-neutral-800 pb-2">
+                <h4 class="serif-title text-xl text-yellow-400 italic">Visual Research & Mood Board</h4>
+                <p class="text-neutral-400 text-xs font-light mt-1">${reg.refDesc}</p>
+              </div>
+              <div class="space-y-4">
+                ${refImgsHtml}
+              </div>
+            </div>
+
+            <!-- 右欄：Production Show Photos -->
+            <div class="space-y-4">
+              <div class="border-b border-neutral-800 pb-2">
+                <h4 class="serif-title text-xl text-yellow-400 italic">Stage Production Photos</h4>
+                <p class="text-neutral-400 text-xs font-light mt-1">${reg.showDesc}</p>
+              </div>
+              <div class="space-y-4">
+                ${showImgsHtml}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="w-full max-w-[1360px] mx-auto px-4 md:px-8 space-y-8">
+        <div class="flex flex-wrap items-center gap-3 border-b border-neutral-800 pb-5">
+          <span class="text-xs uppercase tracking-widest text-neutral-400 font-mono mr-2">Filter Region:</span>
+          ${tabsHtml}
+        </div>
+        ${panelsHtml}
+      </div>
+    `;
+  }
+
+  // 一般劇目的雙欄交錯瀑布流（左1、右2、左3、右4）
   let folderPrefix = project.prefix.replace(/-$/, '');
   let captions = project.photoCaptions || {};
 
@@ -1086,6 +1427,28 @@ for (let i = 1; i <= 20; i++) {
 html += '</div>';
 return html;
 }
+
+// 履歷專屬 Tab 切換
+window.switchResumeTab = function(mode) {
+  const btnTheater = document.getElementById('resume-tab-theater');
+  const btnGame = document.getElementById('resume-tab-game');
+  const contentTheater = document.getElementById('resume-content-theater');
+  const contentGame = document.getElementById('resume-content-game');
+
+  if (!btnTheater || !btnGame || !contentTheater || !contentGame) return;
+
+  if (mode === 'theater') {
+    btnTheater.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer font-mono";
+    btnGame.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer font-mono";
+    contentTheater.classList.remove('hidden');
+    contentGame.classList.add('hidden');
+  } else {
+    btnGame.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer font-mono";
+    btnTheater.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer font-mono";
+    contentGame.classList.remove('hidden');
+    contentTheater.classList.add('hidden');
+  }
+};
 
 // Beehive 專屬雙劇場切換
 window.switchBeehiveVenue = function(venueId) {
@@ -1145,7 +1508,7 @@ function generatePaperworkView(paperworkList) {
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
-    // 專門處理 Beehive 雙劇場切換（Marian vs Solvang），圖紙滿版呈現 + 詳細 Viewport 按鈕
+    // 專門處理 Beehive 雙劇場切換
     if (pw.isDualVenuePlot) {
       let marian = pw.venues[0];
       let solvang = pw.venues[1];
@@ -1208,7 +1571,6 @@ function generatePaperworkView(paperworkList) {
             <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl mt-2">${pw.desc}</p>
           </div>
 
-          <!-- Spot 1 / Spot 2 切換按鈕 -->
           <div class="flex flex-wrap items-center gap-3">
             <button id="btn-spot-1" onclick="switchBeehiveSpot('spot1')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer">
               ${spot1.name}
@@ -1218,7 +1580,6 @@ function generatePaperworkView(paperworkList) {
             </button>
           </div>
 
-          <!-- 滿版 PDF 容器 -->
           <div class="w-full h-[850px] md:h-[1100px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
             <iframe id="iframe-spot-1" src="${spot1.pdfUrl}#view=FitH" class="w-full h-full border-0" title="Beehive Spot 1 Track"></iframe>
             <iframe id="iframe-spot-2" src="${spot2.pdfUrl}#view=FitH" class="hidden w-full h-full border-0" title="Beehive Spot 2 Track"></iframe>
@@ -1243,7 +1604,7 @@ function generatePaperworkView(paperworkList) {
       `;
     }
 
-    // Luchadora 滿版圖紙 + Viewport 按鈕
+    // 滿版圖紙 + Viewport 按鈕
     let imgList = pw.images || (pw.image ? [pw.image] : []);
     let viewportButtonHtml = '';
     if (pw.viewportPdfUrl) {
@@ -1385,6 +1746,7 @@ const hash = rawHash.toLowerCase().trim();
 
 const views = [
   'view-home', 
+  'view-resume',
   'view-photography', 
   'view-lighting-design', 
   'view-lighting-detail', 
@@ -1405,17 +1767,21 @@ if (hash === '#home' || hash === '' || hash === '#') {
   renderHomeHeroCollage();
   triggerBrandAnimation();
 } 
-// 2. 攝影主頁
+// 2. 履歷頁面
+else if (hash === '#resume') {
+  document.getElementById('view-resume').classList.remove('hidden');
+}
+// 3. 攝影主頁
 else if (hash === '#photography') {
   document.getElementById('view-photography').classList.remove('hidden');
   renderPhotographyContent();
 } 
-// 3. 燈光設計主頁
+// 4. 燈光設計主頁
 else if (hash === '#lighting-design') {
   document.getElementById('view-lighting-design').classList.remove('hidden');
   renderLightingContent();
 } 
-// 4. 平面設計頁面
+// 5. 平面設計頁面
 else if (hash === '#video-graphic-design') {
   document.getElementById('view-generic-detail').classList.remove('hidden');
   document.getElementById('generic-title').textContent = 'Video & Graphic Design';
@@ -1425,12 +1791,12 @@ else if (hash === '#video-graphic-design') {
     <div class="w-full">${generateGraphicDesignGrid()}</div>
   `;
 } 
-// 5. 遊戲設計主頁
+// 6. 遊戲設計主頁
 else if (hash === '#game-design') {
   document.getElementById('view-game-design').classList.remove('hidden');
   renderGameProjectsContent();
 } 
-// 6. 燈光設計單一劇目頁面 (#lighting-[id])
+// 7. 燈光設計單一劇目頁面 (#lighting-[id])
 else if (hash.startsWith('#lighting-')) {
   const id = hash.replace('#lighting-', '');
   const project = lightingProjects.find(p => p.id.toLowerCase() === id);
@@ -1515,7 +1881,7 @@ else if (hash.startsWith('#lighting-')) {
     detailView.classList.remove('hidden');
   }
 } 
-// 7. 活動攝影單一相冊頁面 (#event-[id])
+// 8. 活動攝影單一相冊頁面 (#event-[id])
 else if (hash.startsWith('#event-')) {
   const id = parseInt(hash.replace('#event-', ''));
   const project = eventProjects.find(p => p.id === id);
@@ -1548,7 +1914,7 @@ else if (hash.startsWith('#event-')) {
     detailView.classList.remove('hidden');
   }
 } 
-// 8. 遊戲專案單一頁面 (#game-[key])
+// 9. 遊戲專案單一頁面 (#game-[key])
 else if (hash.startsWith('#game-')) {
   const projectId = hash.replace('#game-', '');
   const data = gameProjects[projectId];
