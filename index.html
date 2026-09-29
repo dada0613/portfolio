@@ -526,7 +526,7 @@ let eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單
+// 完整燈光專案資料清單（統一採用 資料夾/plot-1, plot-2 規則）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -614,8 +614,9 @@ const lightingProjects = [
     { 
       title: "Vectorworks Light Plot (Full Venue & Amphitheatre)", 
       type: "Vector CAD Plot", 
-      // 支援 PDF 嵌入預覽，免除超大圖失真問題
-      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora-plot.pdf",
+      // 依你的要求：放在 luchadora/plot-1.pdf
+      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/plot-1.pdf",
+      fileName: "luchadora/plot-1.pdf",
       desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. View below in the interactive viewer or open the full vector PDF to inspect all instrument markings." 
     },
     { 
@@ -658,10 +659,28 @@ const lightingProjects = [
   photoCaptions: {},
   paperwork: [
     { 
-      title: "Vectorworks Light Plot", 
-      type: "Vector CAD Plot", 
-      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive-plot.pdf",
-      desc: "Main stage plot including moving head wash units, cyc backlight systems, and amphitheatre layout. View in the interactive viewer or open the full vector PDF." 
+      isDualVenuePlot: true,
+      title: "Detailed Section Light Plots (Dual Venue Rep)",
+      type: "Vector CAD Plots",
+      desc: "Switch between PCPA's indoor proscenium stage (Marian Theatre) and the outdoor thrust amphitheatre (Solvang Festival Theater) to inspect the specific lighting rigs and systems.",
+      venues: [
+        {
+          id: "marian",
+          name: "Indoor Theater (Marian Theatre)",
+          sub: "Proscenium Layout & Electrics",
+          // 依你的要求：放在 beehive/plot-1.pdf
+          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/plot-1.pdf",
+          fileName: "beehive/plot-1.pdf"
+        },
+        {
+          id: "solvang",
+          name: "Outdoor Theater (Solvang Festival Theater)",
+          sub: "Open-Air Thrust Rig & Catwalks",
+          // 依你的要求：放在 beehive/plot-2.pdf
+          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/plot-2.pdf",
+          fileName: "beehive/plot-2.pdf"
+        }
+      ]
     },
     { 
       title: "Hookup & Instrument Schedule", 
@@ -982,7 +1001,35 @@ html += '</div>';
 return html;
 }
 
-// 圖紙區塊：支援大型 PDF 互動閱讀器 + 全橫排圖片排版
+// Beehive 專屬：雙劇場（Marian vs Solvang）Light Plot 切換器
+function switchBeehiveVenue(venueId) {
+  const btnMarian = document.getElementById('btn-venue-marian');
+  const btnSolvang = document.getElementById('btn-venue-solvang');
+  const iframeMarian = document.getElementById('iframe-venue-marian');
+  const iframeSolvang = document.getElementById('iframe-venue-solvang');
+  const linkMarian = document.getElementById('link-venue-marian');
+  const linkSolvang = document.getElementById('link-venue-solvang');
+
+  if (!btnMarian || !btnSolvang || !iframeMarian || !iframeSolvang) return;
+
+  if (venueId === 'marian') {
+    btnMarian.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all";
+    btnSolvang.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all";
+    iframeMarian.classList.remove('hidden');
+    iframeSolvang.classList.add('hidden');
+    linkMarian.classList.remove('hidden');
+    linkSolvang.classList.add('hidden');
+  } else {
+    btnSolvang.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all";
+    btnMarian.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all";
+    iframeSolvang.classList.remove('hidden');
+    iframeMarian.classList.add('hidden');
+    linkSolvang.classList.remove('hidden');
+    linkMarian.classList.add('hidden');
+  }
+}
+
+// 圖紙區塊：支援大型 PDF 互動閱讀器 + Beehive 雙劇場切換小 Tab
 function generatePaperworkView(paperworkList) {
   if (!paperworkList || paperworkList.length === 0) {
     return `
@@ -996,7 +1043,53 @@ function generatePaperworkView(paperworkList) {
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
-    // 若該項目提供 PDF 網址（如 PCPA 的超大向量圖紙），則直接生成全螢幕閱讀視窗
+    // 專門處理 Beehive 雙劇場切換（Indoor Marian vs Outdoor Solvang）
+    if (pw.isDualVenuePlot) {
+      let marian = pw.venues[0];
+      let solvang = pw.venues[1];
+      return `
+        <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+          <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-5 gap-4">
+            <div>
+              <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
+              <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
+            </div>
+            
+            <!-- 雙劇場外連按鈕 -->
+            <div class="flex items-center gap-3">
+              <a id="link-venue-marian" href="${marian.pdfUrl}" target="_blank" class="text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                Open Marian Plot (${marian.fileName}) ↗
+              </a>
+              <a id="link-venue-solvang" href="${solvang.pdfUrl}" target="_blank" class="hidden text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                Open Solvang Plot (${solvang.fileName}) ↗
+              </a>
+            </div>
+          </div>
+
+          <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl">${pw.desc}</p>
+
+          <!-- 小切換 Tab -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button id="btn-venue-marian" onclick="switchBeehiveVenue('marian')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer">
+              ${marian.name}
+            </button>
+            <button id="btn-venue-solvang" onclick="switchBeehiveVenue('solvang')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer">
+              ${solvang.name}
+            </button>
+          </div>
+
+          <!-- 嵌入式 PDF 預覽視窗 -->
+          <div class="w-full h-[650px] md:h-[850px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
+            <iframe id="iframe-venue-marian" src="${marian.pdfUrl}#view=FitH" class="w-full h-full border-0" title="Beehive Marian Light Plot"></iframe>
+            <iframe id="iframe-venue-solvang" src="${solvang.pdfUrl}#view=FitH" class="hidden w-full h-full border-0" title="Beehive Solvang Light Plot"></iframe>
+          </div>
+        </section>
+      `;
+    }
+
+    // 一般單一 PDF 預覽（如 Luchadora）
     if (pw.pdfUrl) {
       return `
         <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
@@ -1247,7 +1340,7 @@ detailView.innerHTML = `
   ${unifiedPhotosHtml}
 </div>
 
-<!-- 圖紙頁面：獨立一整排寬版展示，支援超大 PDF 向量嵌入 -->
+<!-- 圖紙頁面：獨立一整排寬版展示，支援超大 PDF 向量嵌入與 Beehive 雙劇場切換 -->
 <div id="ld-tab-content-paperwork" class="hidden w-full mt-12">
   ${paperworkHtml}
 </div>
