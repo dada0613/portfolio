@@ -111,6 +111,18 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
+.uncropped-masonry-container {
+column-count: 2;
+column-gap: 24px;
+width: 100%;
+max-width: 1360px;
+margin: 0 auto;
+padding: 0 16px;
+}
+@media (max-width: 768px) {
+.uncropped-masonry-container { column-count: 1; column-gap: 16px; padding: 0 10px; }
+}
+
 .photo-flow-card {
 width: 100%;
 background: #0e1219;
@@ -252,7 +264,7 @@ Creative Portfolio
     <div class="flex justify-end">
       <a href="https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/theater-resume.pdf" target="_blank" class="inline-flex items-center gap-3 bg-yellow-500 hover:bg-yellow-400 text-neutral-950 px-6 py-3 rounded text-xs uppercase tracking-widest font-bold font-mono transition-all">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        <span>Download Theater Resume (PDF) ↗</span>
+        <span>Download Theater Resume ↗</span>
       </a>
     </div>
 
@@ -346,7 +358,7 @@ Creative Portfolio
     <div class="flex justify-end">
       <a href="https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/game-resume.pdf" target="_blank" class="inline-flex items-center gap-3 bg-yellow-500 hover:bg-yellow-400 text-neutral-950 px-6 py-3 rounded text-xs uppercase tracking-widest font-bold font-mono transition-all">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        <span>Download Game Design Resume (PDF) ↗</span>
+        <span>Download Game Design Resume ↗</span>
       </a>
     </div>
 
@@ -450,7 +462,7 @@ street photography
       <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
       </svg>
-      <span>View Full Lighting Portfolio (lighting.pdf) ↗</span>
+      <span>View Full Lighting Portfolio ↗</span>
     </a>
   </div>
 </div>
@@ -695,13 +707,136 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（Live 回歸流暢瀑布流，靈感圖移至 Paperwork）
+// 完整燈光專案資料清單（精確對齊你的指定排序）
 const lightingProjects = [
+{ 
+  id: "beehive", 
+  title: "Beehive: The '60s Musical", 
+  subtitle: "PCPA Summer 2026 Season", 
+  role: "Assistant Lighting Designer", 
+  year: "2026",
+  season: "Summer 2026 Internship at PCPA",
+  prefix: "beehive/beehive-", 
+  desc: "A celebration of powerful 1960s female vocalists, navigating the era's cultural, social, and political transformations.", 
+  credits: [
+    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
+    { label: "Lighting Designer", val: "Kieth W. Rice" },
+    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
+    { label: "Year", val: "Summer 2026" }
+  ],
+  myContributions: [
+    "Assisted in drafting spot sheets and cue tracking across 30+ high-tempo musical numbers.",
+    "Coordinated Lightwright instrument schedules and power load distributions.",
+    "Led daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately.",
+    "Assisted with pixel-mapping and moving head wash presets on EOS light board."
+  ],
+  aboutPlay: "Beehive: The '60s Musical by Larry Gallagher is a high-octane theatrical celebration of the iconic female vocalists who defined the 1960s. Told through the perspectives of six women navigating the era’s cultural, social, and political transformations, the revue features timeless hits made famous by Leslie Gore, The Supremes, Aretha Franklin, Tina Turner, and Janis Joplin. Through electrifying choreography, towering beehive hairdos, and powerful harmonies, Beehive pays tribute to female empowerment and musical revolution.", 
+  aboutDesign: "Serving as Assistant Lighting Designer under Kieth W. Rice at PCPA, I assisted in executing dynamic, concert-style lighting cues across more than thirty fast-paced musical numbers. I generated and tracked cue sheets, managed color gel selections, and maintained Lightwright paperwork including hookups and instrument schedules. During tech runs, I logged detailed focus notes and cue synchronization changes, assisted with pixel-mapping and moving head wash presets, and ensured all fixtures operated reliably through rigorous daily channel checks.",
+  photoCaptions: {},
+  paperwork: [
+    { 
+      isDualVenuePlot: true,
+      title: "Detailed Section Light Plots (Dual Venue Rep)",
+      type: "Full Stage Rig CAD Plots",
+      desc: "Full venue stage plots for PCPA's indoor proscenium stage (Marian Theatre) and outdoor thrust amphitheatre (Solvang Festival Theater). Click the viewport buttons to inspect high-resolution vector section PDFs.",
+      venues: [
+        {
+          id: "marian",
+          name: "Indoor Theater (Marian Theatre)",
+          sub: "Proscenium Layout & Electrics",
+          image: "beehive/plot-1",
+          viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/viewport-1.pdf",
+          viewportLabel: "View Marian Section Viewport ↗"
+        },
+        {
+          id: "solvang",
+          name: "Outdoor Theater (Solvang Festival Theater)",
+          sub: "Open-Air Thrust Rig & Catwalks",
+          image: "beehive/plot-2",
+          viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/viewport-2.pdf",
+          viewportLabel: "View Solvang Section Viewport ↗"
+        }
+      ]
+    },
+    { 
+      isDualSpotSheet: true,
+      title: "Spot Sheets & Followspot Tracker", 
+      type: "ALD Production Paperwork (Full PDF)", 
+      desc: "Followspot pick-up sheets and tracking paperwork covering cue calls across 30+ 1960s musical numbers. Use the buttons below to switch between Spot 1 and Spot 2 tracks.",
+      spots: [
+        {
+          id: "spot1",
+          name: "Spot 1 Track",
+          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/spot-1.pdf"
+        },
+        {
+          id: "spot2",
+          name: "Spot 2 Track",
+          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/spot-2.pdf"
+        }
+      ]
+    },
+    { 
+      title: "Hookup & Instrument Schedule", 
+      type: "Lightwright Export", 
+      images: ["beehive/hookup-1", "beehive/hookup"], 
+      desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." 
+    }
+  ]
+},
+{ 
+  id: "luchadora", 
+  title: "Luchadora!", 
+  subtitle: "PCPA Summer 2026 Season", 
+  role: "Assistant Lighting Designer", 
+  year: "2026",
+  season: "Summer 2026 Internship at PCPA",
+  prefix: "luchadora/luchadora-", 
+  desc: "A coming-of-age story that intertwines Mexican wrestling tradition with personal identity and family secrets.", 
+  credits: [
+    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
+    { label: "Lighting Designer", val: "Kieth W. Rice" },
+    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
+    { label: "Year", val: "Summer 2026" }
+  ],
+  myContributions: [
+    "Drafted and managed followspot pick-up sheets and track sheets with frame counts for wrestling choreography.",
+    "Documented detailed designer notes during multi-week technical rehearsals and production meetings.",
+    "Managed daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately.",
+    "Supported EOS console programming, mover focus presets, and channel checks."
+  ],
+  aboutPlay: "Luchadora! by Alvaro Saar Rios is a heartwarming coming-of-age story that intertwines Mexican wrestling tradition with personal identity and family secrets. Set in 1960s Texas, young Vanessa discovers a pink wrestling mask in her Nana Lupita’s suitcase, unlocking the untold history of how Lupita secretly trained as a luchadora to restore honor to her ailing father. Blending dynamic wrestling choreography with rich cultural heritage, the play explores courage, feminism, and bridging generations.", 
+  aboutDesign: "As the Assistant Lighting Designer for PCPA’s Summer 2026 production under lighting designer Kieth W. Rice, I bridged creative intent with technical stage execution. My primary responsibilities included drafting and managing followspot pick-up sheets and track sheets to ensure precise actor isolation during high-energy wrestling sequences. I maintained comprehensive production paperwork, documented designer notes throughout technical rehearsals, managed daily dimmer/channel checks, and supported EOS console programming and automated fixture focus presets.",
+  photoCaptions: {},
+  paperwork: [
+    { 
+      title: "Vectorworks Light Plot", 
+      type: "Full Stage Rig CAD Plot", 
+      images: ["luchadora/plot-1"],
+      viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/viewport-1.pdf",
+      viewportPdfLabel: "View More Detailed Section Viewport ↗",
+      desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. Click the button to inspect the high-resolution section viewport PDF." 
+    },
+    { 
+      isFullPagePdf: true,
+      title: "Spot Sheets & Followspot Tracker", 
+      type: "ALD Production Paperwork (Full PDF)", 
+      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/spot-1.pdf",
+      desc: "Full-page followspot pick-up sheets with frame counts, cue calls, and performer pickup moments throughout the production." 
+    },
+    { 
+      title: "Magic Sheet / Systems Layout", 
+      type: "Focus & Systems", 
+      images: ["luchadora/magic-1", "luchadora/magic"], 
+      desc: "Color system matrix, moving head beam angles, and area breakdown." 
+    }
+  ]
+},
 { 
   id: "the-harvest", 
   title: "The Harvest", 
   subtitle: "CWRU Dept. of Theater / Kalberer Theatre", 
-  role: "Lighting Designer", 
+  role: "Solo Lighting Designer", 
   year: "2025",
   season: "Junior Year at CWRU",
   prefix: "harvest/harvest-",
@@ -726,6 +861,7 @@ const lightingProjects = [
     2: { title: "Michaela's Entrance & Praying in Tongues", desc: "Lighting design for the moment Michaela descends the stairs while Tom and Jason pray in tongues. The staircase lighting emphasizes her entrance and separates her from the cold moonlight coming through the windows." },
     3: { title: "Rain, Fluorescent & Cold Moon", desc: "Jason is soaked from the rain. The cold moonlight combined with ceiling fluorescent light and warm front light creates deep psychological isolation as characters confront harsh realities." },
     4: { title: "Final Scene: Sunrise & Miracle", desc: "In the final scene where characters pray in tongues, the director wanted lighting to evoke hope and sunrise. I designed a warm, rising light from the window that gradually fills the space, suggesting spiritual transformation." },
+    5: { title: "Thunderstorm & Lightning Effect", desc: "Incorporating thunder FX, three escalating lightning flashes build intensity. At director's request, stage cuts to complete blackout during strikes, letting the audience experience sudden darkness. Window lights flicker with strong winds." }
   },
   paperwork: [
     { 
@@ -787,51 +923,36 @@ const lightingProjects = [
   ]
 },
 { 
-  id: "live-performances", 
-  title: "Live Cultural Showcases & Concerts", 
-  subtitle: "Concerts, Cultural Shows & Cafés", 
-  role: "Lighting Team Leader", 
-  year: "2021-2023",
-  season: "UWC-USA Annual Showcases",
-  prefix: "live/live-",
-  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, Central Asia, and live concerts.",
+  id: "fun-home", 
+  title: "Fun Home", 
+  subtitle: "Musical / Player's Theater Group", 
+  role: "Co-Lighting Designer", 
+  year: "2023",
+  season: "First Year in College",
+  prefix: "funhome/funhome-",
+  desc: "A musical exploring memory and coming out. Transitioned lighting from cheerful to somber using moving lights, color contrast, and synchronized choreography.",
   credits: [
-    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
-    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
-    { label: "Venue", val: "Kluge Auditorium & Campus Amphitheaters, NM" },
-    { label: "Performers", val: "International Student Body (90+ Countries)" }
+    { label: "My Role", val: "Co-Lighting Designer" },
+    { label: "Theater Group", val: "Player's Theater Group (CWRU)" },
+    { label: "Director", val: "Ryan Malkin" },
+    { label: "Venue", val: "Eldred Theatre, Cleveland OH" },
+    { label: "Year", val: "Fall 2023" }
   ],
   myContributions: [
-    "Designed and executed 10+ distinct lighting plots each year for multicultural dance, music, and spoken word.",
-    "Conducted visual research into regional textiles, historical architecture, and cultural color symbolism.",
-    "Programmed dynamic concert chases, beat-synced flashing, and atmospheric sunset specials."
+    "Co-designed full musical lighting plot, color palettes, and mover positions.",
+    "Drafted system magic sheet dividing Movers, Cyc, Gobos, Booms, Front, Top, and Side units.",
+    "Programmed moving lights and color-changing effects synchronized with score and choreography on ETC Eos."
   ],
-  aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
-  aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
+  aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel. It follows Alison at three different ages as she unravels memories of her childhood, her coming out, and her complex relationship with her father, Bruce, a closeted gay man running the family funeral home.",
+  aboutDesign: "The lighting design reflects characters' emotional journeys, transitioning from lighthearted atmosphere to somber, melancholic tones. Utilized moving lights and color-changing effects synchronized with music and choreography to contrast outward appearances with painful inner truths.",
   photoCaptions: {
-    1: { title: "Love Café: Romantic Singer-Songwriter", desc: "Live sound mixing and original songs about love toward family and friends, set under intimate soft purple and pink lighting." },
-    2: { title: "Michael Jackson Tribute & Concert Vibe", desc: "Capturing iconic pop dance style with vibrant purple and cyan backlight inspired by MJ's live concert lighting." },
-    3: { title: "New Moon Café: High-Energy Dance & Silhouettes", desc: "Dynamic beat-synced flashing and quick fades, opening with sharp silhouette backlit poses to build anticipation." },
-    4: { title: "Cultural Showcase: South Asia", desc: "Warm amber-red and gold tones echoing traditional festivals and lively dance choreography." },
-    5: { title: "Cultural Showcase: East Asia", desc: "Blue, violet, and soft amber lighting evoking oceanic tranquility, flowing water, and historical textiles." },
-    6: { title: "Cultural Showcase: East Turkestan Sunset", desc: "A fading sunset spotlight casting warm nostalgic light across the stage, evoking longing for endangered musical traditions." },
-    7: { title: "Cultural Showcase: Latin America", desc: "A vibrant blend of cyan and warm amber balancing celebratory energy with deep cultural history." },
-    8: { title: "Cultural Showcase: Central Asia", desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns." },
-    9: { title: "Cultural Showcase: Africa & Colonial History", desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance." }
+    1: { title: "\"Welcome to Our House on Maple Avenue\"", desc: "As the Bechdel family frantically cleans the house anticipating a visitor, lighting reflects Bruce's obsession with order and perfection while hinting at underlying household tension." },
+    2: { title: "Contrasting Rooms: Indigo vs. Magenta", desc: "While Helen plays piano in one room, Bruce is privately engaged in a relationship with his student in another. Contrasting indigo and magenta lighting across spaces exposes deep psychological fractures." },
+    3: { title: "Ambiguous Pink-Purple Stage Wash", desc: "As hidden relationships surface, an ambiguous pink-purple glow expands across the entire stage, capturing ironic, delicate, and deeply conflicting emotions." },
+    4: { title: "Reprise & Melancholy Contrast", desc: "When \"Maple Avenue\" is sung again, lighting shifts noticeably cooler and quieter, creating sharp, poignant contrast between cheerful lyrics and creeping sadness." }
   },
   paperwork: [
-    { 
-      title: "Visual Research & Cultural Mood Board", 
-      type: "Cultural Mood Board", 
-      images: ["live/ref-1", "live/ref-2"], 
-      desc: "Architectural color studies, historic textiles, and environmental lighting references that informed the color palettes for regional showcases." 
-    },
-    { 
-      title: "Multicultural Festival Rep Plot", 
-      type: "Festival Rep Plot", 
-      images: ["live/plot-1", "live/plot"], 
-      desc: "Rep plot configuration accommodating rapid turnarounds between 15+ student cultural performances." 
-    }
+    { title: "Magic Sheet / Systems Layout", type: "ETC Eos Setup", images: ["funhome/magic-1", "funhome/magic"], desc: "Movers, Cyc, Gobos, Booms, Front, Top, and Side channel groupings." }
   ]
 },
 { 
@@ -879,159 +1000,51 @@ const lightingProjects = [
   ]
 },
 { 
-  id: "luchadora", 
-  title: "Luchadora!", 
-  subtitle: "PCPA Summer 2026 Season", 
-  role: "Assistant Lighting Designer", 
-  year: "2026",
-  season: "Summer 2026 Internship at PCPA",
-  prefix: "luchadora/luchadora-", 
-  desc: "A coming-of-age story that intertwines Mexican wrestling tradition with personal identity and family secrets.", 
+  id: "live-performances", 
+  title: "Live Cultural Showcases & Concerts", 
+  subtitle: "Concerts, Cultural Shows & Cafés", 
+  role: "Lighting Team Leader", 
+  year: "2021-2023",
+  season: "UWC-USA Annual Showcases",
+  prefix: "live/live-",
+  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, Central Asia, and live concerts.",
   credits: [
-    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
-    { label: "Lighting Designer", val: "Kieth W. Rice" },
-    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
-    { label: "Year", val: "Summer 2026" }
+    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
+    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
+    { label: "Venue", val: "Kluge Auditorium & Campus Amphitheaters, NM" },
+    { label: "Performers", val: "International Student Body (90+ Countries)" }
   ],
   myContributions: [
-    "Drafted and managed followspot pick-up sheets and track sheets with frame counts for wrestling choreography.",
-    "Documented detailed designer notes during multi-week technical rehearsals and production meetings.",
-    "Managed daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately.",
-    "Supported EOS console programming, mover focus presets, and channel checks."
+    "Designed and executed 10+ distinct lighting plots each year for multicultural dance, music, and spoken word.",
+    "Conducted visual research into regional textiles, historical architecture, and cultural color symbolism.",
+    "Programmed dynamic concert chases, beat-synced flashing, and atmospheric sunset specials."
   ],
-  aboutPlay: "Luchadora! by Alvaro Saar Rios is a heartwarming coming-of-age story that intertwines Mexican wrestling tradition with personal identity and family secrets. Set in 1960s Texas, young Vanessa discovers a pink wrestling mask in her Nana Lupita’s suitcase, unlocking the untold history of how Lupita secretly trained as a luchadora to restore honor to her ailing father. Blending dynamic wrestling choreography with rich cultural heritage, the play explores courage, feminism, and bridging generations.", 
-  aboutDesign: "As the Assistant Lighting Designer for PCPA’s Summer 2026 production under lighting designer Kieth W. Rice, I bridged creative intent with technical stage execution. My primary responsibilities included drafting and managing followspot pick-up sheets and track sheets to ensure precise actor isolation during high-energy wrestling sequences. I maintained comprehensive production paperwork, documented designer notes throughout technical rehearsals, managed daily dimmer/channel checks, and supported EOS console programming and automated fixture focus presets.",
-  photoCaptions: {},
-  paperwork: [
-    { 
-      title: "Vectorworks Light Plot", 
-      type: "Full Stage Rig CAD Plot", 
-      images: ["luchadora/plot-1"],
-      viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/viewport-1.pdf",
-      viewportPdfLabel: "View More Detailed Section Viewport (viewport-1.pdf) ↗",
-      desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. Click the button to inspect the high-resolution section viewport PDF." 
-    },
-    { 
-      isFullPagePdf: true,
-      title: "Spot Sheets & Followspot Tracker", 
-      type: "ALD Production Paperwork (Full PDF)", 
-      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/spot-1.pdf",
-      desc: "Full-page followspot pick-up sheets with frame counts, cue calls, and performer pickup moments throughout the production." 
-    },
-    { 
-      title: "Magic Sheet / Systems Layout", 
-      type: "Focus & Systems", 
-      images: ["luchadora/magic-1", "luchadora/magic"], 
-      desc: "Color system matrix, moving head beam angles, and area breakdown." 
-    }
-  ]
-},
-{ 
-  id: "beehive", 
-  title: "Beehive: The '60s Musical", 
-  subtitle: "PCPA Summer 2026 Season", 
-  role: "Assistant Lighting Designer", 
-  year: "2026",
-  season: "Summer 2026 Internship at PCPA",
-  prefix: "beehive/beehive-", 
-  desc: "A celebration of powerful 1960s female vocalists, navigating the era's cultural, social, and political transformations.", 
-  credits: [
-    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
-    { label: "Lighting Designer", val: "Kieth W. Rice" },
-    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
-    { label: "Year", val: "Summer 2026" }
-  ],
-  myContributions: [
-    "Assisted in drafting spot sheets and cue tracking across 30+ high-tempo musical numbers.",
-    "Coordinated Lightwright instrument schedules and power load distributions.",
-    "Led daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately.",
-    "Assisted with pixel-mapping and moving head wash presets on EOS light board."
-  ],
-  aboutPlay: "Beehive: The '60s Musical by Larry Gallagher is a high-octane theatrical celebration of the iconic female vocalists who defined the 1960s. Told through the perspectives of six women navigating the era’s cultural, social, and political transformations, the revue features timeless hits made famous by Leslie Gore, The Supremes, Aretha Franklin, Tina Turner, and Janis Joplin. Through electrifying choreography, towering beehive hairdos, and powerful harmonies, Beehive pays tribute to female empowerment and musical revolution.", 
-  aboutDesign: "Serving as Assistant Lighting Designer under Kieth W. Rice at PCPA, I assisted in executing dynamic, concert-style lighting cues across more than thirty fast-paced musical numbers. I generated and tracked cue sheets, managed color gel selections, and maintained Lightwright paperwork including hookups and instrument schedules. During tech runs, I logged detailed focus notes and cue synchronization changes, assisted with pixel-mapping and moving head wash presets, and ensured all fixtures operated reliably through rigorous daily channel checks.",
-  photoCaptions: {},
-  paperwork: [
-    { 
-      isDualVenuePlot: true,
-      title: "Detailed Section Light Plots (Dual Venue Rep)",
-      type: "Full Stage Rig CAD Plots",
-      desc: "Full venue stage plots for PCPA's indoor proscenium stage (Marian Theatre) and outdoor thrust amphitheatre (Solvang Festival Theater). Click the viewport buttons to inspect high-resolution vector section PDFs.",
-      venues: [
-        {
-          id: "marian",
-          name: "Indoor Theater (Marian Theatre)",
-          sub: "Proscenium Layout & Electrics",
-          image: "beehive/plot-1",
-          viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/viewport-1.pdf",
-          viewportLabel: "View Marian Section Viewport (viewport-1.pdf) ↗"
-        },
-        {
-          id: "solvang",
-          name: "Outdoor Theater (Solvang Festival Theater)",
-          sub: "Open-Air Thrust Rig & Catwalks",
-          image: "beehive/plot-2",
-          viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/viewport-2.pdf",
-          viewportLabel: "View Solvang Section Viewport (viewport-2.pdf) ↗"
-        }
-      ]
-    },
-    { 
-      isDualSpotSheet: true,
-      title: "Spot Sheets & Followspot Tracker", 
-      type: "ALD Production Paperwork (Full PDF)", 
-      desc: "Followspot pick-up sheets and tracking paperwork covering cue calls across 30+ 1960s musical numbers. Use the buttons below to switch between Spot 1 and Spot 2 tracks.",
-      spots: [
-        {
-          id: "spot1",
-          name: "Spot 1 Track",
-          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/spot-1.pdf"
-        },
-        {
-          id: "spot2",
-          name: "Spot 2 Track",
-          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/spot-2.pdf"
-        }
-      ]
-    },
-    { 
-      title: "Hookup & Instrument Schedule", 
-      type: "Lightwright Export", 
-      images: ["beehive/hookup-1", "beehive/hookup"], 
-      desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." 
-    }
-  ]
-},
-{ 
-  id: "fun-home", 
-  title: "Fun Home", 
-  subtitle: "Musical / Player's Theater Group", 
-  role: "Co-Lighting Designer", 
-  year: "2023",
-  season: "First Year in College",
-  prefix: "funhome/funhome-",
-  desc: "A musical exploring memory and coming out. Transitioned lighting from cheerful to somber using moving lights, color contrast, and synchronized choreography.",
-  credits: [
-    { label: "My Role", val: "Co-Lighting Designer" },
-    { label: "Theater Group", val: "Player's Theater Group (CWRU)" },
-    { label: "Director", val: "Ryan Malkin" },
-    { label: "Venue", val: "Eldred Theatre, Cleveland OH" },
-    { label: "Year", val: "Fall 2023" }
-  ],
-  myContributions: [
-    "Co-designed full musical lighting plot, color palettes, and mover positions.",
-    "Drafted system magic sheet dividing Movers, Cyc, Gobos, Booms, Front, Top, and Side units.",
-    "Programmed moving lights and color-changing effects synchronized with score and choreography on ETC Eos."
-  ],
-  aboutPlay: "Fun Home is a musical based on Alison Bechdel's graphic novel. It follows Alison at three different ages as she unravels memories of her childhood, her coming out, and her complex relationship with her father, Bruce, a closeted gay man running the family funeral home.",
-  aboutDesign: "The lighting design reflects characters' emotional journeys, transitioning from lighthearted atmosphere to somber, melancholic tones. Utilized moving lights and color-changing effects synchronized with music and choreography to contrast outward appearances with painful inner truths.",
+  aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
+  aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
   photoCaptions: {
-    1: { title: "\"Welcome to Our House on Maple Avenue\"", desc: "As the Bechdel family frantically cleans the house anticipating a visitor, lighting reflects Bruce's obsession with order and perfection while hinting at underlying household tension." },
-    2: { title: "Contrasting Rooms: Indigo vs. Magenta", desc: "While Helen plays piano in one room, Bruce is privately engaged in a relationship with his student in another. Contrasting indigo and magenta lighting across spaces exposes deep psychological fractures." },
-    3: { title: "Ambiguous Pink-Purple Stage Wash", desc: "As hidden relationships surface, an ambiguous pink-purple glow expands across the entire stage, capturing ironic, delicate, and deeply conflicting emotions." },
-    4: { title: "Reprise & Melancholy Contrast", desc: "When \"Maple Avenue\" is sung again, lighting shifts noticeably cooler and quieter, creating sharp, poignant contrast between cheerful lyrics and creeping sadness." }
+    1: { title: "Love Café: Romantic Singer-Songwriter", desc: "Live sound mixing and original songs about love toward family and friends, set under intimate soft purple and pink lighting." },
+    2: { title: "Michael Jackson Tribute & Concert Vibe", desc: "Capturing iconic pop dance style with vibrant purple and cyan backlight inspired by MJ's live concert lighting." },
+    3: { title: "New Moon Café: High-Energy Dance & Silhouettes", desc: "Dynamic beat-synced flashing and quick fades, opening with sharp silhouette backlit poses to build anticipation." },
+    4: { title: "Cultural Showcase: South Asia", desc: "Warm amber-red and gold tones echoing traditional festivals and lively dance choreography." },
+    5: { title: "Cultural Showcase: East Asia", desc: "Blue, violet, and soft amber lighting evoking oceanic tranquility, flowing water, and historical textiles." },
+    6: { title: "Cultural Showcase: East Turkestan Sunset", desc: "A fading sunset spotlight casting warm nostalgic light across the stage, evoking longing for endangered musical traditions." },
+    7: { title: "Cultural Showcase: Latin America", desc: "A vibrant blend of cyan and warm amber balancing celebratory energy with deep cultural history." },
+    8: { title: "Cultural Showcase: Central Asia", desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns." },
+    9: { title: "Cultural Showcase: Africa & Colonial History", desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance." }
   },
   paperwork: [
-    { title: "Magic Sheet / Systems Layout", type: "ETC Eos Setup", images: ["funhome/magic-1", "funhome/magic"], desc: "Movers, Cyc, Gobos, Booms, Front, Top, and Side channel groupings." }
+    { 
+      title: "Visual Research & Cultural Mood Board", 
+      type: "Cultural Mood Board", 
+      images: ["live/ref-latin", "live/ref-southasia"], 
+      desc: "Architectural color studies, historic textiles, and environmental lighting references that informed the color palettes for regional showcases." 
+    },
+    { 
+      title: "Multicultural Festival Rep Plot", 
+      type: "Festival Rep Plot", 
+      images: ["live/plot-1", "live/plot"], 
+      desc: "Rep plot configuration accommodating rapid turnarounds between 15+ student cultural performances." 
+    }
   ]
 },
 { 
@@ -1246,7 +1259,7 @@ function generateGraphicDesignGrid() {
 let html = '<div class="uncropped-masonry-container">';
 for (let i = 1; i <= 20; i++) {
   html += `
-  <div class="photo-flow-card p-2 bg-neutral-900/60 border border-white/10">
+  <div class="photo-flow-card p-2 bg-neutral-900/60 border border-white/10 mb-6">
     ${smartImageHtml(`graphic/graphic-${i}`, `Graphic Design ${i}`, "w-full h-auto object-contain block rounded")}
   </div>
   `;
@@ -1321,7 +1334,7 @@ window.switchBeehiveSpot = function(spotId) {
   }
 };
 
-// 圖紙區塊生成器
+// 圖紙區塊生成器（完全移除括號檔名提示）
 function generatePaperworkView(paperworkList) {
   if (!paperworkList || paperworkList.length === 0) {
     return `
@@ -1335,7 +1348,7 @@ function generatePaperworkView(paperworkList) {
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
-    // Beehive 雙劇場切換
+    // 專門處理 Beehive 雙劇場切換
     if (pw.isDualVenuePlot) {
       let marian = pw.venues[0];
       let solvang = pw.venues[1];
@@ -1522,7 +1535,7 @@ if (streetGrid) {
 let streetItems = '';
 streetPhotos.forEach((url) => {
   streetItems += `
-  <div class="photo-flow-card">
+  <div class="photo-flow-card mb-6">
     ${smartImageHtml(url, `Street Shot`, "w-full h-auto object-contain block")}
   </div>
   `;
