@@ -111,7 +111,7 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 橫向順序 Grid：Row 1 是 1, 2；Row 2 是 3, 4 */
+/* 橫向數過去的 Grid 佈局：Row 1 是 1, 2；Row 2 是 3, 4 */
 .uncropped-masonry-container {
 display: grid;
 grid-template-columns: repeat(2, 1fr);
@@ -206,6 +206,7 @@ AMANDA HSU
 
 <main class="relative z-10 flex-grow w-full flex flex-col justify-center">
 
+<!-- VIEW: HOME -->
 <div id="view-home" class="w-full page-enter space-y-16">
 <section class="relative w-full h-[850px] md:h-[1100px] overflow-hidden flex items-center justify-center bg-black">
 <div id="home-hero-grid" class="absolute inset-0 opacity-80 filter brightness-95 pointer-events-none"></div>
@@ -235,7 +236,7 @@ Creative Portfolio
 <h2 class="serif-title text-4xl lg:text-[42px] italic text-neutral-100 mb-4 text-center group-hover:scale-105 transition-transform duration-500 leading-tight">Video & Graphic<br>Design</h2>
 <span class="text-[9px] tracking-[0.3em] text-neutral-400 uppercase group-hover:text-white transition-colors flex items-center gap-2 mt-2">Explore <span class="text-sm font-light">↗</span></span>
 </a>
-<a href="#game-design" class="group outline-card rounded-sm p-10 transition-all duration-500 cursor-pointer flex flex-col justify-center items-center h-[280px] md:h-[320px] block">
+<a href="#game-design" class="group outline-card rounded-sm p-10 transition-all duration-500 cursor-pointer flex flex-col justify-center items-center h-[280px] md:h-[320px] hover:border-yellow-600/50 block">
 <h2 class="serif-title text-4xl lg:text-[42px] italic text-neutral-100 mb-4 group-hover:scale-105 transition-transform duration-500 group-hover:text-yellow-500">Game Design</h2>
 <span class="text-[9px] tracking-[0.3em] text-neutral-400 uppercase group-hover:text-yellow-500 transition-colors flex items-center gap-2">Explore <span class="text-sm font-light">↗</span></span>
 </a>
@@ -243,6 +244,7 @@ Creative Portfolio
 </div>
 </div>
 
+<!-- VIEW: PHOTOGRAPHY -->
 <div id="view-photography" class="hidden w-full max-w-[1360px] mx-auto px-4 md:px-8 py-8 page-enter">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-6 border-b border-neutral-800">
 <div>
@@ -273,7 +275,7 @@ street photography
 </div>
 </div>
 
-<!-- Lighting Design 首頁 -->
+<!-- VIEW: LIGHTING DESIGN MAIN -->
 <div id="view-lighting-design" class="hidden w-full max-w-[1200px] mx-auto px-6 md:px-12 py-8 page-enter">
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors mb-6">
 <span>← Back to Home</span>
@@ -295,9 +297,13 @@ street photography
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="lighting-projects-grid"></div>
 </div>
 
+<!-- VIEW: LIGHTING DETAIL -->
 <div id="view-lighting-detail" class="hidden w-full page-enter"></div>
+
+<!-- VIEW: EVENT DETAIL -->
 <div id="view-event-detail" class="hidden w-full page-enter"></div>
 
+<!-- VIEW: GENERIC DETAIL (VIDEO & GRAPHIC) -->
 <div id="view-generic-detail" class="hidden space-y-8 page-enter w-full">
 <div class="max-w-[1360px] mx-auto px-4 md:px-8 w-full">
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
@@ -310,6 +316,7 @@ street photography
 <div id="generic-content-area" class="w-full mt-4"></div>
 </div>
 
+<!-- VIEW: GAME DESIGN MAIN -->
 <div id="view-game-design" class="hidden gd-body max-w-[1200px] mx-auto px-6 md:px-12 w-full page-enter">
 <a href="#home" class="mb-12 inline-flex items-center gap-2 text-sm uppercase tracking-widest text-neutral-400 hover:text-yellow-500 transition-colors font-bold block">
 <span>← Back to Main Portfolio</span>
@@ -334,6 +341,7 @@ Bridging the gap between Engineering & Art.
 <div class="grid gap-16" id="game-projects-grid"></div>
 </div>
 
+<!-- VIEW: GAME DETAIL -->
 <div id="view-game-detail" class="hidden gd-body pb-20 max-w-[1200px] mx-auto px-6 md:px-12 w-full page-enter">
 <a href="#game-design" class="mb-8 text-neutral-200 hover:text-white flex items-center gap-2 text-sm uppercase tracking-widest font-bold transition-colors mt-8 inline-flex">
 Back to Projects
@@ -409,7 +417,7 @@ if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`);
-  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase().jpg`);
+  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
   if (folder) {
     candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
   }
@@ -443,19 +451,19 @@ if (itemContainer) itemContainer.style.display = 'none';
 }
 };
 
-function openLightbox(imgSrc) {
+window.openLightbox = function(imgSrc) {
 const modal = document.getElementById('lightbox-modal');
 const modalImg = document.getElementById('lightbox-img');
 if (modal && modalImg) {
 modalImg.src = imgSrc;
 modal.classList.remove('hidden');
 }
-}
+};
 
-function closeLightbox() {
+window.closeLightbox = function() {
 const modal = document.getElementById('lightbox-modal');
 if (modal) modal.classList.add('hidden');
-}
+};
 
 function generateExactBackground() {
 const container = document.getElementById('bg-canvas');
@@ -512,7 +520,7 @@ html += `<div class="justified-item h-[280px] overflow-hidden">${smartImageHtml(
 grid.innerHTML = html;
 }
 
-let eventProjects = [
+const eventProjects = [
 { id: 1, title: "Korean Student Association", date: "Winter 2025", prefix: "ksa/ksa-", desc: "Capturing community gatherings, cultural showcases, and vibrant student moments across campus events." },
 { id: 2, title: "The Trail To Oregon!", date: "Spring 2025", prefix: "ttto/TTTO-", desc: "Stage production documentation capturing dramatic moments, costume details, and dynamic performances." },
 { id: 3, title: "Battle of the Band 2025", date: "Summer 2025", prefix: "botb/botb-", desc: "Battle of the Bands high-energy stage performances, musician portraits, and crowd reactions." },
@@ -526,7 +534,7 @@ let eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（Plot 滿版展示 + Viewport 按鈕，Spot Sheet 用互動 iframe）
+// 完整燈光專案資料清單
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -615,7 +623,6 @@ const lightingProjects = [
       title: "Vectorworks Light Plot", 
       type: "Full Stage Rig CAD Plot", 
       images: ["luchadora/plot-1"],
-      // 旁邊按鈕點開跑出詳細視口 PDF
       viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/viewport-1.pdf",
       viewportPdfLabel: "View More Detailed Section Viewport (viewport-1.pdf) ↗",
       desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. Click the button to inspect the high-resolution section viewport PDF." 
@@ -1012,8 +1019,8 @@ html += '</div>';
 return html;
 }
 
-// Beehive 專屬雙劇場切換
-function switchBeehiveVenue(venueId) {
+// 全域掛載 Beehive 專屬雙劇場切換
+window.switchBeehiveVenue = function(venueId) {
   const btnMarian = document.getElementById('btn-venue-marian');
   const btnSolvang = document.getElementById('btn-venue-solvang');
   const containerMarian = document.getElementById('container-venue-marian');
@@ -1022,17 +1029,17 @@ function switchBeehiveVenue(venueId) {
   if (!btnMarian || !btnSolvang || !containerMarian || !containerSolvang) return;
 
   if (venueId === 'marian') {
-    btnMarian.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all";
-    btnSolvang.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all";
+    btnMarian.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer";
+    btnSolvang.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer";
     containerMarian.classList.remove('hidden');
     containerSolvang.classList.add('hidden');
   } else {
-    btnSolvang.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all";
-    btnMarian.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all";
+    btnSolvang.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer";
+    btnMarian.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer";
     containerSolvang.classList.remove('hidden');
     containerMarian.classList.add('hidden');
   }
-}
+};
 
 // 圖紙區塊生成器
 function generatePaperworkView(paperworkList) {
@@ -1048,7 +1055,7 @@ function generatePaperworkView(paperworkList) {
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
-    // 專門處理 Beehive 雙劇場切換（Marian vs Solvang），圖紙滿版呈現 + 詳細 Viewport 按鈕
+    // Beehive 雙劇場切換
     if (pw.isDualVenuePlot) {
       let marian = pw.venues[0];
       let solvang = pw.venues[1];
@@ -1060,7 +1067,7 @@ function generatePaperworkView(paperworkList) {
             <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl mt-2">${pw.desc}</p>
           </div>
 
-          <!-- 小切換 Tab -->
+          <!-- 切換按鈕 -->
           <div class="flex flex-wrap items-center gap-3">
             <button id="btn-venue-marian" onclick="switchBeehiveVenue('marian')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer">
               ${marian.name}
@@ -1070,7 +1077,7 @@ function generatePaperworkView(paperworkList) {
             </button>
           </div>
 
-          <!-- Marian 劇場：滿版大圖 + Viewport 按鈕 -->
+          <!-- Marian 劇場容器 -->
           <div id="container-venue-marian" class="space-y-4">
             <div class="flex justify-end">
               <a href="${marian.viewportPdfUrl}" target="_blank" class="text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
@@ -1083,7 +1090,7 @@ function generatePaperworkView(paperworkList) {
             </div>
           </div>
 
-          <!-- Solvang 劇場：滿版大圖 + Viewport 按鈕 -->
+          <!-- Solvang 劇場容器 -->
           <div id="container-venue-solvang" class="hidden space-y-4">
             <div class="flex justify-end">
               <a href="${solvang.viewportPdfUrl}" target="_blank" class="text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
@@ -1099,7 +1106,7 @@ function generatePaperworkView(paperworkList) {
       `;
     }
 
-    // Spot Sheet 專用：互動 PDF 視窗
+    // Spot Sheet 互動 iframe
     if (pw.isIframePdf) {
       return `
         <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
@@ -1121,7 +1128,6 @@ function generatePaperworkView(paperworkList) {
       `;
     }
 
-    // Luchadora 專用：滿版大圖 + Viewport 按鈕
     let imgList = pw.images || (pw.image ? [pw.image] : []);
     let viewportButtonHtml = '';
     if (pw.viewportPdfUrl) {
@@ -1170,7 +1176,7 @@ function generatePaperworkView(paperworkList) {
   `;
 }
 
-function switchLightingTab(mode) {
+window.switchLightingTab = function(mode) {
   const btnPhotos = document.getElementById('tab-btn-ld-photos');
   const btnPaper = document.getElementById('tab-btn-ld-paperwork');
   const contentPhotos = document.getElementById('ld-tab-content-photos');
@@ -1179,17 +1185,17 @@ function switchLightingTab(mode) {
   if (!btnPhotos || !btnPaper || !contentPhotos || !contentPaper) return;
 
   if (mode === 'photos') {
-    btnPhotos.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm";
-    btnPaper.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm";
+    btnPhotos.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer";
+    btnPaper.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer";
     contentPhotos.classList.remove('hidden');
     contentPaper.classList.add('hidden');
   } else {
-    btnPaper.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm";
-    btnPhotos.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm";
+    btnPaper.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer";
+    btnPhotos.className = "px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer";
     contentPaper.classList.remove('hidden');
     contentPhotos.classList.add('hidden');
   }
-}
+};
 
 function renderPhotographyContent() {
 const eventsGrid = document.getElementById('events-grid');
@@ -1224,7 +1230,7 @@ streetGrid.innerHTML = `<div class="uncropped-masonry-container">${streetItems}<
 }
 }
 
-function switchPhotoTab(tab) {
+window.switchPhotoTab = function(tab) {
 const btnEvents = document.getElementById('tab-btn-events');
 const btnStreet = document.getElementById('tab-btn-street');
 const contentEvents = document.getElementById('photo-content-events');
@@ -1233,17 +1239,17 @@ const contentStreet = document.getElementById('photo-content-street');
 if (!btnEvents || !btnStreet) return;
 
 if (tab === 'events') {
-btnEvents.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm";
-btnStreet.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm";
+btnEvents.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer";
+btnStreet.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer";
 contentEvents.classList.remove('hidden');
 contentStreet.classList.add('hidden');
 } else {
-btnStreet.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm";
-btnEvents.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm";
+btnStreet.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer";
+btnEvents.className = "px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer";
 contentStreet.classList.remove('hidden');
 contentEvents.classList.add('hidden');
 }
-}
+};
 
 function triggerBrandAnimation() {
 const heroTitle = document.getElementById('hero-title');
@@ -1256,202 +1262,218 @@ heroTitle.classList.add('hero-brand-animate-active');
 }
 }
 
+// 核心路由控制器（精確比對並正確顯示目標頁面）
 function handleRouter() {
 const rawHash = window.location.hash || '#home';
-const hash = rawHash.toLowerCase();
-const views = ['view-home', 'view-photography', 'view-lighting-design', 'view-lighting-detail', 'view-generic-detail', 'view-game-design', 'view-game-detail', 'view-event-detail'];
+const hash = rawHash.toLowerCase().trim();
+
+// 隱藏所有視圖
+const views = [
+  'view-home', 
+  'view-photography', 
+  'view-lighting-design', 
+  'view-lighting-detail', 
+  'view-generic-detail', 
+  'view-game-design', 
+  'view-game-detail', 
+  'view-event-detail'
+];
+
 views.forEach(id => {
-const el = document.getElementById(id);
-if (el) el.classList.add('hidden');
+  const el = document.getElementById(id);
+  if (el) el.classList.add('hidden');
 });
 
-if (hash === '#home' || hash === '') {
-document.getElementById('view-home').classList.remove('hidden');
-renderHomeHeroCollage();
-triggerBrandAnimation();
-} else if (hash === '#photography') {
-document.getElementById('view-photography').classList.remove('hidden');
-renderPhotographyContent();
-} else if (hash === '#lighting-design') {
-document.getElementById('view-lighting-design').classList.remove('hidden');
-renderLightingContent();
-} else if (hash === '#video-graphic-design') {
-document.getElementById('view-generic-detail').classList.remove('hidden');
-document.getElementById('generic-title').textContent = 'Video & Graphic Design';
-const container = document.getElementById('generic-content-area');
-container.innerHTML = `
-<div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Masonry)</div>
-<div class="w-full">${generateGraphicDesignGrid()}</div>
-`;
-} else if (hash === '#game-design') {
-document.getElementById('view-game-design').classList.remove('hidden');
-renderGameProjectsContent();
-} else if (hash.startsWith('#lighting-')) {
-const id = hash.replace('#lighting-', '');
-const project = lightingProjects.find(p => p.id.toLowerCase() === id);
-if (project) {
-const detailView = document.getElementById('view-lighting-detail');
-const unifiedPhotosHtml = generateUnifiedProductionPhotoGrid(project);
-const paperworkHtml = generatePaperworkView(project.paperwork);
-
-let creditsRows = (project.credits || []).map(c => `
-  <div class="flex flex-col sm:flex-row sm:justify-between py-1.5 border-b border-white/5 text-xs">
-    <span class="text-neutral-400 uppercase tracking-widest font-mono">${c.label}</span>
-    <span class="text-neutral-100 font-medium">${c.val}</span>
-  </div>
-`).join('');
-
-let contributionsList = (project.myContributions || []).map(cb => `
-  <li class="text-xs md:text-sm text-neutral-300 font-light flex items-start gap-2">
-    <span class="text-yellow-500 mt-1">•</span>
-    <span>${cb}</span>
-  </li>
-`).join('');
-
-detailView.innerHTML = `
-<div class="w-full px-6 md:px-16 py-14 relative flex flex-col items-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
-<div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
-<div class="w-full flex justify-start mb-6">
-<a href="#lighting-design" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
-<span>← Back to Lighting Design</span>
-</a>
-</div>
-<span class="text-xs uppercase tracking-[0.2em] text-yellow-500 font-mono block mb-2">${project.year} — ${project.role}</span>
-<h1 class="serif-title text-4xl md:text-6xl italic text-white mb-2 text-center">${project.title}</h1>
-<p class="text-neutral-300 text-sm md:text-base font-light mb-8 text-center">${project.subtitle}</p>
-
-<!-- 專案製作 Credits 與個人職責清單 -->
-<div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/90 border border-neutral-800 p-8 rounded-lg mb-10">
-  <div class="space-y-4">
-    <h3 class="serif-title text-xl italic text-yellow-400">Production Credits</h3>
-    <div class="space-y-1">
-      ${creditsRows}
-    </div>
-  </div>
-  <div class="space-y-4">
-    <h3 class="serif-title text-xl italic text-yellow-400">What I Did on This Show</h3>
-    <ul class="space-y-2.5">
-      ${contributionsList}
-    </ul>
-  </div>
-</div>
-
-<div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/50 border border-neutral-800/80 p-8 rounded-lg mb-10">
-<div>
-<h3 class="serif-title text-xl italic text-white mb-3">About the Production</h3>
-<p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutPlay}</p>
-</div>
-<div>
-<h3 class="serif-title text-xl italic text-white mb-3">${project.role.includes('Assistant') ? 'My Role & Responsibilities' : 'Design Concept'}</h3>
-<p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutDesign}</p>
-</div>
-</div>
-
-<div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
-  <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
-    Production Photos & Moments
-  </button>
-  <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
-    Technical Drawings & Paperwork
-  </button>
-</div>
-
-</div>
-</div>
-
-<!-- 劇照頁面：橫向 1, 2, 3... 由左至右排列，文字卡片與純圖無縫整合 -->
-<div id="ld-tab-content-photos" class="w-full mt-12">
-  ${unifiedPhotosHtml}
-</div>
-
-<!-- 圖紙頁面：Plot 滿版展示 + Viewport 按鈕，Spot Sheet 互動預覽 -->
-<div id="ld-tab-content-paperwork" class="hidden w-full mt-12">
-  ${paperworkHtml}
-</div>
-`;
-detailView.classList.remove('hidden');
-}
-} else if (hash.startsWith('#event-')) {
-const id = parseInt(hash.replace('#event-', ''));
-const project = eventProjects.find(p => p.id === id);
-if (project) {
-let detailView = document.getElementById('view-event-detail');
-if (!detailView) {
-detailView = document.createElement('div');
-detailView.id = 'view-event-detail';
-detailView.className = 'hidden w-full min-h-screen page-enter';
-document.querySelector('main').appendChild(detailView);
-}
-let folderPrefix = project.prefix.replace(/-$/, '');
-let itemsHtml = '';
-for (let i = 1; i <= 25; i++) {
-  itemsHtml += `
-    <div class="photo-flow-card">
-      ${smartImageHtml(`${folderPrefix}-${i}`, `Event Photo ${i}`, "w-full h-auto object-contain block")}
-    </div>
+// 1. 首頁
+if (hash === '#home' || hash === '' || hash === '#') {
+  document.getElementById('view-home').classList.remove('hidden');
+  renderHomeHeroCollage();
+  triggerBrandAnimation();
+} 
+// 2. 攝影主頁
+else if (hash === '#photography') {
+  document.getElementById('view-photography').classList.remove('hidden');
+  renderPhotographyContent();
+} 
+// 3. 燈光設計主頁
+else if (hash === '#lighting-design') {
+  document.getElementById('view-lighting-design').classList.remove('hidden');
+  renderLightingContent();
+} 
+// 4. 平面設計頁面
+else if (hash === '#video-graphic-design') {
+  document.getElementById('view-generic-detail').classList.remove('hidden');
+  document.getElementById('generic-title').textContent = 'Video & Graphic Design';
+  const container = document.getElementById('generic-content-area');
+  container.innerHTML = `
+    <div class="text-neutral-400 text-sm tracking-wide mb-8 text-center">Graphic Design & Brand Identity Showcase (Full View Masonry)</div>
+    <div class="w-full">${generateGraphicDesignGrid()}</div>
   `;
-}
-detailView.innerHTML = `
-<div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
-<div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
-<div class="w-full flex justify-start mb-6">
-<a href="#photography" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
-<span>← Back to Photography</span>
-</a>
-</div>
-<span class="text-xs uppercase tracking-[0.2em] text-neutral-400 font-mono block mb-2">${project.date}</span>
-<h1 class="serif-title text-4xl md:text-6xl italic text-white mb-4 text-center">${project.title}</h1>
-<p class="text-neutral-300 text-sm md:text-base max-w-2xl font-light leading-relaxed text-center">${project.desc}</p>
-</div>
-</div>
-<div class="w-full mt-8"><div class="uncropped-masonry-container">${itemsHtml}</div></div>
-`;
-detailView.classList.remove('hidden');
-}
-} else if (hash.startsWith('#game-design') || hash.startsWith('#game-')) {
-if (hash === '#game-design') {
-document.getElementById('view-game-design').classList.remove('hidden');
-renderGameProjectsContent();
-} else {
-const projectId = hash.replace('#game-', '');
-const data = gameProjects[projectId];
-if (data) {
-document.getElementById('gd-detail-title').textContent = data.title;
-document.getElementById('gd-detail-subtitle').textContent = data.subtitle;
-document.getElementById('gd-detail-visual').innerHTML = data.visualHtml;
-document.getElementById('gd-detail-desc').textContent = data.desc;
-document.getElementById('gd-detail-detailedDesc').textContent = data.detailedDesc;
-document.getElementById('gd-detail-role').textContent = data.role;
-document.getElementById('gd-detail-engine').textContent = data.engine;
+} 
+// 5. 遊戲設計主頁
+else if (hash === '#game-design') {
+  document.getElementById('view-game-design').classList.remove('hidden');
+  renderGameProjectsContent();
+} 
+// 6. 燈光設計單一劇目頁面 (#lighting-[id])
+else if (hash.startsWith('#lighting-')) {
+  const id = hash.replace('#lighting-', '');
+  const project = lightingProjects.find(p => p.id.toLowerCase() === id);
+  if (project) {
+    const detailView = document.getElementById('view-lighting-detail');
+    const unifiedPhotosHtml = generateUnifiedProductionPhotoGrid(project);
+    const paperworkHtml = generatePaperworkView(project.paperwork);
 
-const tagsContainer = document.getElementById('gd-detail-tags');
-tagsContainer.innerHTML = data.tags.map(tag => `<span class="text-xs px-3 py-1.5 bg-white/10 text-yellow-500 border border-white/20 rounded-sm">${tag}</span>`).join('');
+    let creditsRows = (project.credits || []).map(c => `
+      <div class="flex flex-col sm:flex-row sm:justify-between py-1.5 border-b border-white/5 text-xs">
+        <span class="text-neutral-400 uppercase tracking-widest font-mono">${c.label}</span>
+        <span class="text-neutral-100 font-medium">${c.val}</span>
+      </div>
+    `).join('');
 
-const linkEl = document.getElementById('gd-detail-link');
-linkEl.href = data.link;
-linkEl.textContent = data.linkText;
+    let contributionsList = (project.myContributions || []).map(cb => `
+      <li class="text-xs md:text-sm text-neutral-300 font-light flex items-start gap-2">
+        <span class="text-yellow-500 mt-1">•</span>
+        <span>${cb}</span>
+      </li>
+    `).join('');
 
-let noticeEl = document.getElementById('gd-detail-notice');
-if (data.notice) {
-noticeEl.textContent = data.notice;
-noticeEl.classList.remove('hidden');
-noticeEl.classList.add('block');
-} else {
-noticeEl.classList.remove('block');
-noticeEl.classList.add('hidden');
+    detailView.innerHTML = `
+    <div class="w-full px-6 md:px-16 py-14 relative flex flex-col items-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
+    <div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
+    <div class="w-full flex justify-start mb-6">
+    <a href="#lighting-design" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
+    <span>← Back to Lighting Design</span>
+    </a>
+    </div>
+    <span class="text-xs uppercase tracking-[0.2em] text-yellow-500 font-mono block mb-2">${project.year} — ${project.role}</span>
+    <h1 class="serif-title text-4xl md:text-6xl italic text-white mb-2 text-center">${project.title}</h1>
+    <p class="text-neutral-300 text-sm md:text-base font-light mb-8 text-center">${project.subtitle}</p>
+
+    <!-- 專案製作 Credits 與個人職責清單 -->
+    <div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/90 border border-neutral-800 p-8 rounded-lg mb-10">
+      <div class="space-y-4">
+        <h3 class="serif-title text-xl italic text-yellow-400">Production Credits</h3>
+        <div class="space-y-1">
+          ${creditsRows}
+        </div>
+      </div>
+      <div class="space-y-4">
+        <h3 class="serif-title text-xl italic text-yellow-400">What I Did on This Show</h3>
+        <ul class="space-y-2.5">
+          ${contributionsList}
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/50 border border-neutral-800/80 p-8 rounded-lg mb-10">
+    <div>
+    <h3 class="serif-title text-xl italic text-white mb-3">About the Production</h3>
+    <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutPlay}</p>
+    </div>
+    <div>
+    <h3 class="serif-title text-xl italic text-white mb-3">${project.role.includes('Assistant') ? 'My Role & Responsibilities' : 'Design Concept'}</h3>
+    <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutDesign}</p>
+    </div>
+    </div>
+
+    <div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
+      <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
+        Production Photos & Moments
+      </button>
+      <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
+        Technical Drawings & Paperwork
+      </button>
+    </div>
+
+    </div>
+    </div>
+
+    <div id="ld-tab-content-photos" class="w-full mt-12">
+      ${unifiedPhotosHtml}
+    </div>
+
+    <div id="ld-tab-content-paperwork" class="hidden w-full mt-12">
+      ${paperworkHtml}
+    </div>
+    `;
+    detailView.classList.remove('hidden');
+  }
+} 
+// 7. 活動攝影單一相冊頁面 (#event-[id])
+else if (hash.startsWith('#event-')) {
+  const id = parseInt(hash.replace('#event-', ''));
+  const project = eventProjects.find(p => p.id === id);
+  if (project) {
+    const detailView = document.getElementById('view-event-detail');
+    let folderPrefix = project.prefix.replace(/-$/, '');
+    let itemsHtml = '';
+    for (let i = 1; i <= 25; i++) {
+      itemsHtml += `
+        <div class="photo-flow-card">
+          ${smartImageHtml(`${folderPrefix}-${i}`, `Event Photo ${i}`, "w-full h-auto object-contain block")}
+        </div>
+      `;
+    }
+    detailView.innerHTML = `
+    <div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
+    <div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
+    <div class="w-full flex justify-start mb-6">
+    <a href="#photography" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
+    <span>← Back to Photography</span>
+    </a>
+    </div>
+    <span class="text-xs uppercase tracking-[0.2em] text-neutral-400 font-mono block mb-2">${project.date}</span>
+    <h1 class="serif-title text-4xl md:text-6xl italic text-white mb-4 text-center">${project.title}</h1>
+    <p class="text-neutral-300 text-sm md:text-base max-w-2xl font-light leading-relaxed text-center">${project.desc}</p>
+    </div>
+    </div>
+    <div class="w-full mt-8"><div class="uncropped-masonry-container">${itemsHtml}</div></div>
+    `;
+    detailView.classList.remove('hidden');
+  }
+} 
+// 8. 遊戲專案單一頁面 (#game-[key])
+else if (hash.startsWith('#game-')) {
+  const projectId = hash.replace('#game-', '');
+  const data = gameProjects[projectId];
+  if (data) {
+    document.getElementById('gd-detail-title').textContent = data.title;
+    document.getElementById('gd-detail-subtitle').textContent = data.subtitle;
+    document.getElementById('gd-detail-visual').innerHTML = data.visualHtml;
+    document.getElementById('gd-detail-desc').textContent = data.desc;
+    document.getElementById('gd-detail-detailedDesc').textContent = data.detailedDesc;
+    document.getElementById('gd-detail-role').textContent = data.role;
+    document.getElementById('gd-detail-engine').textContent = data.engine;
+
+    const tagsContainer = document.getElementById('gd-detail-tags');
+    tagsContainer.innerHTML = data.tags.map(tag => `<span class="text-xs px-3 py-1.5 bg-white/10 text-yellow-500 border border-white/20 rounded-sm">${tag}</span>`).join('');
+
+    const linkEl = document.getElementById('gd-detail-link');
+    linkEl.href = data.link;
+    linkEl.textContent = data.linkText;
+
+    let noticeEl = document.getElementById('gd-detail-notice');
+    if (data.notice) {
+      noticeEl.textContent = data.notice;
+      noticeEl.classList.remove('hidden');
+      noticeEl.classList.add('block');
+    } else {
+      noticeEl.classList.remove('block');
+      noticeEl.classList.add('hidden');
+    }
+    document.getElementById('view-game-detail').classList.remove('hidden');
+  }
 }
-document.getElementById('view-game-detail').classList.remove('hidden');
-}
-}
-}
+
 window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function toggleMobileMenu() {
+window.toggleMobileMenu = function() {
 const menu = document.getElementById('mobile-menu');
 if (!menu) return;
 menu.classList.toggle('hidden');
-}
+};
 
 window.addEventListener('hashchange', handleRouter);
 
