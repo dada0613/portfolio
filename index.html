@@ -111,27 +111,19 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 橫向順序 Grid：Row 1 是 1, 2；Row 2 是 3, 4 */
 .uncropped-masonry-container {
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-gap: 24px;
+column-count: 2;
+column-gap: 20px;
 width: 100%;
 max-width: 1360px;
 margin: 0 auto;
 padding: 0 16px;
-align-items: start;
 }
 @media (max-width: 768px) {
-.uncropped-masonry-container {
-  grid-template-columns: 1fr;
-  gap: 16px;
-  padding: 0 10px;
-}
+.uncropped-masonry-container { column-count: 1; column-gap: 12px; padding: 0 10px; }
 }
 
 .photo-flow-card {
-width: 100%;
 background: #0e1219;
 border: 1px solid rgba(255, 255, 255, 0.12);
 border-radius: 6px;
@@ -534,7 +526,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單
+// 完整燈光專案資料清單（包含 Into the Woods 與 Live Performances）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -546,7 +538,7 @@ const lightingProjects = [
   prefix: "harvest/harvest-",
   desc: "Set entirely in an Idaho church basement, lighting enhances the tension between faith, obligation, and personal struggle with grounded realism.",
   credits: [
-    { label: "My Role", val: "Lighting Designer (Co-Designer with Jill Daug)" },
+    { label: "My Role", val: "Lighting Designer (Co-Designer with Jill Davis)" },
     { label: "Institution / Venue", val: "Case Western Reserve University — Kalberer Theatre" },
     { label: "Directors", val: "David Vegh & Abigail Gilman" },
     { label: "Technical Director", val: "Homer Farr" },
@@ -627,6 +619,98 @@ const lightingProjects = [
   ]
 },
 { 
+  id: "into-the-woods", 
+  title: "Into the Woods", 
+  subtitle: "Sondheim Musical Production", 
+  role: "Tech Lighting Leader", 
+  year: "2023",
+  season: "High School Theater Club",
+  prefix: "woods/woods-",
+  desc: "Sondheim's fairy tale epic. Maximized conventional fixtures, color gels, clock gobos, and shadow play within budget limitations.",
+  credits: [
+    { label: "My Role", val: "Tech Lighting Leader & Lighting Designer" },
+    { label: "School / Venue", val: "UWC-USA — Kluge Auditorium, NM" },
+    { label: "Director", val: "Kate Ribeiro" },
+    { label: "Year", val: "Spring 2023" }
+  ],
+  myContributions: [
+    "Led student lighting crew under strict budget and facility constraints.",
+    "Re-angled fixed conventional lights and manually cut color gels to generate forest depth without moving heads.",
+    "Designed shadow play using backlit fabric scrims for the wolf attack and sudden giant encounters."
+  ],
+  aboutPlay: "Into the Woods blends classic fairy tales with the story of a Baker and his Wife venturing into the woods to lift a curse. While Act One achieves happy endings, Act Two reveals the cost of those wishes as characters confront loss and consequences.",
+  aboutDesign: "With limited facilities and no moving/LED units, I focused on precise fixture angles and gel swatches. Created a magical yet dangerous forest, using shadow play and gobos to heighten tension.",
+  photoCaptions: {
+    1: { title: "Three Protagonists & Opening Wishes", desc: "Fairytale protagonists take turns sharing their deepest wishes. Balanced warm individual light pools emphasize reflection, hope, and vulnerability." },
+    2: { title: "Jack Sells the Cow in the Forest", desc: "Jack trades Milky White for magic beans. Forest lighting balances whimsical discovery with eerie uncertainty under textured tree branch washes." },
+    3: { title: "Midnight Urgency & The Clock Gobo", desc: "As the stepsisters try on the glass slipper, a large clock gobo slowly fades in on the cyc, symbolizing passing time and building midnight tension." },
+    4: { title: "Shadow Puppetry: Little Red & The Wolf", desc: "The hunter rescues Little Red from Mr. Wolf using a backlit fabric screen to cast fierce, looming shadows that heighten physical conflict." },
+    5: { title: "Death of the Baker's Wife", desc: "The Baker's Wife is crushed by the giant. Lighting shifts abruptly into visceral crimson, a stark reminder of fairy tales unraveling into real tragedy." }
+  },
+  paperwork: [
+    { 
+      title: "Conventional Rig Plot & Symbol Layout", 
+      type: "Auditorium Rep Plot", 
+      images: ["woods/plot-1", "woods/plot-2", "woods/plot"], 
+      desc: "Conventional fixture layout, throw distances, and hanging positions tailored for the proscenium stage." 
+    },
+    { 
+      title: "Gel Schedule & Conventional Cue Paperwork", 
+      type: "Conventional Rig Schedule", 
+      images: ["woods/schedule-1", "woods/schedule"], 
+      desc: "Manual gel cut list, instrument focus notes, and cue execution tracking across Acts I & II." 
+    }
+  ]
+},
+{ 
+  id: "live-performances", 
+  title: "Live Cultural Showcases & Concerts", 
+  subtitle: "Concerts, Cultural Shows & Cafés", 
+  role: "Lighting Team Leader", 
+  year: "2021-2023",
+  season: "UWC-USA Annual Showcases",
+  prefix: "live/live-",
+  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, Central Asia, and live concerts.",
+  credits: [
+    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
+    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
+    { label: "Venue", val: "Kluge Auditorium & Campus Amphitheaters, NM" },
+    { label: "Performers", val: "International Student Body (90+ Countries)" }
+  ],
+  myContributions: [
+    "Designed and executed 10+ distinct lighting plots each year for multicultural dance, music, and spoken word.",
+    "Conducted visual research into regional textiles, historical architecture, and cultural color symbolism.",
+    "Programmed dynamic concert chases, beat-synced flashing, and atmospheric sunset specials."
+  ],
+  aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
+  aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
+  photoCaptions: {
+    1: { title: "Love Café: Romantic Singer-Songwriter", desc: "Live sound mixing and original songs about love toward family and friends, set under intimate soft purple and pink lighting." },
+    2: { title: "Michael Jackson Tribute & Concert Vibe", desc: "Capturing iconic pop dance style with vibrant purple and cyan backlight inspired by MJ's live concert lighting." },
+    3: { title: "New Moon Café: High-Energy Dance & Silhouettes", desc: "Dynamic beat-synced flashing and quick fades, opening with sharp silhouette backlit poses to build anticipation." },
+    4: { title: "Cultural Showcase: South Asia", desc: "Warm amber-red and gold tones echoing traditional festivals and lively dance choreography." },
+    5: { title: "Cultural Showcase: East Asia", desc: "Blue, violet, and soft amber lighting evoking oceanic tranquility, flowing water, and historical textiles." },
+    6: { title: "Cultural Showcase: East Turkestan Sunset", desc: "A fading sunset spotlight casting warm nostalgic light across the stage, evoking longing for endangered musical traditions." },
+    7: { title: "Cultural Showcase: Latin America", desc: "A vibrant blend of cyan and warm amber balancing celebratory energy with deep cultural history." },
+    8: { title: "Cultural Showcase: Central Asia", desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns." },
+    9: { title: "Cultural Showcase: Africa & Colonial History", desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance." }
+  },
+  paperwork: [
+    { 
+      title: "Multicultural Festival Rep Plot", 
+      type: "Festival Rep Plot", 
+      images: ["live/plot-1", "live/plot"], 
+      desc: "Rep plot configuration accommodating rapid turnarounds between 15+ student cultural performances." 
+    },
+    { 
+      title: "Cultural Color Research & Color Palette Key", 
+      type: "Visual Research & Swatches", 
+      images: ["live/colorkey-1", "live/colorkey"], 
+      desc: "Color swatch matrix derived from regional architecture and historic textiles across South Asia, East Asia, and Latin America." 
+    }
+  ]
+},
+{ 
   id: "luchadora", 
   title: "Luchadora!", 
   subtitle: "PCPA Summer 2026 Season", 
@@ -654,7 +738,10 @@ const lightingProjects = [
     { 
       title: "Vectorworks Light Plot", 
       type: "Full Stage Rig CAD Plot", 
-      image: "luchadora/plot-1",
+      images: ["luchadora/plot-1"],
+      viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/viewport-1.pdf",
+      viewportPdfLabel: "View More Detailed Section Viewport (viewport-1.pdf) ↗",
+      desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. Click the button to inspect the high-resolution section viewport PDF." 
     },
     { 
       isFullPagePdf: true,
@@ -708,7 +795,7 @@ const lightingProjects = [
           sub: "Proscenium Layout & Electrics",
           image: "beehive/plot-1",
           viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/viewport-1.pdf",
-          viewportLabel: "View Marian Section Viewport ↗"
+          viewportLabel: "View Marian Section Viewport (viewport-1.pdf) ↗"
         },
         {
           id: "solvang",
@@ -716,7 +803,7 @@ const lightingProjects = [
           sub: "Open-Air Thrust Rig & Catwalks",
           image: "beehive/plot-2",
           viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/viewport-2.pdf",
-          viewportLabel: "View Solvang Section Viewport ↗"
+          viewportLabel: "View Solvang Section Viewport (viewport-2.pdf) ↗"
         }
       ]
     },
@@ -839,76 +926,6 @@ const lightingProjects = [
   paperwork: [
     { title: "Production Concept Archive", type: "Concept Dossier", images: ["midsummer/concept-1", "midsummer/concept"], desc: "Color palettes and atmospheric breakdown for fairy world vs mortal realm." }
   ]
-},
-{ 
-  id: "into-the-woods", 
-  title: "Into the Woods", 
-  subtitle: "Sondheim Musical Production", 
-  role: "Tech Lighting Leader", 
-  year: "2023",
-  season: "High School Theater Club",
-  prefix: "woods/woods-",
-  desc: "Sondheim's fairy tale epic. Maximized conventional fixtures, color gels, clock gobos, and shadow play within budget limitations.",
-  credits: [
-    { label: "My Role", val: "Tech Lighting Leader" },
-    { label: "School / Venue", val: "UWC-USA — Kluge Auditorium, NM" },
-    { label: "Director", val: "Kate Ribeiro" },
-    { label: "Year", val: "Spring 2023" }
-  ],
-  myContributions: [
-    "Led student lighting crew under strict budget and facility constraints.",
-    "Re-angled fixed conventional lights and manually cut color gels to generate forest depth without moving heads.",
-    "Designed shadow play using backlit fabric scrims for the wolf attack and sudden giant encounters."
-  ],
-  aboutPlay: "Into the Woods blends classic fairy tales with the story of a Baker and his Wife venturing into the woods to lift a curse. While Act One achieves happy endings, Act Two reveals the cost of those wishes as characters confront loss and consequences.",
-  aboutDesign: "With limited facilities and no moving/LED units, I focused on precise fixture angles and gel swatches. Created a magical yet dangerous forest, using shadow play and gobos to heighten tension.",
-  photoCaptions: {
-    1: { title: "Three Protagonists & Opening Wishes", desc: "Fairytale protagonists take turns sharing their deepest wishes. Balanced warm individual light pools emphasize reflection, hope, and vulnerability." },
-    2: { title: "Jack Sells the Cow in the Forest", desc: "Jack trades Milky White for magic beans. Forest lighting balances whimsical discovery with eerie uncertainty under textured tree branch washes." },
-    3: { title: "Midnight Urgency & The Clock Gobo", desc: "As the stepsisters try on the glass slipper, a large clock gobo slowly fades in on the cyc, symbolizing passing time and building midnight tension." },
-    4: { title: "Shadow Puppetry: Little Red & The Wolf", desc: "The hunter rescues Little Red from Mr. Wolf using a backlit fabric screen to cast fierce, looming shadows that heighten physical conflict." },
-    5: { title: "Death of the Baker's Wife", desc: "The Baker's Wife is crushed by the giant. Lighting shifts abruptly into visceral crimson, a stark reminder of fairy tales unraveling into real tragedy." }
-  },
-  paperwork: [
-    { title: "Gel Schedule & Conventional Plot", type: "Conventional Rig Schedule", images: ["woods/schedule-1", "woods/schedule"], desc: "Gel cut list, instrument focus notes, and manual cue tracking." }
-  ]
-},
-{ 
-  id: "live-performances", 
-  title: "Live Cultural Showcases & Concerts", 
-  subtitle: "Concerts, Cultural Shows & Cafés", 
-  role: "Lighting Team Leader", 
-  year: "2021-2023",
-  season: "UWC-USA Annual Showcases",
-  prefix: "live/live-",
-  desc: "Designed lighting for 10+ annual showcases covering South Asia, East Asia, Latin America, Africa, Central Asia, and live concerts.",
-  credits: [
-    { label: "My Role", val: "Lighting Team Leader & Lead Designer" },
-    { label: "Productions", val: "Love Café (2023), New Moon Café (2022), Phoenix (2022), Borderland (2021)" },
-    { label: "Venue", val: "Kluge Auditorium & Campus Amphitheaters, NM" },
-    { label: "Performers", val: "International Student Body (90+ Countries)" }
-  ],
-  myContributions: [
-    "Designed and executed 10+ distinct lighting plots each year for multicultural dance, music, and spoken word.",
-    "Conducted visual research into regional textiles, historical architecture, and cultural color symbolism.",
-    "Programmed dynamic concert chases, beat-synced flashing, and atmospheric sunset specials."
-  ],
-  aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
-  aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
-  photoCaptions: {
-    1: { title: "Love Café: Romantic Singer-Songwriter", desc: "Live sound mixing and original songs about love toward family and friends, set under intimate soft purple and pink lighting." },
-    2: { title: "Michael Jackson Tribute & Concert Vibe", desc: "Capturing iconic pop dance style with vibrant purple and cyan backlight inspired by MJ's live concert lighting." },
-    3: { title: "New Moon Café: High-Energy Dance & Silhouettes", desc: "Dynamic beat-synced flashing and quick fades, opening with sharp silhouette backlit poses to build anticipation." },
-    4: { title: "Cultural Showcase: South Asia", desc: "Warm amber-red and gold tones echoing traditional festivals and lively dance choreography." },
-    5: { title: "Cultural Showcase: East Asia", desc: "Blue, violet, and soft amber lighting evoking oceanic tranquility, flowing water, and historical textiles." },
-    6: { title: "Cultural Showcase: East Turkestan Sunset", desc: "A fading sunset spotlight casting warm nostalgic light across the stage, evoking longing for endangered musical traditions." },
-    7: { title: "Cultural Showcase: Latin America", desc: "A vibrant blend of cyan and warm amber balancing celebratory energy with deep cultural history." },
-    8: { title: "Cultural Showcase: Central Asia", desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns." },
-    9: { title: "Cultural Showcase: Africa & Colonial History", desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance." }
-  },
-  paperwork: [
-    { title: "Showcase Rigging Schedule", type: "Festival Rep Plot", images: ["live/plot-1", "live/plot"], desc: "Rep plot configuration accommodating quick turnaround between 15+ student performances." }
-  ]
 }
 ];
 
@@ -1013,7 +1030,7 @@ View Details ↗
 grid.innerHTML = html;
 }
 
-// 雙欄交錯瀑布流：橫向讀取順序 (左1、右2、左3、右4)，且緊密貼合、徹底消除中間缺塊！
+// 雙欄交錯瀑布流：橫向閱讀順序 (左1、右2、左3、右4)，緊密貼合、無縫展示
 function generateUnifiedProductionPhotoGrid(project) {
   let folderPrefix = project.prefix.replace(/-$/, '');
   let captions = project.photoCaptions || {};
@@ -1042,7 +1059,6 @@ function generateUnifiedProductionPhotoGrid(project) {
       </div>
     `;
 
-    // 奇數 (1, 3, 5...) 進左欄，偶數 (2, 4, 6...) 進右欄
     if (i % 2 !== 0) {
       leftColHtml += cardHtml;
     } else {
