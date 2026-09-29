@@ -534,7 +534,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（已包含 The Trail To Oregon!）
+// 完整燈光專案資料清單
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -660,12 +660,11 @@ const lightingProjects = [
       desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. Click the button to inspect the high-resolution section viewport PDF." 
     },
     { 
-      isIframePdf: true,
+      isFullPagePdf: true,
       title: "Spot Sheets & Followspot Tracker", 
-      type: "ALD Production Paperwork (Vector PDF)", 
+      type: "ALD Production Paperwork (Full PDF)", 
       pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/spot-1.pdf",
-      fileName: "luchadora/spot-1.pdf",
-      desc: "Interactive followspot pick-up sheets with frame counts, cue calls, and performer pickup moments throughout the production." 
+      desc: "Full-page followspot pick-up sheets with frame counts, cue calls, and performer pickup moments throughout the production." 
     },
     { 
       title: "Magic Sheet / Systems Layout", 
@@ -725,12 +724,22 @@ const lightingProjects = [
       ]
     },
     { 
-      isIframePdf: true,
+      isDualSpotSheet: true,
       title: "Spot Sheets & Followspot Tracker", 
-      type: "ALD Production Paperwork (Vector PDF)", 
-      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/spot-1.pdf",
-      fileName: "beehive/spot-1.pdf",
-      desc: "Followspot pick-up sheets and tracking paperwork covering cue calls across 30+ 1960s musical numbers." 
+      type: "ALD Production Paperwork (Full PDF)", 
+      desc: "Followspot pick-up sheets and tracking paperwork covering cue calls across 30+ 1960s musical numbers. Use the buttons below to switch between Spot 1 and Spot 2 tracks.",
+      spots: [
+        {
+          id: "spot1",
+          name: "Spot 1 Track",
+          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/spot-1.pdf"
+        },
+        {
+          id: "spot2",
+          name: "Spot 2 Track",
+          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/spot-2.pdf"
+        }
+      ]
     },
     { 
       title: "Hookup & Instrument Schedule", 
@@ -1073,6 +1082,28 @@ window.switchBeehiveVenue = function(venueId) {
   }
 };
 
+// Beehive 專屬雙 Spot Track 切換
+window.switchBeehiveSpot = function(spotId) {
+  const btnSpot1 = document.getElementById('btn-spot-1');
+  const btnSpot2 = document.getElementById('btn-spot-2');
+  const iframeSpot1 = document.getElementById('iframe-spot-1');
+  const iframeSpot2 = document.getElementById('iframe-spot-2');
+
+  if (!btnSpot1 || !btnSpot2 || !iframeSpot1 || !iframeSpot2) return;
+
+  if (spotId === 'spot1') {
+    btnSpot1.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer";
+    btnSpot2.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer";
+    iframeSpot1.classList.remove('hidden');
+    iframeSpot2.classList.add('hidden');
+  } else {
+    btnSpot2.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer";
+    btnSpot1.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer";
+    iframeSpot2.classList.remove('hidden');
+    iframeSpot1.classList.add('hidden');
+  }
+};
+
 // 圖紙區塊生成器
 function generatePaperworkView(paperworkList) {
   if (!paperworkList || paperworkList.length === 0) {
@@ -1138,28 +1169,54 @@ function generatePaperworkView(paperworkList) {
       `;
     }
 
-    // Spot Sheet 互動 iframe
-    if (pw.isIframePdf) {
+    // Beehive 雙 Spot Sheet 切換
+    if (pw.isDualSpotSheet) {
+      let spot1 = pw.spots[0];
+      let spot2 = pw.spots[1];
       return `
         <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
-          <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-4 gap-4">
-            <div>
-              <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
-              <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
-            </div>
-            <a href="${pw.pdfUrl}" target="_blank" class="self-start md:self-auto text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-              Open Spot Sheet PDF (${pw.fileName || 'View'}) ↗
-            </a>
+          <div class="border-b border-neutral-800 pb-5">
+            <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
+            <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
+            <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl mt-2">${pw.desc}</p>
           </div>
-          <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl">${pw.desc}</p>
-          <div class="w-full h-[650px] md:h-[850px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
+
+          <!-- Spot 1 / Spot 2 切換按鈕 -->
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="btn-spot-1" onclick="switchBeehiveSpot('spot1')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer">
+              ${spot1.name}
+            </button>
+            <button id="btn-spot-2" onclick="switchBeehiveSpot('spot2')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer">
+              ${spot2.name}
+            </button>
+          </div>
+
+          <!-- 滿版 PDF 容器 -->
+          <div class="w-full h-[850px] md:h-[1100px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
+            <iframe id="iframe-spot-1" src="${spot1.pdfUrl}#view=FitH" class="w-full h-full border-0" title="Beehive Spot 1 Track"></iframe>
+            <iframe id="iframe-spot-2" src="${spot2.pdfUrl}#view=FitH" class="hidden w-full h-full border-0" title="Beehive Spot 2 Track"></iframe>
+          </div>
+        </section>
+      `;
+    }
+
+    // Luchadora 滿版 Spot Sheet PDF 容器
+    if (pw.isFullPagePdf) {
+      return `
+        <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+          <div class="border-b border-neutral-800 pb-4">
+            <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
+            <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
+            <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl mt-2">${pw.desc}</p>
+          </div>
+          <div class="w-full h-[850px] md:h-[1100px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
             <iframe src="${pw.pdfUrl}#view=FitH" class="w-full h-full border-0" title="${pw.title}"></iframe>
           </div>
         </section>
       `;
     }
 
+    // Luchadora 滿版圖紙 + Viewport 按鈕
     let imgList = pw.images || (pw.image ? [pw.image] : []);
     let viewportButtonHtml = '';
     if (pw.viewportPdfUrl) {
@@ -1294,12 +1351,11 @@ heroTitle.classList.add('hero-brand-animate-active');
 }
 }
 
-// 核心路由控制器（精確比對並正確顯示目標頁面）
+// 核心路由控制器
 function handleRouter() {
 const rawHash = window.location.hash || '#home';
 const hash = rawHash.toLowerCase().trim();
 
-// 隱藏所有視圖
 const views = [
   'view-home', 
   'view-photography', 
