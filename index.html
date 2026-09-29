@@ -111,25 +111,6 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 橫向順序 Grid：Row 1 是 1, 2；Row 2 是 3, 4 */
-.uncropped-masonry-container {
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-gap: 24px;
-width: 100%;
-max-width: 1360px;
-margin: 0 auto;
-padding: 0 16px;
-align-items: start;
-}
-@media (max-width: 768px) {
-.uncropped-masonry-container {
-  grid-template-columns: 1fr;
-  gap: 16px;
-  padding: 0 10px;
-}
-}
-
 .photo-flow-card {
 width: 100%;
 background: #0e1219;
@@ -246,7 +227,7 @@ Creative Portfolio
 </div>
 </div>
 
-<!-- VIEW: RESUME (含雙領域 TAB) -->
+<!-- VIEW: RESUME -->
 <div id="view-resume" class="hidden w-full max-w-[1200px] mx-auto px-6 md:px-12 py-10 page-enter">
   <div class="border-b border-neutral-800 pb-8 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
     <div>
@@ -257,7 +238,6 @@ Creative Portfolio
       <p class="text-neutral-400 text-sm tracking-wide">Dual Specialization in Theatrical Production & Technical Game Development</p>
     </div>
 
-    <!-- 領域切換按鈕 -->
     <div class="flex items-center bg-neutral-900 border border-neutral-800 p-1.5 rounded-sm self-start md:self-auto">
       <button id="resume-tab-theater" onclick="switchResumeTab('theater')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer font-mono">
         Theater & Lighting
@@ -268,7 +248,6 @@ Creative Portfolio
     </div>
   </div>
 
-  <!-- THEATER RESUME CONTENT -->
   <div id="resume-content-theater" class="space-y-12">
     <div class="flex justify-end">
       <a href="https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/theater-resume.pdf" target="_blank" class="inline-flex items-center gap-3 bg-yellow-500 hover:bg-yellow-400 text-neutral-950 px-6 py-3 rounded text-xs uppercase tracking-widest font-bold font-mono transition-all">
@@ -363,7 +342,6 @@ Creative Portfolio
     </div>
   </div>
 
-  <!-- GAME DESIGN RESUME CONTENT -->
   <div id="resume-content-game" class="hidden space-y-12">
     <div class="flex justify-end">
       <a href="https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/game-resume.pdf" target="_blank" class="inline-flex items-center gap-3 bg-yellow-500 hover:bg-yellow-400 text-neutral-950 px-6 py-3 rounded text-xs uppercase tracking-widest font-bold font-mono transition-all">
@@ -599,6 +577,7 @@ if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`);
+  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.png`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
   if (folder) {
     candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
@@ -716,7 +695,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（Live Performances 包含文化分區與靈感圖配置）
+// 完整燈光專案資料清單（Live 回歸流暢瀑布流，靈感圖移至 Paperwork）
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -830,92 +809,29 @@ const lightingProjects = [
   ],
   aboutPlay: "Diverse annual student showcases celebrating culture, identity, love, and social justice, bringing together performers from more than 90 countries.",
   aboutDesign: "Every performance challenged me to adapt to distinct cultural aesthetics, emotional tones, and musical genres, translating regional heritage into light.",
-  // 專屬文化分區架構
-  isRegionalShowcase: true,
-  regions: [
-    {
-      id: "southasia",
-      name: "South Asia",
-      tag: "Amber-Red & Energetic Vibrancy",
-      about: "After researching South Asian architectural color palettes and festival hues, I selected warm amber-red and gold tones to capture the energetic dance choreography and rich cultural heritage.",
-      refImages: ["live/ref-southasia", "live/ref-southasia-1"],
-      refDesc: "Visual research: Sandstone palace architecture, Marigold flower festivals, and traditional embroidered garments.",
-      showImages: ["live/live-4", "live/show-southasia-1"],
-      showDesc: "Stage production: Warm saturated amber-red side lighting sculpting traditional dancers on stage."
-    },
-    {
-      id: "eastasia",
-      name: "East Asia",
-      tag: "Oceanic Blue & Tranquility",
-      about: "Used a palette of oceanic blue, violet, and soft amber to create a dreamy, water-like flow. The ocean historically connects East Asian trade and art, symbolizing adaptability, grace, and tranquility.",
-      refImages: ["live/ref-eastasia", "live/ref-eastasia-1"],
-      refDesc: "Visual research: Flowing calligraphy silk scrolls, historical indigo dye techniques, and water aesthetics.",
-      showImages: ["live/live-5", "live/show-eastasia-1"],
-      showDesc: "Stage production: Cool cyan and violet backdrop washes with soft amber frontal highlights."
-    },
-    {
-      id: "eastturkestan",
-      name: "East Turkestan",
-      tag: "Sunset Nostalgia & Time",
-      about: "Performers used traditional instruments to express concern for their endangered musical heritage. I designed a fading sunset effect with a focused warm spotlight, casting a solitary glow across the stage.",
-      refImages: ["live/ref-eastturkestan", "live/ref-eastturkestan-1"],
-      refDesc: "Visual research: Desert dunes at dusk, Silk Road caravans, and traditional stringed instrument textures.",
-      showImages: ["live/live-6", "live/show-eastturkestan-1"],
-      showDesc: "Stage production: Isolating sunset beam creating shadows and emphasizing longing for cultural preservation."
-    },
-    {
-      id: "latin",
-      name: "Latin America",
-      tag: "Cyan & Amber Balance",
-      about: "Inspired by Latin American colonial architecture, vibrant street murals, and traditional textile weaving, I blended bright cyan with warm amber to balance celebratory energy with profound cultural roots.",
-      refImages: ["live/ref-latin", "live/ref-latin-1"],
-      refDesc: "Visual research: Colorful woven serapes, sun-drenched stucco courtyards, and festive street markets.",
-      showImages: ["live/live-7", "live/show-latin-1", "live/show-latin-2"],
-      showDesc: "Stage production: Dynamic cross-lighting contrasting warm gold dancers with cool cyan backdrop depth."
-    },
-    {
-      id: "centralasia",
-      name: "Central Asia",
-      tag: "Violet-Purple Allure",
-      about: "Chose deep violet-purple lighting to reflect the mystical allure and historical nobility of the ancient Silk Road, complementing the intricate textile embroidery and dynamic nomadic music.",
-      refImages: ["live/ref-centralasia", "live/ref-centralasia-1"],
-      refDesc: "Visual research: Ornate yurt tapestries, lapis lazuli mosaics, and ancient Silk Road trading cities.",
-      showImages: ["live/live-8", "live/show-centralasia-1"],
-      showDesc: "Stage production: Deep violet cyc illumination emphasizing the intricate costumes and graceful formations."
-    },
-    {
-      id: "africa",
-      name: "Africa",
-      tag: "Visceral Crimson & Resilience",
-      about: "Representing historical struggles against colonization and ongoing modern resilience, I employed stark crimson lighting. The red signifies passion, resistance, and the intense emotional narrative of the piece.",
-      refImages: ["live/ref-africa", "live/ref-africa-1"],
-      refDesc: "Visual research: Ochre earth pigments, historic liberation imagery, and traditional clay textile hues.",
-      showImages: ["live/live-9", "live/show-africa-1"],
-      showDesc: "Stage production: High-contrast red wash casting sharp silhouettes during the poignant historical narrative."
-    },
-    {
-      id: "cafes",
-      name: "Music Cafés & Live Sets",
-      tag: "Concerts, Cafés & Pop",
-      about: "From soft purple and romantic tones for 'Love Café' to high-energy dance flashes at 'New Moon Café' and iconic cyan/purple concert lighting for a Michael Jackson tribute set.",
-      refImages: ["live/ref-concert", "live/ref-mj"],
-      refDesc: "Visual research: Intimate acoustic coffeehouse stages and 1980s pop concert stadium backlights.",
-      showImages: ["live/live-1", "live/live-2", "live/live-3"],
-      showDesc: "Stage production: Dynamic live concert chases, silhouette entrances, and beat-synced flashing."
-    }
-  ],
+  photoCaptions: {
+    1: { title: "Love Café: Romantic Singer-Songwriter", desc: "Live sound mixing and original songs about love toward family and friends, set under intimate soft purple and pink lighting." },
+    2: { title: "Michael Jackson Tribute & Concert Vibe", desc: "Capturing iconic pop dance style with vibrant purple and cyan backlight inspired by MJ's live concert lighting." },
+    3: { title: "New Moon Café: High-Energy Dance & Silhouettes", desc: "Dynamic beat-synced flashing and quick fades, opening with sharp silhouette backlit poses to build anticipation." },
+    4: { title: "Cultural Showcase: South Asia", desc: "Warm amber-red and gold tones echoing traditional festivals and lively dance choreography." },
+    5: { title: "Cultural Showcase: East Asia", desc: "Blue, violet, and soft amber lighting evoking oceanic tranquility, flowing water, and historical textiles." },
+    6: { title: "Cultural Showcase: East Turkestan Sunset", desc: "A fading sunset spotlight casting warm nostalgic light across the stage, evoking longing for endangered musical traditions." },
+    7: { title: "Cultural Showcase: Latin America", desc: "A vibrant blend of cyan and warm amber balancing celebratory energy with deep cultural history." },
+    8: { title: "Cultural Showcase: Central Asia", desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns." },
+    9: { title: "Cultural Showcase: Africa & Colonial History", desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance." }
+  },
   paperwork: [
+    { 
+      title: "Visual Research & Cultural Mood Board", 
+      type: "Cultural Mood Board", 
+      images: ["live/ref-1", "live/ref-2"], 
+      desc: "Architectural color studies, historic textiles, and environmental lighting references that informed the color palettes for regional showcases." 
+    },
     { 
       title: "Multicultural Festival Rep Plot", 
       type: "Festival Rep Plot", 
       images: ["live/plot-1", "live/plot"], 
       desc: "Rep plot configuration accommodating rapid turnarounds between 15+ student cultural performances." 
-    },
-    { 
-      title: "Cultural Color Research & Palette Matrix", 
-      type: "Visual Research & Swatches", 
-      images: ["live/colorkey-1", "live/colorkey"], 
-      desc: "Color swatch matrix derived from regional architecture and historic textiles across South Asia, East Asia, and Latin America." 
     }
   ]
 },
@@ -1283,96 +1199,8 @@ View Details ↗
 grid.innerHTML = html;
 }
 
-// Live 專用：分區切換函式
-window.switchLiveRegion = function(regionId) {
-  document.querySelectorAll('.live-region-btn').forEach(btn => {
-    btn.className = "live-region-btn px-5 py-2 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer";
-  });
-  document.querySelectorAll('.live-region-panel').forEach(panel => {
-    panel.classList.add('hidden');
-  });
-
-  const activeBtn = document.getElementById(`btn-region-${regionId}`);
-  const activePanel = document.getElementById(`panel-region-${regionId}`);
-
-  if (activeBtn) {
-    activeBtn.className = "live-region-btn px-5 py-2 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer";
-  }
-  if (activePanel) {
-    activePanel.classList.remove('hidden');
-  }
-};
-
-// 雙欄交錯瀑布流：支援 Live Cultural Showcase 分區自適應渲染
+// 雙欄交錯瀑布流：橫向閱讀順序 (左1、右2、左3、右4)，緊密貼合、無縫展示
 function generateUnifiedProductionPhotoGrid(project) {
-  // 如果是 Live Showcase，套用專屬的「區域切換器 + 靈感與劇照分區卡片」
-  if (project.isRegionalShowcase && project.regions) {
-    let tabsHtml = project.regions.map((reg, idx) => `
-      <button id="btn-region-${reg.id}" onclick="switchLiveRegion('${reg.id}')" class="live-region-btn px-5 py-2 text-xs uppercase tracking-widest font-mono ${idx === 0 ? 'font-bold bg-yellow-500 text-neutral-950 shadow' : 'font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700'} rounded transition-all cursor-pointer">
-        ${reg.name}
-      </button>
-    `).join('');
-
-    let panelsHtml = project.regions.map((reg, idx) => {
-      let refImgsHtml = reg.refImages.map(img => `
-        <div class="photo-flow-card">
-          ${smartImageHtml(img, `${reg.name} Research`, "w-full h-auto object-contain block")}
-        </div>
-      `).join('');
-
-      let showImgsHtml = reg.showImages.map(img => `
-        <div class="photo-flow-card">
-          ${smartImageHtml(img, `${reg.name} Show Photo`, "w-full h-auto object-contain block")}
-        </div>
-      `).join('');
-
-      return `
-        <div id="panel-region-${reg.id}" class="live-region-panel ${idx === 0 ? '' : 'hidden'} space-y-10">
-          <div class="outline-card p-6 md:p-8 rounded-lg space-y-3">
-            <span class="text-xs uppercase tracking-[0.2em] text-yellow-500 font-mono font-bold">${reg.tag}</span>
-            <h3 class="serif-title text-3xl text-white italic">${reg.name} Cultural Showcase</h3>
-            <p class="text-neutral-300 text-sm md:text-base font-light leading-relaxed max-w-4xl">${reg.about}</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <!-- 左欄：Visual Research / Mood Board -->
-            <div class="space-y-4">
-              <div class="border-b border-neutral-800 pb-2">
-                <h4 class="serif-title text-xl text-yellow-400 italic">Visual Research & Mood Board</h4>
-                <p class="text-neutral-400 text-xs font-light mt-1">${reg.refDesc}</p>
-              </div>
-              <div class="space-y-4">
-                ${refImgsHtml}
-              </div>
-            </div>
-
-            <!-- 右欄：Production Show Photos -->
-            <div class="space-y-4">
-              <div class="border-b border-neutral-800 pb-2">
-                <h4 class="serif-title text-xl text-yellow-400 italic">Stage Production Photos</h4>
-                <p class="text-neutral-400 text-xs font-light mt-1">${reg.showDesc}</p>
-              </div>
-              <div class="space-y-4">
-                ${showImgsHtml}
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    return `
-      <div class="w-full max-w-[1360px] mx-auto px-4 md:px-8 space-y-8">
-        <div class="flex flex-wrap items-center gap-3 border-b border-neutral-800 pb-5">
-          <span class="text-xs uppercase tracking-widest text-neutral-400 font-mono mr-2">Filter Region:</span>
-          ${tabsHtml}
-        </div>
-        ${panelsHtml}
-      </div>
-    `;
-  }
-
-  // 一般劇目的雙欄交錯瀑布流（左1、右2、左3、右4）
   let folderPrefix = project.prefix.replace(/-$/, '');
   let captions = project.photoCaptions || {};
 
@@ -1508,7 +1336,7 @@ function generatePaperworkView(paperworkList) {
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
-    // 專門處理 Beehive 雙劇場切換
+    // Beehive 雙劇場切換
     if (pw.isDualVenuePlot) {
       let marian = pw.venues[0];
       let solvang = pw.venues[1];
@@ -1520,7 +1348,6 @@ function generatePaperworkView(paperworkList) {
             <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl mt-2">${pw.desc}</p>
           </div>
 
-          <!-- 切換按鈕 -->
           <div class="flex flex-wrap items-center gap-3">
             <button id="btn-venue-marian" onclick="switchBeehiveVenue('marian')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer">
               ${marian.name}
@@ -1530,7 +1357,6 @@ function generatePaperworkView(paperworkList) {
             </button>
           </div>
 
-          <!-- Marian 劇場容器 -->
           <div id="container-venue-marian" class="space-y-4">
             <div class="flex justify-end">
               <a href="${marian.viewportPdfUrl}" target="_blank" class="text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
@@ -1543,7 +1369,6 @@ function generatePaperworkView(paperworkList) {
             </div>
           </div>
 
-          <!-- Solvang 劇場容器 -->
           <div id="container-venue-solvang" class="hidden space-y-4">
             <div class="flex justify-end">
               <a href="${solvang.viewportPdfUrl}" target="_blank" class="text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
