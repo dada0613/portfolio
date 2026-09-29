@@ -111,7 +111,7 @@ border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }
 
-/* 橫向數過去的 Grid 佈局：Row 1 是 1, 2；Row 2 是 3, 4 */
+/* 橫向順序 Grid：Row 1 是 1, 2；Row 2 是 3, 4 */
 .uncropped-masonry-container {
 display: grid;
 grid-template-columns: repeat(2, 1fr);
@@ -273,7 +273,7 @@ street photography
 </div>
 </div>
 
-<!-- Lighting Design 首頁：頂部新增放大的完整 PDF 按鈕 -->
+<!-- Lighting Design 首頁 -->
 <div id="view-lighting-design" class="hidden w-full max-w-[1200px] mx-auto px-6 md:px-12 py-8 page-enter">
 <a href="#home" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors mb-6">
 <span>← Back to Home</span>
@@ -283,7 +283,6 @@ street photography
     <h1 class="serif-title text-4xl md:text-5xl italic text-neutral-100 mb-2">Lighting Design & Technical Portfolio</h1>
     <p class="text-neutral-400 text-sm tracking-wide">Theatrical Lighting, Light Plots, Magic Sheets, Visual Moments & Production Paperwork</p>
   </div>
-  <!-- 放大版 PDF 下載/預覽按鈕 -->
   <div class="shrink-0">
     <a href="https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/lighting.pdf" target="_blank" class="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 text-black px-6 py-3.5 rounded text-xs md:text-sm font-bold uppercase tracking-[0.2em] hover:brightness-110 hover:shadow-[0_0_20px_rgba(218,165,32,0.4)] transition-all transform hover:-translate-y-0.5">
       <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -558,6 +557,7 @@ const lightingProjects = [
     2: { title: "Michaela's Entrance & Praying in Tongues", desc: "Lighting design for the moment Michaela descends the stairs while Tom and Jason pray in tongues. The staircase lighting emphasizes her entrance and separates her from the cold moonlight coming through the windows." },
     3: { title: "Rain, Fluorescent & Cold Moon", desc: "Jason is soaked from the rain. The cold moonlight combined with ceiling fluorescent light and warm front light creates deep psychological isolation as characters confront harsh realities." },
     4: { title: "Final Scene: Sunrise & Miracle", desc: "In the final scene where characters pray in tongues, the director wanted lighting to evoke hope and sunrise. I designed a warm, rising light from the window that gradually fills the space, suggesting spiritual transformation." },
+    5: { title: "Thunderstorm & Lightning Effect", desc: "Incorporating thunder FX, three escalating lightning flashes build intensity. At director's request, stage cuts to complete blackout during strikes, letting the audience experience sudden darkness. Window lights flicker with strong winds." }
   },
   paperwork: [
     { 
@@ -583,6 +583,91 @@ const lightingProjects = [
       type: "Lightwright Export", 
       images: ["harvest/schedule-1", "harvest/schedule-2"], 
       desc: "Complete channel-to-dimmer assignments, unit types (ETC ColorSource, S4), and gels." 
+    }
+  ]
+},
+{ 
+  id: "luchadora", 
+  title: "Luchadora!", 
+  subtitle: "PCPA Summer 2026 Season", 
+  role: "Assistant Lighting Designer", 
+  year: "2026",
+  season: "Summer 2026 Internship at PCPA",
+  prefix: "luchadora/luchadora-", 
+  desc: "A coming-of-age story that intertwines Mexican wrestling tradition with personal identity and family secrets.", 
+  credits: [
+    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
+    { label: "Lighting Designer", val: "Kieth W. Rice" },
+    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
+    { label: "Year", val: "Summer 2026" }
+  ],
+  myContributions: [
+    "Drafted and managed followspot pick-up sheets and track sheets with frame counts for wrestling choreography.",
+    "Documented detailed designer notes during multi-week technical rehearsals and production meetings.",
+    "Managed daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately.",
+    "Supported EOS console programming, mover focus presets, and channel checks."
+  ],
+  aboutPlay: "Luchadora! by Alvaro Saar Rios is a heartwarming coming-of-age story that intertwines Mexican wrestling tradition with personal identity and family secrets. Set in 1960s Texas, young Vanessa discovers a pink wrestling mask in her Nana Lupita’s suitcase, unlocking the untold history of how Lupita secretly trained as a luchadora to restore honor to her ailing father. Blending dynamic wrestling choreography with rich cultural heritage, the play explores courage, feminism, and bridging generations.", 
+  aboutDesign: "As the Assistant Lighting Designer for PCPA’s Summer 2026 production under lighting designer Kieth W. Rice, I bridged creative intent with technical stage execution. My primary responsibilities included drafting and managing followspot pick-up sheets and track sheets to ensure precise actor isolation during high-energy wrestling sequences. I maintained comprehensive production paperwork, documented designer notes throughout technical rehearsals, managed daily dimmer/channel checks, and supported EOS console programming and automated fixture focus presets.",
+  photoCaptions: {},
+  paperwork: [
+    { 
+      title: "Vectorworks Light Plot (Full Venue & Amphitheatre)", 
+      type: "Vector CAD Plot", 
+      // 支援 PDF 嵌入預覽，免除超大圖失真問題
+      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora-plot.pdf",
+      desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. View below in the interactive viewer or open the full vector PDF to inspect all instrument markings." 
+    },
+    { 
+      title: "Magic Sheet / Systems Layout", 
+      type: "Focus & Systems", 
+      images: ["luchadora/magic-1", "luchadora/magic"], 
+      desc: "Color system matrix, moving head beam angles, and area breakdown." 
+    },
+    { 
+      title: "Spot Sheets & Cue Tracker", 
+      type: "ALD Production Paperwork", 
+      images: ["luchadora/spot-1", "luchadora/spot"], 
+      desc: "Followspot pick-up sheets with frame counts and scene transition cues." 
+    }
+  ]
+},
+{ 
+  id: "beehive", 
+  title: "Beehive: The '60s Musical", 
+  subtitle: "PCPA Summer 2026 Season", 
+  role: "Assistant Lighting Designer", 
+  year: "2026",
+  season: "Summer 2026 Internship at PCPA",
+  prefix: "beehive/beehive-", 
+  desc: "A celebration of powerful 1960s female vocalists, navigating the era's cultural, social, and political transformations.", 
+  credits: [
+    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
+    { label: "Lighting Designer", val: "Kieth W. Rice" },
+    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
+    { label: "Year", val: "Summer 2026" }
+  ],
+  myContributions: [
+    "Assisted in drafting spot sheets and cue tracking across 30+ high-tempo musical numbers.",
+    "Coordinated Lightwright instrument schedules and power load distributions.",
+    "Led daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately.",
+    "Assisted with pixel-mapping and moving head wash presets on EOS light board."
+  ],
+  aboutPlay: "Beehive: The '60s Musical by Larry Gallagher is a high-octane theatrical celebration of the iconic female vocalists who defined the 1960s. Told through the perspectives of six women navigating the era’s cultural, social, and political transformations, the revue features timeless hits made famous by Leslie Gore, The Supremes, Aretha Franklin, Tina Turner, and Janis Joplin. Through electrifying choreography, towering beehive hairdos, and powerful harmonies, Beehive pays tribute to female empowerment and musical revolution.", 
+  aboutDesign: "Serving as Assistant Lighting Designer under Kieth W. Rice at PCPA, I assisted in executing dynamic, concert-style lighting cues across more than thirty fast-paced musical numbers. I generated and tracked cue sheets, managed color gel selections, and maintained Lightwright paperwork including hookups and instrument schedules. During tech runs, I logged detailed focus notes and cue synchronization changes, assisted with pixel-mapping and moving head wash presets, and ensured all fixtures operated reliably through rigorous daily channel checks.",
+  photoCaptions: {},
+  paperwork: [
+    { 
+      title: "Vectorworks Light Plot", 
+      type: "Vector CAD Plot", 
+      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive-plot.pdf",
+      desc: "Main stage plot including moving head wash units, cyc backlight systems, and amphitheatre layout. View in the interactive viewer or open the full vector PDF." 
+    },
+    { 
+      title: "Hookup & Instrument Schedule", 
+      type: "Lightwright Export", 
+      images: ["beehive/hookup-1", "beehive/hookup"], 
+      desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." 
     }
   ]
 },
@@ -749,63 +834,6 @@ const lightingProjects = [
   paperwork: [
     { title: "Showcase Rigging Schedule", type: "Festival Rep Plot", images: ["live/plot-1", "live/plot"], desc: "Rep plot configuration accommodating quick turnaround between 15+ student performances." }
   ]
-},
-{
-  id: "luchadora", 
-  title: "Luchadora", 
-  subtitle: "PCPA Summer 2026 Season", 
-  role: "Assistant Lighting Designer", 
-  year: "2026",
-  season: "Summer 2026 Internship at PCPA",
-  prefix: "luchadora/luchadora-", 
-  desc: "Blends coming-of-age drama with theatrical athleticism of Lucha Libre. Assisted in spot sheets, cue synchronization, and moving light presets.", 
-  credits: [
-    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
-    { label: "Lighting Designer", val: "Kieth W. Rice" },
-    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
-    { label: "Year", val: "Summer 2026" }
-  ],
-  myContributions: [
-    "Generated followspot pick-up sheets and track sheets with frame counts.",
-    "Documented detailed designer notes during multi-week technical rehearsals and production meetings.",
-    "Supported EOS console programming, mover focus presets, and channel checks."
-  ],
-  aboutPlay: "Luchadora blends coming-of-age drama with the theatrical athleticism of Lucha Libre.", 
-  aboutDesign: "Served as Assistant Lighting Designer during the PCPA Summer 2026 season under designer Kieth W. Rice.",
-  photoCaptions: {},
-  paperwork: [
-    { title: "Vectorworks Light Plot", type: "CAD Plot (1/4\" Scale)", images: ["luchadora/plot-1", "luchadora/plot"], desc: "Rigging points, DMX distribution, and automated fixture positions." },
-    { title: "Magic Sheet / Systems Layout", type: "Focus & Systems", images: ["luchadora/magic-1", "luchadora/magic"], desc: "Color system matrix, moving head beam angles, and area breakdown." },
-    { title: "Spot Sheets & Cue Tracker", type: "ALD Production Paperwork", images: ["luchadora/spot-1", "luchadora/spot"], desc: "Followspot pick-up sheets with frame counts and scene transition cues." }
-  ]
-},
-{ 
-  id: "beehive", 
-  title: "Beehive: The 60s Musical", 
-  subtitle: "PCPA Summer 2026 Season", 
-  role: "Assistant Lighting Designer", 
-  year: "2026",
-  season: "Summer 2026 Internship at PCPA",
-  prefix: "beehive/beehive-", 
-  desc: "A celebration of 1960s female vocalists. Managed paperwork, automated fixtures, cue timings, and daily channel checks.", 
-  credits: [
-    { label: "My Role", val: "Assistant Lighting Designer (Summer Intern)" },
-    { label: "Lighting Designer", val: "Kieth W. Rice" },
-    { label: "Company", val: "Pacific Conservatory Theatre (PCPA)" },
-    { label: "Year", val: "Summer 2026" }
-  ],
-  myContributions: [
-    "Assisted in drafting spot sheets and cue tracking across 30+ high-tempo musical numbers.",
-    "Coordinated Lightwright instrument schedules and power load distributions.",
-    "Led daily dimmer and channel checks, ensuring all moving heads and LED wash units responded accurately."
-  ],
-  aboutPlay: "Beehive is a high-energy celebration of powerful female vocalists of the 1960s.", 
-  aboutDesign: "PCPA Summer 2026 internship project under Keith W. Rice, LD.",
-  photoCaptions: {},
-  paperwork: [
-    { title: "Vectorworks Light Plot", type: "CAD Plot", images: ["beehive/plot-1", "beehive/plot"], desc: "Main stage plot including moving head wash units and cyc backlight systems." },
-    { title: "Hookup & Instrument Schedule", type: "Lightwright Export", images: ["beehive/hookup-1", "beehive/hookup"], desc: "Channel-to-dimmer assignments, power load calculation, and gel cut list." }
-  ]
 }
 ];
 
@@ -954,7 +982,7 @@ html += '</div>';
 return html;
 }
 
-// 圖紙區塊：每個項目自成獨立一整排寬版展示
+// 圖紙區塊：支援大型 PDF 互動閱讀器 + 全橫排圖片排版
 function generatePaperworkView(paperworkList) {
   if (!paperworkList || paperworkList.length === 0) {
     return `
@@ -967,9 +995,30 @@ function generatePaperworkView(paperworkList) {
     `;
   }
 
-  let sectionsHtml = paperworkList.map((pw, index) => {
+  let sectionsHtml = paperworkList.map((pw) => {
+    // 若該項目提供 PDF 網址（如 PCPA 的超大向量圖紙），則直接生成全螢幕閱讀視窗
+    if (pw.pdfUrl) {
+      return `
+        <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+          <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-4 gap-4">
+            <div>
+              <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
+              <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
+            </div>
+            <a href="${pw.pdfUrl}" target="_blank" class="self-start md:self-auto text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+              Open Vector PDF in New Tab ↗
+            </a>
+          </div>
+          <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl">${pw.desc}</p>
+          <div class="w-full h-[650px] md:h-[850px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
+            <iframe src="${pw.pdfUrl}#view=FitH" class="w-full h-full border-0" title="${pw.title}"></iframe>
+          </div>
+        </section>
+      `;
+    }
+
     let imgList = pw.images || (pw.image ? [pw.image] : []);
-    
     let imagesGridClass = imgList.length > 1 ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "w-full";
     let imagesHtml = imgList.map((imgName, idx) => `
       <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center overflow-hidden cursor-zoom-in p-2">
@@ -1176,7 +1225,7 @@ detailView.innerHTML = `
 <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutPlay}</p>
 </div>
 <div>
-<h3 class="serif-title text-xl italic text-white mb-3">Design Concept</h3>
+<h3 class="serif-title text-xl italic text-white mb-3">${project.role.includes('Assistant') ? 'My Role & Responsibilities' : 'Design Concept'}</h3>
 <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutDesign}</p>
 </div>
 </div>
@@ -1198,7 +1247,7 @@ detailView.innerHTML = `
   ${unifiedPhotosHtml}
 </div>
 
-<!-- 圖紙頁面：獨立一整排寬版展示 -->
+<!-- 圖紙頁面：獨立一整排寬版展示，支援超大 PDF 向量嵌入 -->
 <div id="ld-tab-content-paperwork" class="hidden w-full mt-12">
   ${paperworkHtml}
 </div>
