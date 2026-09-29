@@ -409,7 +409,7 @@ if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
   candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`);
-  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
+  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase().jpg`);
   if (folder) {
     candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
   }
@@ -526,7 +526,7 @@ let eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（Luchadora & Beehive Plot 與 Cue Sheet 均採用 PDF 格式）
+// 完整燈光專案資料清單
 const lightingProjects = [
 { 
   id: "the-harvest", 
@@ -612,24 +612,29 @@ const lightingProjects = [
   photoCaptions: {},
   paperwork: [
     { 
-      title: "Vectorworks Light Plot (Full Venue & Amphitheatre)", 
-      type: "Vector CAD Plot", 
-      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/plot-1.pdf",
-      fileName: "luchadora/plot-1.pdf",
-      desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. View below in the interactive viewer or open the full vector PDF to inspect all instrument markings." 
+      // 滿版大圖呈現，附帶按鈕新分頁開啟 Section Viewport PDF
+      isFullPlotWithViewportBtn: true,
+      title: "Vectorworks Light Plot (Full Venue)", 
+      type: "Full Plot & Section Viewport", 
+      image: "luchadora/plot-1", 
+      viewportPdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/plot-1.pdf",
+      btnText: "View Detailed Section Viewport PDF ↗",
+      desc: "Full venue lighting layout covering the amphitheatre, catwalk circuits, and stage rig. Click the button to inspect the high-resolution vector Section Viewport PDF." 
+    },
+    { 
+      // Spot Sheet 採用互動 PDF 視窗
+      isPdfEmbed: true,
+      title: "Spot Sheets & Pick-up Track", 
+      type: "ALD Production Paperwork (Interactive PDF)", 
+      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/spot-1.pdf",
+      fileName: "luchadora/spot-1.pdf",
+      desc: "Interactive followspot pick-up sheets with frame counts, scene cues, and actor tracking throughout high-energy combat." 
     },
     { 
       title: "Magic Sheet / Systems Layout", 
       type: "Focus & Systems", 
       images: ["luchadora/magic-1", "luchadora/magic"], 
       desc: "Color system matrix, moving head beam angles, and area breakdown." 
-    },
-    { 
-      title: "Spot Sheets & Cue Tracker", 
-      type: "ALD Production Paperwork (PDF)", 
-      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/luchadora/cue-1.pdf",
-      fileName: "luchadora/cue-1.pdf",
-      desc: "Followspot pick-up sheets with frame counts and scene transition cues across technical runs. Inspect the complete tracking document in vector PDF." 
     }
   ]
 },
@@ -659,33 +664,23 @@ const lightingProjects = [
   photoCaptions: {},
   paperwork: [
     { 
-      isDualVenuePlot: true,
-      title: "Detailed Section Light Plots (Dual Venue Rep)",
-      type: "Vector CAD Plots",
-      desc: "Switch between PCPA's indoor proscenium stage (Marian Theatre) and the outdoor thrust amphitheatre (Solvang Festival Theater) to inspect the specific lighting rigs and systems.",
-      venues: [
-        {
-          id: "marian",
-          name: "Indoor Theater (Marian Theatre)",
-          sub: "Proscenium Layout & Electrics",
-          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/plot-1.pdf",
-          fileName: "beehive/plot-1.pdf"
-        },
-        {
-          id: "solvang",
-          name: "Outdoor Theater (Solvang Festival Theater)",
-          sub: "Open-Air Thrust Rig & Catwalks",
-          pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/plot-2.pdf",
-          fileName: "beehive/plot-2.pdf"
-        }
-      ]
+      // 滿版大圖呈現，兩個獨立按鈕開啟 Marian 與 Solvang 的詳細 Section Viewport PDF
+      isBeehiveDualViewport: true,
+      title: "Vectorworks Light Plot (Dual Venue Repertory)", 
+      type: "Full Plot & Section Viewports", 
+      image: "beehive/plot-1", 
+      marianPdf: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/plot-1.pdf",
+      solvangPdf: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/plot-2.pdf",
+      desc: "Full overview plot for the repertory season. Click the buttons above to open high-resolution vector Section Viewport PDFs for either the Marian Theatre or Solvang Festival Theater." 
     },
     { 
-      title: "Cue Sheet & Musical Track Document", 
-      type: "ALD Production Paperwork (PDF)", 
-      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/cue-1.pdf",
-      fileName: "beehive/cue-1.pdf",
-      desc: "Detailed cue tracker and song-by-song transition paperwork for over 30 musical numbers across tech rehearsals." 
+      // Spot Sheet 採用互動 PDF 視窗
+      isPdfEmbed: true,
+      title: "Spot Sheets & Cue Tracker", 
+      type: "ALD Production Paperwork (Interactive PDF)", 
+      pdfUrl: "https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/beehive/spot-1.pdf",
+      fileName: "beehive/spot-1.pdf",
+      desc: "Interactive followspot tracker across 30+ 1960s musical numbers with cue timings, color frames, and pickup assignments." 
     },
     { 
       title: "Hookup & Instrument Schedule", 
@@ -1006,35 +1001,7 @@ html += '</div>';
 return html;
 }
 
-// Beehive 專屬：雙劇場（Marian vs Solvang）Light Plot 切換器
-function switchBeehiveVenue(venueId) {
-  const btnMarian = document.getElementById('btn-venue-marian');
-  const btnSolvang = document.getElementById('btn-venue-solvang');
-  const iframeMarian = document.getElementById('iframe-venue-marian');
-  const iframeSolvang = document.getElementById('iframe-venue-solvang');
-  const linkMarian = document.getElementById('link-venue-marian');
-  const linkSolvang = document.getElementById('link-venue-solvang');
-
-  if (!btnMarian || !btnSolvang || !iframeMarian || !iframeSolvang) return;
-
-  if (venueId === 'marian') {
-    btnMarian.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all";
-    btnSolvang.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all";
-    iframeMarian.classList.remove('hidden');
-    iframeSolvang.classList.add('hidden');
-    linkMarian.classList.remove('hidden');
-    linkSolvang.classList.add('hidden');
-  } else {
-    btnSolvang.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all";
-    btnMarian.className = "px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all";
-    iframeSolvang.classList.remove('hidden');
-    iframeMarian.classList.add('hidden');
-    linkSolvang.classList.remove('hidden');
-    linkMarian.classList.add('hidden');
-  }
-}
-
-// 圖紙區塊：支援大型 PDF 互動閱讀器 + Beehive 雙劇場切換小 Tab + Cue Sheet PDF
+// 圖紙區塊：支援滿版全貌大圖（無捲軸）+ Viewport PDF 按鈕 + Spot Sheet 向量互動視窗
 function generatePaperworkView(paperworkList) {
   if (!paperworkList || paperworkList.length === 0) {
     return `
@@ -1048,54 +1015,58 @@ function generatePaperworkView(paperworkList) {
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
-    // 專門處理 Beehive 雙劇場切換（Indoor Marian vs Outdoor Solvang）
-    if (pw.isDualVenuePlot) {
-      let marian = pw.venues[0];
-      let solvang = pw.venues[1];
+    // 1. Luchadora 滿版全景圖 + Viewport PDF 按鈕
+    if (pw.isFullPlotWithViewportBtn) {
       return `
         <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
-          <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-5 gap-4">
+          <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-4 gap-4">
             <div>
               <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
               <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
             </div>
-            
-            <!-- 雙劇場外連按鈕 -->
-            <div class="flex items-center gap-3">
-              <a id="link-venue-marian" href="${marian.pdfUrl}" target="_blank" class="text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                Open Marian Plot (${marian.fileName}) ↗
-              </a>
-              <a id="link-venue-solvang" href="${solvang.pdfUrl}" target="_blank" class="hidden text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                Open Solvang Plot (${solvang.fileName}) ↗
-              </a>
-            </div>
+            <a href="${pw.viewportPdfUrl}" target="_blank" class="self-start md:self-auto text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+              <span>${pw.btnText}</span>
+            </a>
           </div>
-
           <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl">${pw.desc}</p>
-
-          <!-- 小切換 Tab -->
-          <div class="flex flex-wrap items-center gap-3 pt-2">
-            <button id="btn-venue-marian" onclick="switchBeehiveVenue('marian')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-bold bg-yellow-500 text-neutral-950 rounded shadow transition-all cursor-pointer">
-              ${marian.name}
-            </button>
-            <button id="btn-venue-solvang" onclick="switchBeehiveVenue('solvang')" class="px-5 py-2.5 text-xs uppercase tracking-widest font-mono font-medium text-neutral-400 hover:text-white bg-neutral-900 border border-neutral-700 rounded transition-all cursor-pointer">
-              ${solvang.name}
-            </button>
-          </div>
-
-          <!-- 嵌入式 PDF 預覽視窗 -->
-          <div class="w-full h-[650px] md:h-[850px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
-            <iframe id="iframe-venue-marian" src="${marian.pdfUrl}#view=FitH" class="w-full h-full border-0" title="Beehive Marian Light Plot"></iframe>
-            <iframe id="iframe-venue-solvang" src="${solvang.pdfUrl}#view=FitH" class="hidden w-full h-full border-0" title="Beehive Solvang Light Plot"></iframe>
+          <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center p-3 cursor-zoom-in">
+            ${smartImageHtml(pw.image, pw.title, "w-full h-auto object-contain block rounded")}
           </div>
         </section>
       `;
     }
 
-    // 單一 PDF 預覽（如 Luchadora Plot 與 Luchadora/Beehive 的 Cue Sheet）
-    if (pw.pdfUrl) {
+    // 2. Beehive 滿版全景圖 + Marian & Solvang 雙按鈕
+    if (pw.isBeehiveDualViewport) {
+      return `
+        <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+          <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-4 gap-4">
+            <div>
+              <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
+              <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <a href="${pw.marianPdf}" target="_blank" class="text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-4 py-2.5 rounded shadow transition-all font-mono">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                View Marian Viewport PDF ↗
+              </a>
+              <a href="${pw.solvangPdf}" target="_blank" class="text-xs uppercase tracking-widest text-yellow-400 font-bold bg-neutral-900 border border-yellow-500/50 hover:bg-neutral-800 flex items-center gap-2 px-4 py-2.5 rounded shadow transition-all font-mono">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                View Solvang Viewport PDF ↗
+              </a>
+            </div>
+          </div>
+          <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl">${pw.desc}</p>
+          <div class="w-full bg-black/90 rounded border border-white/10 flex items-center justify-center p-3 cursor-zoom-in">
+            ${smartImageHtml(pw.image, pw.title, "w-full h-auto object-contain block rounded")}
+          </div>
+        </section>
+      `;
+    }
+
+    // 3. Spot Sheet 互動 PDF 視窗（可在網頁內互動檢視）
+    if (pw.isPdfEmbed) {
       return `
         <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
           <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-4 gap-4">
@@ -1105,17 +1076,18 @@ function generatePaperworkView(paperworkList) {
             </div>
             <a href="${pw.pdfUrl}" target="_blank" class="self-start md:self-auto text-xs uppercase tracking-widest text-neutral-950 font-bold bg-yellow-500 hover:bg-yellow-400 flex items-center gap-2 px-5 py-2.5 rounded shadow transition-all font-mono">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-              Open ${pw.fileName || 'Vector PDF'} in New Tab ↗
+              Open Spot Sheet PDF (${pw.fileName}) ↗
             </a>
           </div>
           <p class="text-neutral-300 text-xs md:text-sm font-light leading-relaxed max-w-4xl">${pw.desc}</p>
-          <div class="w-full h-[650px] md:h-[850px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
+          <div class="w-full h-[650px] md:h-[800px] bg-black rounded border border-white/10 overflow-hidden relative shadow-2xl">
             <iframe src="${pw.pdfUrl}#view=FitH" class="w-full h-full border-0" title="${pw.title}"></iframe>
           </div>
         </section>
       `;
     }
 
+    // 4. 一般圖片清單（如 Magic Sheet、Instrument Schedule）
     let imgList = pw.images || (pw.image ? [pw.image] : []);
     let imagesGridClass = imgList.length > 1 ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "w-full";
     let imagesHtml = imgList.map((imgName, idx) => `
@@ -1142,7 +1114,7 @@ function generatePaperworkView(paperworkList) {
     <div class="max-w-[1360px] mx-auto px-4 md:px-8 space-y-12 pb-16">
       <div class="border-b border-neutral-800 pb-4">
         <h3 class="serif-title text-3xl text-white italic">Technical Drawings, Plots & Paperwork</h3>
-        <p class="text-neutral-400 text-xs tracking-wide mt-1">Light Plots, Focus Areas, Magic Sheets, Cue Trackers & Instrument Schedules</p>
+        <p class="text-neutral-400 text-xs tracking-wide mt-1">Light Plots, Focus Areas, Magic Sheets, Spot Sheets & Instrument Schedules</p>
       </div>
       <div class="space-y-10 w-full">
         ${sectionsHtml}
@@ -1345,7 +1317,7 @@ detailView.innerHTML = `
   ${unifiedPhotosHtml}
 </div>
 
-<!-- 圖紙頁面：獨立一整排寬版展示，支援超大 PDF 向量嵌入與 Beehive 雙劇場切換 -->
+<!-- 圖紙頁面：獨立一整排寬版展示，滿版全圖 + Viewport 按鈕 + Spot Sheet 互動視窗 -->
 <div id="ld-tab-content-paperwork" class="hidden w-full mt-12">
   ${paperworkHtml}
 </div>
