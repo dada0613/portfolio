@@ -57,7 +57,7 @@ transition: transform 0.3s ease;
 animation: stereoGlow 3s ease-in-out forwards;
 }
 
-/* 90% 不透明，阻隔背景原點干擾 */
+/* 90% 不透明度卡片設計，徹底阻絕背景彩點干擾 */
 .outline-card {
 background: rgba(11, 15, 21, 0.90);
 backdrop-filter: blur(16px);
@@ -580,7 +580,7 @@ window.smartImageHtml = function(baseName, altText, className = "w-full h-auto o
   if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
     candidates.push(cleanBase);
   } else {
-    // 嚴格限制：只有檔名開頭為 ttto-數字 時才判定為劇照，不誤判 magic-1 或 plot-1
+    // 嚴格判定：只有當檔名精確以 ttto-數字 命名時才做劇照 fallback，不干擾 magic-1 或 plot-1
     if (folder.toLowerCase() === 'ttto' && /^ttto-\d+$/i.test(fileName)) {
       let numMatch = fileName.match(/(\d+)$/);
       let num = numMatch ? numMatch[1] : '0';
@@ -711,7 +711,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（TTTO 採用 Magic Sheet，Into the Woods 暫未上傳圖紙則設空）
+// 完整燈光專案資料清單（The Harvest 已移除 Thunderstorm 描述，無 Paperwork 專案直接清空）
 const lightingProjects = [
 { 
   id: "beehive", 
@@ -856,7 +856,7 @@ const lightingProjects = [
     "Spearheaded complete lighting design concept, drafting, cue structure, and tech execution.",
     "Drafted 1/4\" Vectorworks Light Plot, Focus Areas, and Instrument Schedule for 60+ conventional and LED fixtures.",
     "Built realistic environmental light sources using practical basement windows, fluorescent fixtures, and staircase shafts.",
-    "Programmed multi-step thunderstorm autofollow cue stacks with lightning blackouts synchronized with sound effects on ETC Eos."
+    "Programmed precise cue transitions and blackouts synchronized with the emotional rhythm of the play on ETC Eos."
   ],
   aboutPlay: "The Harvest by Samuel D. Hunter takes place in a small evangelical church in Idaho, where a group of young missionaries prepare for a trip to the Middle East. As they pray, argue, and reveal their fears, the play explores themes of faith, isolation, and the longing for purpose.",
   aboutDesign: "Every cue is rooted in realism, appearing to come from practical sources: fluorescent fixtures, LED strips, small basement windows, and staircase lighting that guides movement between emotional and physical space. Subtle transitions reveal texture, sculpt faces, and support the psychological landscape.",
@@ -864,7 +864,7 @@ const lightingProjects = [
     1: { title: "Music, Connection & Isolation", desc: "Tom and Jason listen to music together, but their emotions diverge: Jason wants to leave, while Tom wants him to stay. I used cold moonlight from the window to isolate Jason in shadow, and warm piano light to emphasize Tom's desire for connection." },
     2: { title: "Michaela's Entrance & Praying in Tongues", desc: "Lighting design for the moment Michaela descends the stairs while Tom and Jason pray in tongues. The staircase lighting emphasizes her entrance and separates her from the cold moonlight coming through the windows." },
     3: { title: "Rain, Fluorescent & Cold Moon", desc: "Jason is soaked from the rain. The cold moonlight combined with ceiling fluorescent light and warm front light creates deep psychological isolation as characters confront harsh realities." },
-    4: { title: "Final Scene: Sunrise & Miracle", desc: "In the final scene where characters pray in tongues, the director wanted lighting to evoke hope and sunrise. I designed a warm, rising light from the window that gradually fills the space, suggesting spiritual transformation." },
+    4: { title: "Final Scene: Sunrise & Miracle", desc: "In the final scene where characters pray in tongues, the director wanted lighting to evoke hope and sunrise. I designed a warm, rising light from the window that gradually fills the space, suggesting spiritual transformation." }
   },
   paperwork: [
     { 
@@ -883,7 +883,7 @@ const lightingProjects = [
       title: "Cue List & Sequence Script", 
       type: "Stage Cue Track", 
       images: ["harvest/cue-1", "harvest/cue-2", "harvest/cue-3", "harvest/cue-4"], 
-      desc: "Detailed cue calls with fade times, autofollow storm sequences, and lighting state descriptions." 
+      desc: "Detailed cue calls with fade times, transition sequences, and lighting state descriptions." 
     },
     { 
       title: "Instrument Schedule", 
@@ -916,7 +916,6 @@ const lightingProjects = [
   aboutPlay: "The Trail To Oregon! is an interactive musical comedy produced by StarKid Productions parodying the retro video game Oregon Trail. The story follows an eccentric pioneer family traversing 19th-century America from Missouri to Oregon, facing bandits, dysentery, snake bites, and river crossings with audience-chosen names and fates.",
   aboutDesign: "Lighting balanced cartoonish comedy with theatrical adventure. Saturated, punchy cyc colors established time and varied landscapes across the trail—from scorching desert yellows to perilous river blues and ominous sunset ambers. Fast tempo transitions supported the dynamic ensemble and live audience interactions.",
   photoCaptions: {},
-  // 正式改為 Magic Sheet，路徑指向 ttto/magic-1
   paperwork: [
     { 
       title: "Systems Magic Sheet", 
@@ -988,7 +987,6 @@ const lightingProjects = [
     4: { title: "Shadow Puppetry: Little Red & The Wolf", desc: "The hunter rescues Little Red from Mr. Wolf using a backlit fabric screen to cast fierce, looming shadows that heighten physical conflict." },
     5: { title: "Death of the Baker's Wife", desc: "The Baker's Wife is crushed by the giant. Lighting shifts abruptly into visceral crimson, a stark reminder of fairy tales unraveling into real tragedy." }
   },
-  // 未上傳圖紙前直接設為空陣列，保證自動隱藏 Paperwork Tab
   paperwork: []
 },
 { 
@@ -1618,7 +1616,7 @@ else if (hash.startsWith('#lighting-')) {
     const detailView = document.getElementById('view-lighting-detail');
     const unifiedPhotosHtml = generateUnifiedProductionPhotoGrid(project);
     
-    // 嚴格判斷：只有當 paperwork 陣列存在且長度大於 0 時，才啟用圖紙功能
+    // 嚴格檢查：只有當真正存在 paperwork 項目時才掛載圖紙
     const hasPaperwork = Array.isArray(project.paperwork) && project.paperwork.length > 0;
     const paperworkHtml = hasPaperwork ? generatePaperworkView(project.paperwork) : '';
 
@@ -1636,7 +1634,7 @@ else if (hash.startsWith('#lighting-')) {
       </li>
     `).join('');
 
-    // 若有 paperwork 則顯示切換 Tab，若無則保證完全不渲染任何 Tab 按鈕！
+    // 若無 paperwork 則保證不渲染任何 Tab 按鈕
     let tabButtonsHtml = '';
     if (hasPaperwork) {
       tabButtonsHtml = `
