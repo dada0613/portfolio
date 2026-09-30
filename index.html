@@ -57,19 +57,20 @@ transition: transform 0.3s ease;
 animation: stereoGlow 3s ease-in-out forwards;
 }
 
+/* 調成 90% 不透明，防止背景彩點干擾視線 */
 .outline-card {
-background: rgba(20, 25, 30, 0.4);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
+background: rgba(11, 15, 21, 0.90);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
 border: 1px solid rgba(255, 255, 255, 0.15);
-box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 transition: all 0.3s ease;
 }
 .outline-card:hover {
 border: 1px solid rgba(255, 255, 255, 0.35);
-background: rgba(255, 255, 255, 0.05);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
+background: rgba(15, 20, 28, 0.95);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
 }
 
 .page-enter {
@@ -95,32 +96,20 @@ filter: drop-shadow(0 0 15px rgba(218, 165, 32, 0.3));
 @keyframes blink { 50% { opacity: 0; } }
 
 .gd-card {
-background: rgba(25, 25, 25, 0.8);
+background: rgba(15, 18, 24, 0.92);
 border: 1px solid rgba(255, 255, 255, 0.2);
 transition: all 0.3s ease;
 }
 .gd-card:hover {
 border-color: rgba(218, 165, 32, 0.5);
-background: rgba(35, 35, 35, 0.9);
+background: rgba(22, 26, 35, 0.95);
 }
 
 .glass-panel {
-background: rgba(25, 25, 25, 0.95);
+background: rgba(15, 18, 24, 0.95);
 backdrop-filter: blur(16px);
 border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
-}
-
-.uncropped-masonry-container {
-column-count: 2;
-column-gap: 24px;
-width: 100%;
-max-width: 1360px;
-margin: 0 auto;
-padding: 0 16px;
-}
-@media (max-width: 768px) {
-.uncropped-masonry-container { column-count: 1; column-gap: 16px; padding: 0 10px; }
 }
 
 .photo-flow-card {
@@ -170,7 +159,7 @@ padding: 0 24px;
 <img id="lightbox-img" src="" alt="Zoomed Image" class="max-w-[92vw] max-h-[92vh] object-contain rounded shadow-2xl" onclick="event.stopPropagation()">
 </div>
 
-<header id="global-header" class="relative z-20 w-full px-6 md:px-12 py-8 flex items-center justify-between transition-colors bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800/50">
+<header id="global-header" class="relative z-20 w-full px-6 md:px-12 py-8 flex items-center justify-between transition-colors bg-[#0b0f15]/95 backdrop-blur-md border-b border-neutral-800/50">
 <a href="#home" class="serif-title text-xl md:text-2xl tracking-widest text-neutral-100 flex items-center gap-2 hover:opacity-80 transition-opacity">
 AMANDA HSU
 </a>
@@ -298,7 +287,7 @@ Creative Portfolio
                 <span>The Harvest — Kalberer Theatre (CWRU)</span>
                 <span class="text-yellow-500 font-mono">2025</span>
               </div>
-              <p class="text-neutral-400">Solo Lighting Designer | Dir. David Vegh & Abigail Gilman</p>
+              <p class="text-neutral-400">Lighting Designer | Dir. David Vegh & Abigail Gilman</p>
             </div>
 
             <div class="border-b border-white/5 pb-3">
@@ -569,58 +558,60 @@ Play / Download
 const SUPABASE_STORAGE_URL = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
 
 window.smartImageHtml = function(baseName, altText, className = "w-full h-auto object-contain") {
-let cleanBase = (baseName || "").trim();
-let parts = cleanBase.split('/');
-let folder = parts.length > 1 ? parts[0] : '';
-let fileName = parts.length > 1 ? parts[1] : cleanBase;
+  let cleanBase = (baseName || "").trim();
+  let parts = cleanBase.split('/');
+  let folder = parts.length > 1 ? parts[0] : '';
+  let fileName = parts.length > 1 ? parts[1] : cleanBase;
 
-let candidates = [];
+  let candidates = [];
 
-if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
-  candidates.push(cleanBase);
-} else {
-  if (folder.toLowerCase() === 'ttto') {
-    let numMatch = fileName.match(/(\d+)$/);
-    let num = numMatch ? numMatch[1] : '0';
-    candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.jpg`);
-    candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.JPG`);
-    candidates.push(`${SUPABASE_STORAGE_URL}ttto/ttto-${num}.jpg`);
+  if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
+    candidates.push(cleanBase);
+  } else {
+    // 只有在請求劇照 (檔名含有 ttto 或純數字) 時才套用劇照編號 fallback，防止圖紙抓錯
+    if (folder.toLowerCase() === 'ttto' && (fileName.toLowerCase().includes('ttto') || /^\d+$/.test(fileName))) {
+      let numMatch = fileName.match(/(\d+)$/);
+      let num = numMatch ? numMatch[1] : '0';
+      candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.jpg`);
+      candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.JPG`);
+      candidates.push(`${SUPABASE_STORAGE_URL}ttto/ttto-${num}.jpg`);
+    }
+
+    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
+    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
+    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`);
+    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.png`);
+    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
+    if (folder) {
+      candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
+    }
   }
-  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpg`);
-  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
-  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`);
-  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.png`);
-  candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
-  if (folder) {
-    candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
-  }
-}
 
-candidates = [...new Set(candidates)].filter(url => url && !url.includes('undefined'));
-let initialSrc = candidates.length > 0 ? candidates[0] : '';
-let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
+  candidates = [...new Set(candidates)].filter(url => url && !url.includes('undefined'));
+  let initialSrc = candidates.length > 0 ? candidates[0] : '';
+  let candidatesAttr = encodeURIComponent(JSON.stringify(candidates));
 
-let isCoverImg = cleanBase.toLowerCase().includes('-0');
-let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
-let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
+  let isCoverImg = cleanBase.toLowerCase().includes('-0');
+  let clickAttr = isCoverImg ? '' : 'onclick="openLightbox(this.src)"';
+  let cursorStyle = isCoverImg ? 'cursor: default;' : 'cursor: zoom-in;';
 
-return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
+  return `<img src="${initialSrc}" alt="${altText}" class="${className}" style="${cursorStyle}" data-candidates="${candidatesAttr}" data-candidate-idx="0" onerror="handleSmartImageError(this)" loading="lazy" decoding="async" ${clickAttr}>`;
 };
 
 window.handleSmartImageError = function(imgEl) {
 try {
-let candidates = JSON.parse(decodeURIComponent(imgEl.dataset.candidates || "[]"));
-let idx = parseInt(imgEl.dataset.candidateIdx || "0") + 1;
-if (idx < candidates.length) {
-imgEl.dataset.candidateIdx = idx.toString();
-imgEl.src = candidates[idx];
-} else {
-let itemContainer = imgEl.closest('.photo-flow-card') || imgEl.closest('.outline-card');
-if (itemContainer) itemContainer.style.display = 'none';
-}
+  let candidates = JSON.parse(decodeURIComponent(imgEl.dataset.candidates || "[]"));
+  let idx = parseInt(imgEl.dataset.candidateIdx || "0") + 1;
+  if (idx < candidates.length) {
+    imgEl.dataset.candidateIdx = idx.toString();
+    imgEl.src = candidates[idx];
+  } else {
+    let itemContainer = imgEl.closest('.photo-flow-card') || imgEl.closest('.outline-card');
+    if (itemContainer) itemContainer.style.display = 'none';
+  }
 } catch (e) {
-let itemContainer = imgEl.closest('.photo-flow-card') || imgEl.closest('.outline-card');
-if (itemContainer) itemContainer.style.display = 'none';
+  let itemContainer = imgEl.closest('.photo-flow-card') || imgEl.closest('.outline-card');
+  if (itemContainer) itemContainer.style.display = 'none';
 }
 };
 
@@ -836,13 +827,13 @@ const lightingProjects = [
   id: "the-harvest", 
   title: "The Harvest", 
   subtitle: "CWRU Dept. of Theater / Kalberer Theatre", 
-  role: "Solo Lighting Designer", 
+  role: "Lighting Designer", 
   year: "2025",
   season: "Junior Year at CWRU",
   prefix: "harvest/harvest-",
   desc: "Set entirely in an Idaho church basement, lighting enhances the tension between faith, obligation, and personal struggle with grounded realism.",
   credits: [
-    { label: "My Role", val: "Lighting Designer (Solo Lighting Design)" },
+    { label: "My Role", val: "Lighting Designer" },
     { label: "Institution / Venue", val: "Case Western Reserve University — Kalberer Theatre" },
     { label: "Directors", val: "David Vegh & Abigail Gilman" },
     { label: "Technical Director", val: "Homer Farr" },
@@ -915,10 +906,16 @@ const lightingProjects = [
   photoCaptions: {},
   paperwork: [
     { 
-      title: "Paperwork & Production Dossier", 
-      type: "Eldred Theatre Rig Schedule", 
-      images: ["ttto/plot-1", "ttto/plot"], 
-      desc: "Production lighting plot, gel schedule, and cue paperwork for the musical showcase." 
+      title: "Light Plot & Focus Layout", 
+      type: "Eldred Theatre CAD Plot", 
+      images: ["ttto/ttto-plot-1"], 
+      desc: "Full venue conventional and LED lighting plot designed for the Eldred Theatre thrust stage." 
+    },
+    { 
+      title: "Instrument Schedule & Cue Track", 
+      type: "Production Paperwork", 
+      images: ["ttto/ttto-schedule-1"], 
+      desc: "Channel-to-dimmer assignments, gel schedule, and beat-synced musical cue list." 
     }
   ]
 },
@@ -1057,7 +1054,7 @@ const lightingProjects = [
   prefix: "diane/diane-",
   desc: "A suburban kitchen meets Dionysian destruction. Explored tempo acceleration, side lighting, saturated colors, and storm strobes.",
   credits: [
-    { label: "My Role", val: "Solo Lighting Designer (Class Final Project)" },
+    { label: "My Role", val: "Lighting Designer (Class Final Project)" },
     { label: "Playwright", val: "Madeleine George" },
     { label: "Faculty Advisor", val: "Jill Davis" },
     { label: "Plot Scale", val: "Light Lab Plot (1/2\" Scale, 1/27/2024)" }
@@ -1081,13 +1078,13 @@ const lightingProjects = [
   id: "midsummer", 
   title: "A Midsummer Night's Dream", 
   subtitle: "William Shakespeare / The Lir Academy", 
-  role: "Solo Lighting Designer", 
+  role: "Lighting Designer", 
   year: "2024",
   season: "Study Abroad (Dublin, Ireland)",
   prefix: "midsummer/midsummer-",
   desc: "Designed at The Lir Academy in Ireland. Explored emotional contrast between mortal lovers and magical woodland spirits.",
   credits: [
-    { label: "My Role", val: "Solo Lighting Designer" },
+    { label: "My Role", val: "Lighting Designer" },
     { label: "Institution", val: "The Lir Academy — Trinity College Dublin" },
     { label: "Director", val: "Hilary Wood" },
     { label: "Year", val: "Fall 2024" }
@@ -1334,17 +1331,10 @@ window.switchBeehiveSpot = function(spotId) {
   }
 };
 
-// 圖紙區塊生成器（完全移除括號檔名提示）
+// 圖紙區塊生成器
 function generatePaperworkView(paperworkList) {
   if (!paperworkList || paperworkList.length === 0) {
-    return `
-      <div class="max-w-[1200px] mx-auto text-center py-16 px-4">
-        <div class="outline-card p-10 max-w-lg mx-auto rounded-lg space-y-2">
-          <h3 class="serif-title text-xl text-white italic">Paperwork Archive</h3>
-          <p class="text-neutral-400 text-xs leading-relaxed">CAD plots, Lightwright paperwork, and cue lists for this production are available upon request.</p>
-        </div>
-      </div>
-    `;
+    return '';
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
@@ -1353,7 +1343,7 @@ function generatePaperworkView(paperworkList) {
       let marian = pw.venues[0];
       let solvang = pw.venues[1];
       return `
-        <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+        <section class="outline-card rounded-lg overflow-hidden border border-white/15 p-6 md:p-8 space-y-6 w-full">
           <div class="border-b border-neutral-800 pb-5">
             <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
             <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
@@ -1401,7 +1391,7 @@ function generatePaperworkView(paperworkList) {
       let spot1 = pw.spots[0];
       let spot2 = pw.spots[1];
       return `
-        <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+        <section class="outline-card rounded-lg overflow-hidden border border-white/15 p-6 md:p-8 space-y-6 w-full">
           <div class="border-b border-neutral-800 pb-5">
             <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
             <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
@@ -1428,7 +1418,7 @@ function generatePaperworkView(paperworkList) {
     // Luchadora 滿版 Spot Sheet PDF 容器
     if (pw.isFullPagePdf) {
       return `
-        <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+        <section class="outline-card rounded-lg overflow-hidden border border-white/15 p-6 md:p-8 space-y-6 w-full">
           <div class="border-b border-neutral-800 pb-4">
             <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
             <h4 class="serif-title text-2xl text-white italic">${pw.title}</h4>
@@ -1461,7 +1451,7 @@ function generatePaperworkView(paperworkList) {
     `).join('');
 
     return `
-      <section class="outline-card rounded-lg overflow-hidden bg-[#10141d]/80 border border-white/15 p-6 md:p-8 space-y-6 w-full">
+      <section class="outline-card rounded-lg overflow-hidden border border-white/15 p-6 md:p-8 space-y-6 w-full">
         <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-800 pb-4 gap-4">
           <div>
             <span class="text-[10px] text-yellow-500 uppercase tracking-widest font-mono font-bold block mb-1">${pw.type}</span>
@@ -1640,7 +1630,8 @@ else if (hash.startsWith('#lighting-')) {
   if (project) {
     const detailView = document.getElementById('view-lighting-detail');
     const unifiedPhotosHtml = generateUnifiedProductionPhotoGrid(project);
-    const paperworkHtml = generatePaperworkView(project.paperwork);
+    const hasPaperwork = project.paperwork && project.paperwork.length > 0;
+    const paperworkHtml = hasPaperwork ? generatePaperworkView(project.paperwork) : '';
 
     let creditsRows = (project.credits || []).map(c => `
       <div class="flex flex-col sm:flex-row sm:justify-between py-1.5 border-b border-white/5 text-xs">
@@ -1656,8 +1647,23 @@ else if (hash.startsWith('#lighting-')) {
       </li>
     `).join('');
 
+    // 若有 paperwork 則顯示切換 Tab，若無則不顯示任何 Tab 按鈕
+    let tabButtonsHtml = '';
+    if (hasPaperwork) {
+      tabButtonsHtml = `
+        <div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
+          <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
+            Production Photos & Moments
+          </button>
+          <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
+            Technical Drawings & Paperwork
+          </button>
+        </div>
+      `;
+    }
+
     detailView.innerHTML = `
-    <div class="w-full px-6 md:px-16 py-14 relative flex flex-col items-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
+    <div class="w-full px-6 md:px-16 py-14 relative flex flex-col items-center bg-[#0b0f15]/95 backdrop-blur-md border-b border-neutral-800 shadow-xl">
     <div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
     <div class="w-full flex justify-start mb-6">
     <a href="#lighting-design" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
@@ -1669,7 +1675,7 @@ else if (hash.startsWith('#lighting-')) {
     <p class="text-neutral-300 text-sm md:text-base font-light mb-8 text-center">${project.subtitle}</p>
 
     <!-- 專案製作 Credits 與個人職責清單 -->
-    <div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/90 border border-neutral-800 p-8 rounded-lg mb-10">
+    <div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full outline-card p-8 rounded-lg mb-10">
       <div class="space-y-4">
         <h3 class="serif-title text-xl italic text-yellow-400">Production Credits</h3>
         <div class="space-y-1">
@@ -1684,7 +1690,7 @@ else if (hash.startsWith('#lighting-')) {
       </div>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full bg-neutral-900/50 border border-neutral-800/80 p-8 rounded-lg mb-10">
+    <div class="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto w-full outline-card p-8 rounded-lg mb-10">
     <div>
     <h3 class="serif-title text-xl italic text-white mb-3">About the Production</h3>
     <p class="text-neutral-300 text-xs md:text-sm leading-relaxed">${project.aboutPlay}</p>
@@ -1695,14 +1701,7 @@ else if (hash.startsWith('#lighting-')) {
     </div>
     </div>
 
-    <div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
-      <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
-        Production Photos & Moments
-      </button>
-      <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
-        Technical Drawings & Paperwork
-      </button>
-    </div>
+    ${tabButtonsHtml}
 
     </div>
     </div>
@@ -1711,9 +1710,7 @@ else if (hash.startsWith('#lighting-')) {
       ${unifiedPhotosHtml}
     </div>
 
-    <div id="ld-tab-content-paperwork" class="hidden w-full mt-12">
-      ${paperworkHtml}
-    </div>
+    ${hasPaperwork ? `<div id="ld-tab-content-paperwork" class="hidden w-full mt-12">${paperworkHtml}</div>` : ''}
     `;
     detailView.classList.remove('hidden');
   }
@@ -1734,7 +1731,7 @@ else if (hash.startsWith('#event-')) {
       `;
     }
     detailView.innerHTML = `
-    <div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/90 backdrop-blur-md border-b border-neutral-800 shadow-xl">
+    <div class="w-full px-6 md:px-16 py-16 relative flex flex-col items-center text-center bg-[#0b0f15]/95 backdrop-blur-md border-b border-neutral-800 shadow-xl">
     <div class="max-w-[1200px] w-full mx-auto relative z-10 flex flex-col items-center">
     <div class="w-full flex justify-start mb-6">
     <a href="#photography" class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors font-medium">
