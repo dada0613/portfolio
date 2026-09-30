@@ -57,7 +57,7 @@ transition: transform 0.3s ease;
 animation: stereoGlow 3s ease-in-out forwards;
 }
 
-/* 調成 90% 不透明，防止背景彩點干擾視線 */
+/* 90% 不透明，阻隔背景原點干擾 */
 .outline-card {
 background: rgba(11, 15, 21, 0.90);
 backdrop-filter: blur(16px);
@@ -110,6 +110,18 @@ background: rgba(15, 18, 24, 0.95);
 backdrop-filter: blur(16px);
 border: 1px solid rgba(255, 255, 255, 0.25);
 box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+}
+
+.uncropped-masonry-container {
+column-count: 2;
+column-gap: 24px;
+width: 100%;
+max-width: 1360px;
+margin: 0 auto;
+padding: 0 16px;
+}
+@media (max-width: 768px) {
+.uncropped-masonry-container { column-count: 1; column-gap: 16px; padding: 0 10px; }
 }
 
 .photo-flow-card {
@@ -568,8 +580,8 @@ window.smartImageHtml = function(baseName, altText, className = "w-full h-auto o
   if (cleanBase.startsWith('http://') || cleanBase.startsWith('https://')) {
     candidates.push(cleanBase);
   } else {
-    // 只有在請求劇照 (檔名含有 ttto 或純數字) 時才套用劇照編號 fallback，防止圖紙抓錯
-    if (folder.toLowerCase() === 'ttto' && (fileName.toLowerCase().includes('ttto') || /^\d+$/.test(fileName))) {
+    // 嚴格限制：只有檔名開頭為 ttto-數字 時才判定為劇照，不誤判 magic-1 或 plot-1
+    if (folder.toLowerCase() === 'ttto' && /^ttto-\d+$/i.test(fileName)) {
       let numMatch = fileName.match(/(\d+)$/);
       let num = numMatch ? numMatch[1] : '0';
       candidates.push(`${SUPABASE_STORAGE_URL}ttto/TTTO-${num}.jpg`);
@@ -581,6 +593,7 @@ window.smartImageHtml = function(baseName, altText, className = "w-full h-auto o
     candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.JPG`);
     candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.jpeg`);
     candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.png`);
+    candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase}.PNG`);
     candidates.push(`${SUPABASE_STORAGE_URL}${cleanBase.toLowerCase()}.jpg`);
     if (folder) {
       candidates.push(`${SUPABASE_STORAGE_URL}${folder.toLowerCase()}/${fileName.toUpperCase()}.jpg`);
@@ -698,7 +711,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（精確對齊你的指定排序）
+// 完整燈光專案資料清單（TTTO 採用 Magic Sheet，Into the Woods 暫未上傳圖紙則設空）
 const lightingProjects = [
 { 
   id: "beehive", 
@@ -898,24 +911,19 @@ const lightingProjects = [
   ],
   myContributions: [
     "Conceived and executed complete musical lighting design, cue synchronization, and color washes for fast-moving musical numbers.",
-    "Drafted light plot and instrument paperwork accommodating multi-location travel across rivers, deserts, and campsites.",
+    "Drafted Magic Sheet and channel layout to manage high-contrast color chases and specials across the Eldred thrust stage.",
     "Programmed saturated color chases and comedic followspot effects synchronized with choreography on ETC Eos console."
   ],
   aboutPlay: "The Trail To Oregon! is an interactive musical comedy produced by StarKid Productions parodying the retro video game Oregon Trail. The story follows an eccentric pioneer family traversing 19th-century America from Missouri to Oregon, facing bandits, dysentery, snake bites, and river crossings with audience-chosen names and fates.",
   aboutDesign: "Lighting balanced cartoonish comedy with theatrical adventure. Saturated, punchy cyc colors established time and varied landscapes across the trail—from scorching desert yellows to perilous river blues and ominous sunset ambers. Fast tempo transitions supported the dynamic ensemble and live audience interactions.",
   photoCaptions: {},
+  // 正式改為 Magic Sheet，路徑指向 ttto/magic-1
   paperwork: [
     { 
-      title: "Light Plot & Focus Layout", 
-      type: "Eldred Theatre CAD Plot", 
-      images: ["ttto/ttto-plot-1"], 
-      desc: "Full venue conventional and LED lighting plot designed for the Eldred Theatre thrust stage." 
-    },
-    { 
-      title: "Instrument Schedule & Cue Track", 
-      type: "Production Paperwork", 
-      images: ["ttto/ttto-schedule-1"], 
-      desc: "Channel-to-dimmer assignments, gel schedule, and beat-synced musical cue list." 
+      title: "Systems Magic Sheet", 
+      type: "ETC Eos Console Setup", 
+      images: ["ttto/magic-1"], 
+      desc: "Console channel distribution covering Front systems, Color Wash cyc units, Moving specials, and Thrust stage area grouping." 
     }
   ]
 },
@@ -981,20 +989,8 @@ const lightingProjects = [
     4: { title: "Shadow Puppetry: Little Red & The Wolf", desc: "The hunter rescues Little Red from Mr. Wolf using a backlit fabric screen to cast fierce, looming shadows that heighten physical conflict." },
     5: { title: "Death of the Baker's Wife", desc: "The Baker's Wife is crushed by the giant. Lighting shifts abruptly into visceral crimson, a stark reminder of fairy tales unraveling into real tragedy." }
   },
-  paperwork: [
-    { 
-      title: "Conventional Rig Plot & Symbol Layout", 
-      type: "Auditorium Rep Plot", 
-      images: ["woods/plot-1", "woods/plot-2", "woods/plot"], 
-      desc: "Conventional fixture layout, throw distances, and hanging positions tailored for the proscenium stage." 
-    },
-    { 
-      title: "Gel Schedule & Conventional Cue Paperwork", 
-      type: "Conventional Rig Schedule", 
-      images: ["woods/schedule-1", "woods/schedule"], 
-      desc: "Manual gel cut list, instrument focus notes, and cue execution tracking across Acts I & II." 
-    }
-  ]
+  // 未上傳圖紙前直接設為空陣列，保證自動隱藏 Paperwork Tab
+  paperwork: []
 },
 { 
   id: "live-performances", 
@@ -1035,12 +1031,6 @@ const lightingProjects = [
       type: "Cultural Mood Board", 
       images: ["live/ref-latin", "live/ref-southasia"], 
       desc: "Architectural color studies, historic textiles, and environmental lighting references that informed the color palettes for regional showcases." 
-    },
-    { 
-      title: "Multicultural Festival Rep Plot", 
-      type: "Festival Rep Plot", 
-      images: ["live/plot-1", "live/plot"], 
-      desc: "Rep plot configuration accommodating rapid turnarounds between 15+ student cultural performances." 
     }
   ]
 },
@@ -1101,9 +1091,7 @@ const lightingProjects = [
     2: { title: "Bottom's Surreal Transformation", desc: "After Bottom transforms into a donkey-headed figure, five focused spotlights and deep shadows emphasize comedic horror and supernatural confusion." },
     3: { title: "Titania's Enchanted Love Spell", desc: "Titania falls under the flower potion. Designed with a step-based lighting effect that shifted in rhythm with music to convey magical enchantment." }
   },
-  paperwork: [
-    { title: "Production Concept Archive", type: "Concept Dossier", images: ["midsummer/concept-1", "midsummer/concept"], desc: "Color palettes and atmospheric breakdown for fairy world vs mortal realm." }
-  ]
+  paperwork: []
 }
 ];
 
@@ -1630,7 +1618,9 @@ else if (hash.startsWith('#lighting-')) {
   if (project) {
     const detailView = document.getElementById('view-lighting-detail');
     const unifiedPhotosHtml = generateUnifiedProductionPhotoGrid(project);
-    const hasPaperwork = project.paperwork && project.paperwork.length > 0;
+    
+    // 嚴格判斷：只有當 paperwork 陣列存在且長度大於 0 時，才啟用圖紙功能
+    const hasPaperwork = Array.isArray(project.paperwork) && project.paperwork.length > 0;
     const paperworkHtml = hasPaperwork ? generatePaperworkView(project.paperwork) : '';
 
     let creditsRows = (project.credits || []).map(c => `
@@ -1647,7 +1637,7 @@ else if (hash.startsWith('#lighting-')) {
       </li>
     `).join('');
 
-    // 若有 paperwork 則顯示切換 Tab，若無則不顯示任何 Tab 按鈕
+    // 若有 paperwork 則顯示切換 Tab，若無則保證完全不渲染任何 Tab 按鈕！
     let tabButtonsHtml = '';
     if (hasPaperwork) {
       tabButtonsHtml = `
