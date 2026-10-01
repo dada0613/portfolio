@@ -711,7 +711,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單（The Harvest 已移除 Thunderstorm 描述，無 Paperwork 專案直接清空）
+// 完整燈光專案資料清單
 const lightingProjects = [
 { 
   id: "beehive", 
@@ -951,7 +951,7 @@ const lightingProjects = [
   photoCaptions: {
     1: { title: "\"Welcome to Our House on Maple Avenue\"", desc: "As the Bechdel family frantically cleans the house anticipating a visitor, lighting reflects Bruce's obsession with order and perfection while hinting at underlying household tension." },
     2: { title: "Contrasting Rooms: Indigo vs. Magenta", desc: "While Helen plays piano in one room, Bruce is privately engaged in a relationship with his student in another. Contrasting indigo and magenta lighting across spaces exposes deep psychological fractures." },
-    3: { title: "Ambiguous Pink-Purple Stage Wash", desc: "As hidden relationships surface, an ambiguous pink-purple glow expands across the entire stage, capturing ironic, delicate, and deeply conflicting emotions." },
+    3: { title: "Ambiguous Pink-Purple Stage Wash", desc: "As hidden relationships surface, an ambiguous pink-purple glow expands across the整个 stage, capturing ironic, delicate, and deeply conflicting emotions." },
     4: { title: "Reprise & Melancholy Contrast", desc: "When \"Maple Avenue\" is sung again, lighting shifts noticeably cooler and quieter, creating sharp, poignant contrast between cheerful lyrics and creeping sadness." }
   },
   paperwork: [
@@ -1248,6 +1248,19 @@ for (let i = 1; i <= 20; i++) {
 }
 html += '</div>';
 return html;
+}
+
+// 智慧動態檢查函式：由程式碼自動檢查是否有實質圖紙內容
+function checkHasPaperwork(project) {
+  if (!project.paperwork || !Array.isArray(project.paperwork) || project.paperwork.length === 0) {
+    return false;
+  }
+  return project.paperwork.some(pw => 
+    (Array.isArray(pw.images) && pw.images.length > 0) || 
+    Boolean(pw.pdfUrl) || 
+    Boolean(pw.isDualVenuePlot) || 
+    Boolean(pw.isDualSpotSheet)
+  );
 }
 
 // 履歷專屬 Tab 切換
@@ -1616,8 +1629,8 @@ else if (hash.startsWith('#lighting-')) {
     const detailView = document.getElementById('view-lighting-detail');
     const unifiedPhotosHtml = generateUnifiedProductionPhotoGrid(project);
     
-    // 嚴格檢查：只有當真正存在 paperwork 項目時才掛載圖紙
-    const hasPaperwork = Array.isArray(project.paperwork) && project.paperwork.length > 0;
+    // 由智慧函式全自動檢查：只有包含實質圖紙內容的專案才啟用 Paperwork
+    const hasPaperwork = checkHasPaperwork(project);
     const paperworkHtml = hasPaperwork ? generatePaperworkView(project.paperwork) : '';
 
     let creditsRows = (project.credits || []).map(c => `
@@ -1634,7 +1647,7 @@ else if (hash.startsWith('#lighting-')) {
       </li>
     `).join('');
 
-    // 若無 paperwork 則保證不渲染任何 Tab 按鈕
+    // 若判定為無圖紙，保證不輸出任何 Tab 按鈕！
     let tabButtonsHtml = '';
     if (hasPaperwork) {
       tabButtonsHtml = `
