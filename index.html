@@ -564,7 +564,37 @@ Play / Download
 
 </main>
 
-<div class="h-12 w-full"></div>
+<!-- 全域頁尾：CONTACT & COPYRIGHT -->
+<footer class="relative z-20 w-full bg-[#070a0f] border-t border-neutral-800/60 mt-20 py-12 px-6 md:px-16 transition-colors">
+  <div class="max-w-[1360px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+    <div class="space-y-2">
+      <div class="serif-title text-xl text-neutral-100 tracking-wider">Amanda Hsu (徐 曼芸)</div>
+      <p class="text-xs text-neutral-400 font-light max-w-md">
+        Undergraduate Double Major in Theatrical Lighting Design & Computer Science at Case Western Reserve University.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row sm:items-center gap-6 md:gap-10 text-xs">
+      <div>
+        <span class="text-[10px] text-neutral-400 uppercase tracking-widest block mb-1">Direct Contact</span>
+        <a href="mailto:amandahsu0613@gmail.com" class="text-neutral-200 hover:text-yellow-400 font-mono transition-colors block">
+          amandahsu0613@gmail.com
+        </a>
+      </div>
+      <div>
+        <span class="text-[10px] text-neutral-400 uppercase tracking-widest block mb-1">Academic Inquiries</span>
+        <a href="mailto:mxh1084@case.edu" class="text-neutral-200 hover:text-yellow-400 font-mono transition-colors block">
+          mxh1084@case.edu
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-[1360px] mx-auto mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center text-[11px] text-neutral-400">
+    <span>© 2026 Amanda Hsu. All rights reserved.</span>
+    <span class="mt-2 sm:mt-0">Cleveland, OH • Taipei, Taiwan</span>
+  </div>
+</footer>
 
 <script>
 const SUPABASE_STORAGE_URL = 'https://alvboxtaouzggqvkoanz.supabase.co/storage/v1/object/public/portfolio-images/';
@@ -711,7 +741,7 @@ const eventProjects = [
 
 const streetPhotos = Array.from({length: 25}, (_, i) => `street/street-${i + 1}`);
 
-// 完整燈光專案資料清單
+// 完整燈光專案資料清單（Live Performances 設置專屬 Reference 資料）
 const lightingProjects = [
 { 
   id: "beehive", 
@@ -951,12 +981,10 @@ const lightingProjects = [
   photoCaptions: {
     1: { title: "\"Welcome to Our House on Maple Avenue\"", desc: "As the Bechdel family frantically cleans the house anticipating a visitor, lighting reflects Bruce's obsession with order and perfection while hinting at underlying household tension." },
     2: { title: "Contrasting Rooms: Indigo vs. Magenta", desc: "While Helen plays piano in one room, Bruce is privately engaged in a relationship with his student in another. Contrasting indigo and magenta lighting across spaces exposes deep psychological fractures." },
-    3: { title: "Ambiguous Pink-Purple Stage Wash", desc: "As hidden relationships surface, an ambiguous pink-purple glow expands across the整个 stage, capturing ironic, delicate, and deeply conflicting emotions." },
+    3: { title: "Ambiguous Pink-Purple Stage Wash", desc: "As hidden relationships surface, an ambiguous pink-purple glow expands across the entire stage, capturing ironic, delicate, and deeply conflicting emotions." },
     4: { title: "Reprise & Melancholy Contrast", desc: "When \"Maple Avenue\" is sung again, lighting shifts noticeably cooler and quieter, creating sharp, poignant contrast between cheerful lyrics and creeping sadness." }
   },
-  paperwork: [
-    { title: "Magic Sheet / Systems Layout", type: "ETC Eos Setup", images: ["funhome/magic-1", "funhome/magic"], desc: "Movers, Cyc, Gobos, Booms, Front, Top, and Side channel groupings." }
-  ]
+  paperwork: []
 },
 { 
   id: "into-the-woods", 
@@ -1022,12 +1050,14 @@ const lightingProjects = [
     8: { title: "Cultural Showcase: Central Asia", desc: "Deep violet-purple lighting reflecting silk road heritage, mystical allure, and intricate textile patterns." },
     9: { title: "Cultural Showcase: Africa & Colonial History", desc: "Stark, visceral crimson lighting symbolizing historical struggle, colonial oppression, and resilient resistance." }
   },
+  // 專門標記為 Reference 類型，而非一般圖紙
+  isReferenceProject: true,
   paperwork: [
     { 
       title: "Visual Research & Cultural Mood Board", 
-      type: "Cultural Mood Board", 
+      type: "Visual Reference & Research", 
       images: ["live/ref-latin", "live/ref-southasia"], 
-      desc: "Architectural color studies, historic textiles, and environmental lighting references that informed the color palettes for regional showcases." 
+      desc: "Architectural color studies, historic textiles, and environmental lighting references that informed the color palettes for regional showcases (Latin America & South Asia)." 
     }
   ]
 },
@@ -1250,7 +1280,7 @@ html += '</div>';
 return html;
 }
 
-// 智慧動態檢查函式：由程式碼自動檢查是否有實質圖紙內容
+// 智慧動態檢查函式：純程式碼判定是否有實質圖紙或參考資源內容
 function checkHasPaperwork(project) {
   if (!project.paperwork || !Array.isArray(project.paperwork) || project.paperwork.length === 0) {
     return false;
@@ -1329,14 +1359,14 @@ window.switchBeehiveSpot = function(spotId) {
   }
 };
 
-// 圖紙區塊生成器
+// 圖紙/參考資源區塊生成器
 function generatePaperworkView(paperworkList) {
   if (!paperworkList || paperworkList.length === 0) {
     return '';
   }
 
   let sectionsHtml = paperworkList.map((pw) => {
-    // 專門處理 Beehive 雙劇場切換
+    // Beehive 雙劇場切換
     if (pw.isDualVenuePlot) {
       let marian = pw.venues[0];
       let solvang = pw.venues[1];
@@ -1429,7 +1459,7 @@ function generatePaperworkView(paperworkList) {
       `;
     }
 
-    // 滿版圖紙 + Viewport 按鈕
+    // 滿版圖紙 / 參考靈感圖 + Viewport 按鈕
     let imgList = pw.images || (pw.image ? [pw.image] : []);
     let viewportButtonHtml = '';
     if (pw.viewportPdfUrl) {
@@ -1468,8 +1498,8 @@ function generatePaperworkView(paperworkList) {
   return `
     <div class="max-w-[1360px] mx-auto px-4 md:px-8 space-y-12 pb-16">
       <div class="border-b border-neutral-800 pb-4">
-        <h3 class="serif-title text-3xl text-white italic">Technical Drawings, Plots & Paperwork</h3>
-        <p class="text-neutral-400 text-xs tracking-wide mt-1">Light Plots, Section Viewports, Magic Sheets & Spot Sheets</p>
+        <h3 class="serif-title text-3xl text-white italic">Technical Drawings, Plots & References</h3>
+        <p class="text-neutral-400 text-xs tracking-wide mt-1">Light Plots, Section Viewports, Magic Sheets & Visual Research</p>
       </div>
       <div class="space-y-10 w-full">
         ${sectionsHtml}
@@ -1629,7 +1659,7 @@ else if (hash.startsWith('#lighting-')) {
     const detailView = document.getElementById('view-lighting-detail');
     const unifiedPhotosHtml = generateUnifiedProductionPhotoGrid(project);
     
-    // 由智慧函式全自動檢查：只有包含實質圖紙內容的專案才啟用 Paperwork
+    // 由智慧函式判定是否包含實質圖紙或參考資料
     const hasPaperwork = checkHasPaperwork(project);
     const paperworkHtml = hasPaperwork ? generatePaperworkView(project.paperwork) : '';
 
@@ -1647,16 +1677,20 @@ else if (hash.startsWith('#lighting-')) {
       </li>
     `).join('');
 
-    // 若判定為無圖紙，保證不輸出任何 Tab 按鈕！
+    // 若判定為無圖紙，保證不輸出任何 Tab 按鈕！若為 Live Showcase 則客製為 "Visual Reference & Research"
     let tabButtonsHtml = '';
     if (hasPaperwork) {
+      let secondaryTabLabel = project.isReferenceProject 
+        ? "Visual Reference & Research" 
+        : "Technical Drawings & Paperwork";
+
       tabButtonsHtml = `
         <div class="flex items-center bg-neutral-900 border border-neutral-700/80 p-1.5 rounded-sm">
           <button id="tab-btn-ld-photos" onclick="switchLightingTab('photos')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-neutral-100 text-neutral-900 rounded-sm cursor-pointer">
             Production Photos & Moments
           </button>
           <button id="tab-btn-ld-paperwork" onclick="switchLightingTab('paperwork')" class="px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-medium text-neutral-400 hover:text-white transition-all rounded-sm cursor-pointer">
-            Technical Drawings & Paperwork
+            ${secondaryTabLabel}
           </button>
         </div>
       `;
